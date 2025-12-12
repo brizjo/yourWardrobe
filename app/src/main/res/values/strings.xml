@@ -4,5 +4,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">login</string>
     <string name="sign_up">registrati</string>
+    <string name="login_with_google">login con google</string>
+    <string name="your_wardrobe">Your Wardrobe</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="benvenuto">Benvenuto!</string>
+    <string name="registrato">Sei già registrato?</string>
+    <string name="password_dimenticata">password dimenticata?</string>
 
 </resources>

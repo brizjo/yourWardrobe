@@ -6,30 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.welcome.WelcomeActivity">
-    
-    <LinearLayout
+
+    <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context=".ui.WelcomeActivity">
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        app:tint="?android:attr/textColorPrimary" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/xl"
-            android:text="@string/login"
-            android:fontFamily="@font/playfairdisplay_extrabold"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/xl"
-            android:text="@string/sign_up"
-            android:fontFamily="@font/montserrat_bold"
-            />
-
-    </LinearLayout>
+        android:id="@+id/fragment_container_view"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/nav_graph_welcome"
+        app:defaultNavHost="true"        />
 </androidx.constraintlayout.widget.ConstraintLayout>

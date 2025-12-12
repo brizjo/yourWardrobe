@@ -47,4 +47,20 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+    <style name="AppLogo" parent="@style/TextAppearance.Material3.DisplayMedium">
+
+        <item name ="fontFamily">@font/poppins_italic</item>
+
+        <item name ="android:fontFamily">@font/poppins_italic</item>
+    </style>
+    <style name="MyHeadlineLarge" parent="@style/TextAppearance.Material3.HeadlineLarge">
+    <item name="fontFamily">@font/playfairdisplay_bold</item>
+    <item name="android:fontFamily">@font/playfairdisplay_italic_variablefont_wght</item>
+    </style>
+    <style name="TextAppearance.YourWardrobe.Body" parent="@style/TextAppearance.Material3.BodyLarge">
+    <item name="fontFamily">@font/montserrat_regular</item>
+    </style>
+
+
 </resources>

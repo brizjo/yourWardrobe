@@ -22,6 +22,7 @@
         android:layout_height="240dp"
         android:src="@drawable/dressing_login"
         android:scaleType="centerInside"
+        android:contentDescription="@string/dressinlogin"
         />
 
 

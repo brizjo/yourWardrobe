@@ -40,12 +40,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/benvenuto"
+                android:layout_marginStart="@dimen/md"
                 android:textAppearance="@style/MyHeadlineLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/registrato"
+                android:layout_marginStart="@dimen/md"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -95,32 +97,63 @@
                 android:text="@string/password_dimenticata"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
-            <Button
+            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
                 android:id="@+id/login_button"
-                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/xl"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="@dimen/sm"
+                android:layout_marginEnd="100dp">
+
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="1dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="@dimen/sm"
+                    android:layout_toStartOf="@id/text_or"
+                    android:background="#555" />
+
+                <TextView
+                    android:id="@+id/text_or"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/o" />
+
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="1dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/sm"
+                    android:layout_toEndOf="@id/text_or"
+                    android:background="#555" />
+            </RelativeLayout>
+
+            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
+                android:id="@+id/login_button_google"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="50dp"
                 android:layout_marginEnd="50dp"
-                android:text="@string/login"
+                android:layout_marginTop="@dimen/md"/>
 
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-
-            <Button
-                style="@style/Widget.Material3.Button.ElevatedButton"
+            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
+                android:id="@+id/sign_up_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="50dp"
-                android:layout_marginTop="@dimen/md"
                 android:layout_marginEnd="50dp"
-                android:text="@string/login_with_google"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:icon="@drawable/icon_google"
-                app:iconGravity="textStart"
-                app:iconTint="@null" />
+                android:layout_marginTop="@dimen/md"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

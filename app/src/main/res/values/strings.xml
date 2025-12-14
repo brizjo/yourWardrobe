@@ -12,5 +12,6 @@
     <string name="registrato">Sei già registrato?</string>
     <string name="password_dimenticata">password dimenticata?</string>
     <string name="dressinlogin">dressinLogin</string>
+    <string name="o">o</string>
 
 </resources>

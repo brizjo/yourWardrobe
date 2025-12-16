@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,13 +29,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // setup bottom navigation
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
+                findFragmentById(R.id.nav_host_fragment);
+
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
-            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+            NavigationUI.setupWithNavController(bottomNav, navController);
         }
+
+
     }
 }

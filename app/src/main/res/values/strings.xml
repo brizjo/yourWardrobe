@@ -21,4 +21,6 @@
     <string name="home">Home</string>
     <string name="wardrobe">Wardrobe</string>
     <string name="personal_stylist">Personal Stylist</string>
+    <string name="avatar">avatar</string>
+    <string name="daily_outfit">Outfit del giorno</string>
 </resources>

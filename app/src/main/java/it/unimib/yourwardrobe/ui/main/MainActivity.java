@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.ui.home;
+package it.unimib.yourwardrobe.ui.main;
 
 import android.os.Bundle;
 
@@ -7,6 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import it.unimib.yourwardrobe.R;
 
@@ -22,5 +28,16 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
+                findFragmentById(R.id.nav_host_fragment);
+
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+            NavigationUI.setupWithNavController(bottomNav, navController);
+        }
+
+
     }
 }

@@ -13,17 +13,19 @@
         android:theme="@style/YourWardrobe" >
         <activity
             android:name=".ui.welcome.WelcomeActivity"
-            android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
         </activity>
 
         <activity
-            android:name=".ui.home.MainActivity"
-            android:exported="false" />
+            android:name=".ui.main.MainActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_home"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.HomeFragment"
+        android:label="@string/home" />
+
+    <fragment
+        android:id="@+id/wardrobeFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.WardrobeFragment"
+        android:label="@string/wardrobe" />
+
+    <fragment
+        android:id="@+id/personalStylistFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.PersonalStylistFragment"
+        android:label="@string/personal_stylist" />
+
+</navigation>

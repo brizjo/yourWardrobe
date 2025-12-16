@@ -18,4 +18,7 @@
     <string name="example_weather_time">9:41</string>
     <string name="example_weather_temp">30</string>
     <string name="degree_symbol">°</string>
+    <string name="home">Home</string>
+    <string name="wardrobe">Wardrobe</string>
+    <string name="personal_stylist">Personal Stylist</string>
 </resources>

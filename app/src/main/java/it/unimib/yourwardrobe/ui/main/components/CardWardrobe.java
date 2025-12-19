@@ -5,28 +5,25 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.card.MaterialCardView;
 
 import it.unimib.yourwardrobe.R;
 
-public class CardComponent extends LinearLayout {
-
+public class CardWardrobe  extends LinearLayout {
     private MaterialCardView materialCardView;
 
-    public CardComponent(Context context){
+    public CardWardrobe(Context context){
         super(context, null);
     }
 
-    public CardComponent(Context context, @Nullable AttributeSet attrs) {
+    public CardWardrobe(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CardComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CardWardrobe(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -38,36 +35,13 @@ public class CardComponent extends LinearLayout {
         // 2. Find the button ID defined in your XML
         materialCardView = findViewById(R.id.card);
     }
-    public void setCardText(String text) {
-        if (materialCardView != null) {
-            TextView textView = materialCardView.findViewById(R.id.text_view);
-            textView.setText(text);
-        }
-    }
 
-    public void setCardTextStyle(int font) {
-        if (materialCardView != null) {
-            TextView textView = materialCardView.findViewById(R.id.text_view);
-            textView.setTextAppearance(font);
-        }
-    }
-    public void setCardStroke(int color, int width) {
-        if (materialCardView != null) {
-            materialCardView.setStrokeColor(color);
-            materialCardView.setStrokeWidth(width);
-        }
-    }
     public void setCardImage(Drawable drawable) {
         if (materialCardView != null) {
-           materialCardView.setBackgroundDrawable(drawable);
+            materialCardView.setBackgroundDrawable(drawable);
         }
     }
 
-    private void setCardClickable(){
-        if (materialCardView != null) {
-            materialCardView.setClickable(true);
-        }
-    }
     public void setOnCardClickListener(OnClickListener listener) {
         if (materialCardView != null) {
             materialCardView.setClickable(true);

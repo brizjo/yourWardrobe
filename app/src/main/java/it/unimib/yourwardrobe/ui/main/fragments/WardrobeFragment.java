@@ -7,14 +7,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.main.components.CardComponent;
-import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
+import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 
 public class WardrobeFragment extends Fragment {
 
@@ -38,13 +38,15 @@ public class WardrobeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CardComponent outfitCard = view.findViewById(R.id.outfitCard);
+        CardMenu outfitCard = view.findViewById(R.id.outfitCard);
         outfitCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
         outfitCard.setCardText("outfit");
         outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
-        outfitCard.setOnCardClickListener(view1 -> {
-            Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.cloudy);
-            outfitCard.setCardImage(drawable);
+        outfitCard.setOnCardClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_wardrobeFragment_to_clothesFragment);
+            }
         });
     }
 }

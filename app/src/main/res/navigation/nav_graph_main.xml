@@ -17,7 +17,11 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.WardrobeFragment"
         android:label="@string/wardrobe"
         tools:layout="@layout/fragment_wardrobe"
-        />
+        >
+        <action
+            android:id="@+id/action_wardrobeFragment_to_clothesFragment"
+            app:destination="@id/clothesFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/personalStylistFragment"
@@ -25,5 +29,14 @@
         android:label="@string/personal_stylist"
         tools:layout="@layout/fragment_personal_stylist"
         />
+    <fragment
+        android:id="@+id/clothesFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
+        android:label="fragment_clothes"
+        tools:layout="@layout/fragment_clothes" >
+        <action
+            android:id="@+id/action_clothesFragment_to_wardrobeFragment"
+            app:destination="@id/wardrobeFragment" />
+    </fragment>
 
 </navigation>

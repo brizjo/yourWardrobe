@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_home_selector"
         android:title="@string/home" />
 
     <item
         android:id="@+id/wardrobeFragment"
-        android:icon="@drawable/ic_dresser"
+        android:icon="@drawable/idc_dresser_selector"
         android:title="@string/wardrobe" />
 
     <item
         android:id="@+id/personalStylistFragment"
-        android:icon="@drawable/ic_bot"
+        android:icon="@drawable/ic_bot_selector"
         android:title="@string/personal_stylist" />
 
 </menu>

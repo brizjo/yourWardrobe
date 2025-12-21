@@ -52,7 +52,7 @@ public class LoginFragment extends Fragment {
         button.setButtonText(getString(R.string.login));;
         LoginButton button_google = view.findViewById(R.id.login_button_google);
         button_google.setButtonText(getString(R.string.login_with_google));
-        button_google.setButtonIcon(R.drawable.icon_google);
+        button_google.setButtonIcon(R.drawable.ic_google);
         LoginButton signUpButton = view.findViewById(R.id.sign_up_button);
         signUpButton.setButtonText(getString(R.string.sign_up));
 

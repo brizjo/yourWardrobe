@@ -59,7 +59,7 @@
                 android:layout_marginEnd="@dimen/md"
                 android:background="#05000000"
                 android:hint="@string/email"
-                app:startIconDrawable="@drawable/email_icon">
+                app:startIconDrawable="@drawable/ic_email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputEmail"
@@ -78,7 +78,7 @@
                 android:layout_marginEnd="@dimen/md"
                 android:background="#05000000"
                 android:hint="@string/password"
-                app:startIconDrawable="@drawable/password_icon">
+                app:startIconDrawable="@drawable/ic_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputPassword"

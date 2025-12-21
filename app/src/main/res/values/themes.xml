@@ -68,7 +68,7 @@
     </style>
 
     <style name="Widget.App.BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:color">@color/md_theme_background_mediumContrast</item>
+        <item name="android:color">@android:color/transparent</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">

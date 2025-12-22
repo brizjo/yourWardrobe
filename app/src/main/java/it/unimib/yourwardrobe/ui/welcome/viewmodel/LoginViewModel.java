@@ -32,6 +32,25 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
+    public void signUp(String email, String password, String confirmPassword) {
+        //Validazione dell'input
+        if (!isEmailValid(email)) {
+            authenticationResult.setValue(new AuthenticationResult(false, "Formato email non valido"));
+            return;
+        }
+        if (!isPasswordValid(password)) {
+            authenticationResult.setValue(new AuthenticationResult(false, "La password deve avere almeno 6 caratteri"));
+            return;
+        }
+        if (!password.equals(confirmPassword)) {
+            authenticationResult.setValue(new AuthenticationResult(false,"Le password non coincidono"));
+            return;
+        }
+        //qui chiamata a repository o firebase
+        if (true) {
+            authenticationResult.setValue(new AuthenticationResult(true, null));
+        }
+    }
     public LiveData<AuthenticationResult> getAuthenticationResult() {
         return authenticationResult;
     }

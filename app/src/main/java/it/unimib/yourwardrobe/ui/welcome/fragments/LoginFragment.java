@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment {
         });
         loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
             if (result.success) {
-                // Login OK: Naviga verso la Home o il prossimo fragment
+                // Login OK: Naviga verso la Home
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity);
                 Toast.makeText(getContext(), "Login effettuato!", Toast.LENGTH_SHORT).show();
             } else {

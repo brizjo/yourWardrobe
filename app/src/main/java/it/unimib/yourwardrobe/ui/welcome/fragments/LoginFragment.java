@@ -85,6 +85,9 @@ public class LoginFragment extends Fragment {
         buttonGoogle.setButtonIcon(R.drawable.ic_google);
         LoginButton signUpButton = view.findViewById(R.id.sign_up_button);
         signUpButton.setButtonText(getString(R.string.sign_up));
+        signUpButton.setOnButtonClickListener(v -> {
+            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signUpFragment);
+        });
 
         /*Button button = view.findViewById(R.id.login_button);
         button.setOnClickListener(new View.OnClickListener() {

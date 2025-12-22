@@ -23,4 +23,6 @@
     <string name="personal_stylist">Personal Stylist</string>
     <string name="avatar">avatar</string>
     <string name="daily_outfit">Outfit del giorno</string>
+    <string name="conferma_password">conferma password</string>
+    <string name="sign_up_frase">entra subito nel tuo wardrobe personale</string>
 </resources>

@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -19,6 +18,7 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
+import it.unimib.yourwardrobe.utils.ToastHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +32,6 @@ public class SignUpFragment extends Fragment {
     private TextInputEditText passwordEditText;
     private TextInputEditText confirmPasswordEditText;
     private long lastClickTime = 0;
-    private Toast currentToast;
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -78,14 +77,12 @@ public class SignUpFragment extends Fragment {
             loginViewModel.signUp(email, password, confirmPassword);
         });
         loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
-            if (currentToast != null) {
-                currentToast.cancel();
-            }
+
 
             if (result.success) {
                 // Registrazione avvenuta con successo
-                currentToast = Toast.makeText(getContext(), "Registrazione completata!", Toast.LENGTH_SHORT);
-                currentToast.show();
+                ToastHelper.show(getContext(), "Registrazione completata!", false);
+
                 // Avvia MainActivity e pulisce lo stack di navigazione
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -95,8 +92,7 @@ public class SignUpFragment extends Fragment {
             } else if (!result.success) {
                 // Mostra l'errore di validazione o registrazione
                 String errorMessage = ((LoginViewModel.AuthenticationResult) result).errorMessage;
-                currentToast = Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG);
-                currentToast.show();
+                ToastHelper.show(getContext(), errorMessage, true);
             }
         });
     }

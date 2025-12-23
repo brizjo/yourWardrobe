@@ -11,13 +11,13 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
+import it.unimib.yourwardrobe.utils.ToastHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +29,7 @@ public class LoginFragment extends Fragment {
     private LoginViewModel loginViewModel;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
+    private long lastClickTime = 0;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -36,10 +37,6 @@ public class LoginFragment extends Fragment {
 
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
-        //Bundle args = new Bundle();
-        //args.putString(ARG_PARAM1, param1);
-        //args.putString(ARG_PARAM2, param2);
-        //fragment.setArguments(args);
         return fragment;
     }
 
@@ -64,6 +61,11 @@ public class LoginFragment extends Fragment {
         LoginButton loginButton = view.findViewById(R.id.login_button);
         loginButton.setButtonText(getString(R.string.login));
         loginButton.setOnButtonClickListener(v ->{
+            // prevenzione click ripetuti
+            if (System.currentTimeMillis() - lastClickTime < 1000) {
+                return;
+            }
+            lastClickTime = System.currentTimeMillis();
                 String email = emailEditText.getText() != null ? emailEditText.getText().toString() : "";
                 String password = passwordEditText.getText() != null ? passwordEditText.getText().toString() : "";
 
@@ -74,10 +76,10 @@ public class LoginFragment extends Fragment {
             if (result.success) {
                 // Login OK: Naviga verso la Home
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity);
-                Toast.makeText(getContext(), "Login effettuato!", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Login effettuato!", false);
             } else {
                 // Login Fallito: Mostra errore
-                Toast.makeText(getContext(), result.errorMessage, Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), result.errorMessage, false);
             }
         });
         LoginButton buttonGoogle = view.findViewById(R.id.login_button_google);
@@ -89,13 +91,5 @@ public class LoginFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signUpFragment);
         });
 
-        /*Button button = view.findViewById(R.id.login_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextInputEditText inputEmail = view.findViewById(R.id.textInputEmail);
-                TextInputEditText inputPassword = view.findViewById(R.id.textInputPassword);
-            }
-        });*/
     }
 }

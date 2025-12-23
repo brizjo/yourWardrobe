@@ -38,11 +38,11 @@ public class WardrobeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CardMenu outfitCard = view.findViewById(R.id.outfitCard);
-        outfitCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
-        outfitCard.setCardText("outfit");
-        outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
-        outfitCard.setOnCardClickListener(new View.OnClickListener() {
+        CardMenu clothesCard = view.findViewById(R.id.clothesCard);
+        clothesCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
+        clothesCard.setCardText("vestiario");
+        clothesCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        clothesCard.setOnCardClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.action_wardrobeFragment_to_clothesFragment);

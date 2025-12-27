@@ -66,8 +66,8 @@ public class ClothesFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.action_clothesFragment_to_wardrobeFragment);
             }
         });
-        RecyclerView recyclerView = view.findViewById(R.id.magliette_recycler_view);
-        recyclerView.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        RecyclerView recyclerViewMagliette = view.findViewById(R.id.magliette_recycler_view);
+        recyclerViewMagliette.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         //dati di prova
         List<Integer> i = new ArrayList<>();
         i.add(R.drawable.cloudy);
@@ -75,7 +75,15 @@ public class ClothesFragment extends Fragment {
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
-        recyclerView.setAdapter(new ClothesAdapter(i));
-        recyclerView.setNestedScrollingEnabled(false);
+        recyclerViewMagliette.setAdapter(new ClothesAdapter(i));
+        recyclerViewMagliette.setNestedScrollingEnabled(false);
+        RecyclerView recyclerViewFelpe = view.findViewById(R.id.felpe_recycler_view);
+        recyclerViewFelpe.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewFelpe.setAdapter(new ClothesAdapter(i));
+        recyclerViewFelpe.setNestedScrollingEnabled(false);
+        RecyclerView recyclerViewPantaloni = view.findViewById(R.id.pantaloni_recycler_view);
+        recyclerViewPantaloni.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewPantaloni.setAdapter(new ClothesAdapter(i));
+        recyclerViewPantaloni.setNestedScrollingEnabled(false);
     }
 }

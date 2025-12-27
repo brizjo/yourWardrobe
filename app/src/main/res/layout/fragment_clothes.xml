@@ -6,24 +6,41 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.main.fragments.ClothesFragment">
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/back_button"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="@dimen/sm"
+        android:layout_marginEnd="50dp">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="indietro" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_button"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@id/back_button"
+        android:layout_marginStart="30dp"
+        app:icon="@drawable/ic_add"
+        app:iconGravity="textStart"
+        android:layout_height="wrap_content"
+        android:text="@string/aggiungi_capo" />
+    </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/magliette"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"/>
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textColor="@color/md_theme_primary"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/sm"
         android:layout_marginEnd="@dimen/sm"
-        android:background="#555" />
+        android:background="@color/md_theme_primary" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/magliette_recycler_view"
@@ -37,25 +54,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/felpe"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"/>
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textColor="@color/md_theme_primary"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/sm"
         android:layout_marginEnd="@dimen/sm"
-        android:background="#555" />
+        android:background="@color/md_theme_primary" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/felpe_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pantaloni"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"/>
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textColor="@color/md_theme_primary"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/sm"
         android:layout_marginEnd="@dimen/sm"
-        android:background="#555" />
+        android:background="@color/md_theme_primary" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pantaloni_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="196dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
 
 </LinearLayout>

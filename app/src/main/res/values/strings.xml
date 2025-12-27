@@ -25,4 +25,9 @@
     <string name="daily_outfit">Outfit del giorno</string>
     <string name="conferma_password">conferma password</string>
     <string name="sign_up_frase">entra subito nel tuo wardrobe personale</string>
+    <string name="vestiario">vestiario</string>
+    <string name="outfit">outfit</string>
+    <string name="magliette">Magliette</string>
+    <string name="pantaloni">Pantaloni</string>
+    <string name="felpe">Felpe</string>
 </resources>

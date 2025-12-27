@@ -7,13 +7,21 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.material.carousel.CarouselLayoutManager;
+import com.google.android.material.carousel.UncontainedCarouselStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
 
@@ -51,8 +59,6 @@ public class ClothesFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CardWardrobe clothesCard = view.findViewById(R.id.clothesCard);
-        clothesCard.setCardImage(ContextCompat.getDrawable(getContext(), R.drawable.cloudy));
         Button button = view.findViewById(R.id.back_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,5 +66,16 @@ public class ClothesFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.action_clothesFragment_to_wardrobeFragment);
             }
         });
+        RecyclerView recyclerView = view.findViewById(R.id.magliette_recycler_view);
+        recyclerView.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        //dati di prova
+        List<Integer> i = new ArrayList<>();
+        i.add(R.drawable.cloudy);
+        i.add(R.drawable.ic_email);
+        i.add(R.drawable.ic_password);
+        i.add(R.drawable.ic_google);
+        i.add(R.drawable.ic_bot_filled);
+        recyclerView.setAdapter(new ClothesAdapter(i));
+        recyclerView.setNestedScrollingEnabled(false);
     }
 }

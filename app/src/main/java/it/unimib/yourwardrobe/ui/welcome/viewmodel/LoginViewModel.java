@@ -5,6 +5,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
+
 public class LoginViewModel extends ViewModel {
 
     // LiveData per notificare il fragment del risultato del login
@@ -25,11 +29,22 @@ public class LoginViewModel extends ViewModel {
 
         // Logica di Autenticazione (per ora simulato)
         // Qui chiamata a Repository o Firebase
-        if (/*email.equals("user@example.com") && password.equals("password123")*/ true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        } else {
-            authenticationResult.setValue(new AuthenticationResult(false, "Credenziali errate"));
-        }
+
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()) {
+                        //login è riuscito
+                        authenticationResult.setValue(new AuthenticationResult(true, null));
+                    } else {
+                        //login non riuscito
+                        String errorMessage = "Errore di autenticazione";
+                        if (task.getException() != null) {
+                            errorMessage = task.getException().getMessage();
+                        }
+                        authenticationResult.setValue(new AuthenticationResult(false, errorMessage));
+                    }
+                }
+        );
     }
 
     public void signUp(String email, String password, String confirmPassword) {
@@ -47,9 +62,25 @@ public class LoginViewModel extends ViewModel {
             return;
         }
         //qui chiamata a repository o firebase
-        if (true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        }
+        // TODO: Implementare la registrazione reale
+
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                //login è riuscito
+                authenticationResult.setValue(new AuthenticationResult(true, null));
+            }
+            else{
+
+                String errorMessage = "Errore di registrazione";
+                if (task.getException() != null) {
+                    errorMessage = task.getException().getMessage();
+                }
+                authenticationResult.setValue(new AuthenticationResult(false, errorMessage));
+            }
+
+
+
+        });
     }
     public LiveData<AuthenticationResult> getAuthenticationResult() {
         return authenticationResult;
@@ -76,4 +107,3 @@ public class LoginViewModel extends ViewModel {
         }
     }
 }
-

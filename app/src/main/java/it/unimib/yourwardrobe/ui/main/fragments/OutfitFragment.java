@@ -2,13 +2,24 @@ package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.carousel.CarouselLayoutManager;
+import com.google.android.material.carousel.UncontainedCarouselStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,14 +28,8 @@ import it.unimib.yourwardrobe.R;
  */
 public class OutfitFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public OutfitFragment() {
         // Required empty public constructor
@@ -34,27 +39,16 @@ public class OutfitFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment OutfitFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static OutfitFragment newInstance(String param1, String param2) {
+    public static OutfitFragment newInstance() {
         OutfitFragment fragment = new OutfitFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +56,28 @@ public class OutfitFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_outfit, container, false);
+    }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView recyclerViewOutfit = view.findViewById(R.id.outfit_recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerViewOutfit.setLayoutManager(gridLayoutManager);
+        recyclerViewOutfit.setNestedScrollingEnabled(false);
+        List<Integer> i = new ArrayList<>();
+        i.add(R.drawable.cloudy);
+        i.add(R.drawable.ic_email);
+        i.add(R.drawable.ic_password);
+        i.add(R.drawable.ic_google);
+        i.add(R.drawable.ic_bot_filled);
+        i.add(R.drawable.ic_email);
+        i.add(R.drawable.ic_password);
+        i.add(R.drawable.ic_google);
+        i.add(R.drawable.ic_bot_filled);
+        i.add(R.drawable.ic_email);
+        i.add(R.drawable.ic_password);
+        i.add(R.drawable.ic_google);
+        i.add(R.drawable.ic_bot_filled);
+        recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid));
+
     }
 }

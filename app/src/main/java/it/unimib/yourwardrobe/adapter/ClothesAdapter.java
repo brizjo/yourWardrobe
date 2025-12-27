@@ -16,16 +16,23 @@ import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
     private final List<Integer> clothesList; // Lista di ID immagini
+    private final int layoutId; // ID del layout da utilizzare
+
+
+    public ClothesAdapter(List<Integer> clothesList, int layoutId) {
+        this.clothesList = clothesList;
+        this.layoutId = layoutId;
+    }
 
     public ClothesAdapter(List<Integer> clothesList) {
-        this.clothesList = clothesList;
+        this(clothesList, R.layout.item_clothes_carousel);
     }
 
     @NonNull
     @Override
     public ClothesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_clothes_carousel, parent, false);
+                .inflate(this.layoutId, parent, false);
         return new ClothesViewHolder(view);
     }
 

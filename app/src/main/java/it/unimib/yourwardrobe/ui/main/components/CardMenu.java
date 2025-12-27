@@ -41,6 +41,7 @@ public class CardMenu extends LinearLayout {
         if (materialCardView != null) {
             TextView textView = materialCardView.findViewById(R.id.text_view);
             textView.setText(text);
+            textView.setVisibility(VISIBLE);
         }
     }
 

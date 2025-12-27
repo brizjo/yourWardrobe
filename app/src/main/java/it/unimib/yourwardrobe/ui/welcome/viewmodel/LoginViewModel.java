@@ -62,7 +62,6 @@ public class LoginViewModel extends ViewModel {
             return;
         }
         //qui chiamata a repository o firebase
-        // TODO: Implementare la registrazione reale
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

@@ -36,8 +36,7 @@ public class LoginFragment extends Fragment {
     }
 
     public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
-        return fragment;
+        return new LoginFragment();
     }
 
     @Override
@@ -72,6 +71,8 @@ public class LoginFragment extends Fragment {
                 // Passa i dati al ViewModel
                 loginViewModel.login(email, password);
         });
+
+        // Osserva i risultati del login
         loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
             if (result.success) {
                 // Login OK: Naviga verso la Home
@@ -82,14 +83,21 @@ public class LoginFragment extends Fragment {
                 ToastHelper.show(getContext(), result.errorMessage, false);
             }
         });
+
+        // Configurazione bottone Google
         LoginButton buttonGoogle = view.findViewById(R.id.login_button_google);
         buttonGoogle.setButtonText(getString(R.string.login_with_google));
         buttonGoogle.setButtonIcon(R.drawable.ic_google);
+
+        buttonGoogle.setOnButtonClickListener(v -> {
+            // Chiamata al ViewModel passando l'activity come Context per il CredentialManager
+            loginViewModel.loginGoogle(requireActivity());
+        });
+
         LoginButton signUpButton = view.findViewById(R.id.sign_up_button);
         signUpButton.setButtonText(getString(R.string.sign_up));
         signUpButton.setOnButtonClickListener(v -> {
             Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signUpFragment);
         });
-
     }
 }

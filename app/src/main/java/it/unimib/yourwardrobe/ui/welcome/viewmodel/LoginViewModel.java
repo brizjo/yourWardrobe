@@ -1,14 +1,22 @@
 package it.unimib.yourwardrobe.ui.welcome.viewmodel;
 
+import android.content.Context;
 import android.util.Patterns;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import it.unimib.yourwardrobe.repository.UserRepository;
+
 public class LoginViewModel extends ViewModel {
 
     // LiveData per notificare il fragment del risultato del login
     private final MutableLiveData<AuthenticationResult> authenticationResult = new MutableLiveData<>();
+    private final UserRepository userRepository;
+
+    public LoginViewModel() {
+        this.userRepository = new UserRepository();
+    }
 
     // Metodo chiamato dal Fragment quando l'utente preme "Login"
     public void login(String email, String password) {
@@ -23,13 +31,13 @@ public class LoginViewModel extends ViewModel {
             return;
         }
 
-        // Logica di Autenticazione (per ora simulato)
-        // Qui chiamata a Repository o Firebase
-        if (/*email.equals("user@example.com") && password.equals("password123")*/ true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        } else {
-            authenticationResult.setValue(new AuthenticationResult(false, "Credenziali errate"));
-        }
+        // Delega al Repository
+        userRepository.signInWithEmail(email, password, authenticationResult);
+    }
+
+    public void loginGoogle(Context context){
+        // Delega al Repository passando il contesto necessario per CredentialManager
+        userRepository.signInWithGoogle(context, authenticationResult);
     }
 
     public void signUp(String email, String password, String confirmPassword) {
@@ -46,11 +54,11 @@ public class LoginViewModel extends ViewModel {
             authenticationResult.setValue(new AuthenticationResult(false,"Le password non coincidono"));
             return;
         }
-        //qui chiamata a repository o firebase
-        if (true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        }
+
+        // Delega al Repository
+        userRepository.signUp(email, password, authenticationResult);
     }
+
     public LiveData<AuthenticationResult> getAuthenticationResult() {
         return authenticationResult;
     }
@@ -76,4 +84,3 @@ public class LoginViewModel extends ViewModel {
         }
     }
 }
-

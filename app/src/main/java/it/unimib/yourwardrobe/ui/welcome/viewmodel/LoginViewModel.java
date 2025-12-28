@@ -1,18 +1,22 @@
 package it.unimib.yourwardrobe.ui.welcome.viewmodel;
 
+import android.content.Context;
 import android.util.Patterns;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
+import it.unimib.yourwardrobe.repository.UserRepository;
 
 public class LoginViewModel extends ViewModel {
 
     // LiveData per notificare il fragment del risultato del login
     private final MutableLiveData<AuthenticationResult> authenticationResult = new MutableLiveData<>();
+    private final UserRepository userRepository;
+
+    public LoginViewModel() {
+        this.userRepository = new UserRepository();
+    }
 
     // Metodo chiamato dal Fragment quando l'utente preme "Login"
     public void login(String email, String password) {
@@ -27,24 +31,13 @@ public class LoginViewModel extends ViewModel {
             return;
         }
 
-        // Logica di Autenticazione (per ora simulato)
-        // Qui chiamata a Repository o Firebase
+        // Delega al Repository
+        userRepository.signInWithEmail(email, password, authenticationResult);
+    }
 
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(
-                task -> {
-                    if (task.isSuccessful()) {
-                        //login è riuscito
-                        authenticationResult.setValue(new AuthenticationResult(true, null));
-                    } else {
-                        //login non riuscito
-                        String errorMessage = "Errore di autenticazione";
-                        if (task.getException() != null) {
-                            errorMessage = task.getException().getMessage();
-                        }
-                        authenticationResult.setValue(new AuthenticationResult(false, errorMessage));
-                    }
-                }
-        );
+    public void loginGoogle(Context context){
+        // Delega al Repository passando il contesto necessario per CredentialManager
+        userRepository.signInWithGoogle(context, authenticationResult);
     }
 
     public void signUp(String email, String password, String confirmPassword) {
@@ -61,26 +54,11 @@ public class LoginViewModel extends ViewModel {
             authenticationResult.setValue(new AuthenticationResult(false,"Le password non coincidono"));
             return;
         }
-        //qui chiamata a repository o firebase
 
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                //login è riuscito
-                authenticationResult.setValue(new AuthenticationResult(true, null));
-            }
-            else{
-
-                String errorMessage = "Errore di registrazione";
-                if (task.getException() != null) {
-                    errorMessage = task.getException().getMessage();
-                }
-                authenticationResult.setValue(new AuthenticationResult(false, errorMessage));
-            }
-
-
-
-        });
+        // Delega al Repository
+        userRepository.signUp(email, password, authenticationResult);
     }
+
     public LiveData<AuthenticationResult> getAuthenticationResult() {
         return authenticationResult;
     }

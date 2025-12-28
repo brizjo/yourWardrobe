@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "642238090838",
+    "project_id": "yourwardr0be",
+    "storage_bucket": "yourwardr0be.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642238090838:android:65665ce7c04bb4047975f7",
+        "android_client_info": {
+          "package_name": "it.unimib.yourwardrobe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642238090838-irue9uvukneglmtc52008mnqm9sihipg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unimib.yourwardrobe",
+            "certificate_hash": "f3f097b8152f5ef7ac65df3afe53f626905a410d"
+          }
+        },
+        {
+          "client_id": "642238090838-fh3ae2tn6jdtnr583ffoondd75tketss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_6BIPrnZhahm44EM5uaOJJTgzwC2Ykjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642238090838-fh3ae2tn6jdtnr583ffoondd75tketss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

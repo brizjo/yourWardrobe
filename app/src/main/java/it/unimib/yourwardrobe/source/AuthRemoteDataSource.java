@@ -13,12 +13,13 @@ import androidx.credentials.exceptions.GetCredentialException;
 
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;//utente di firebase
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.model.User;
 
 public class AuthRemoteDataSource {
 
@@ -26,6 +27,14 @@ public class AuthRemoteDataSource {
 
     public AuthRemoteDataSource() {
         this.firebaseAuth = FirebaseAuth.getInstance();
+    }
+
+    public User getCurrentUser() {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            return new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName());
+        }
+        return null;
     }
 
     public void signInWithGoogle(Context context, AuthCallback callback) {
@@ -79,7 +88,13 @@ public class AuthRemoteDataSource {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        callback.onSuccess();
+                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName());
+                            callback.onSuccess(user);
+                        } else {
+                            callback.onFailure("Errore recupero utente");
+                        }
                     } else {
                         String errorMessage = "Errore login Firebase";
                         if (task.getException() != null) {
@@ -94,7 +109,13 @@ public class AuthRemoteDataSource {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        callback.onSuccess();
+                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName());
+                            callback.onSuccess(user);
+                        } else {
+                            callback.onFailure("Errore recupero utente");
+                        }
                     } else {
                         String errorMessage = "Errore di autenticazione";
                         if (task.getException() != null) {
@@ -109,7 +130,13 @@ public class AuthRemoteDataSource {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        callback.onSuccess();
+                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName());
+                            callback.onSuccess(user);
+                        } else {
+                            callback.onFailure("Errore recupero utente");
+                        }
                     } else {
                         String errorMessage = "Errore di registrazione";
                         if (task.getException() != null) {
@@ -118,10 +145,5 @@ public class AuthRemoteDataSource {
                         callback.onFailure(errorMessage);
                     }
                 });
-    }
-
-    public interface AuthCallback {
-        void onSuccess();
-        void onFailure(String errorMessage);
     }
 }

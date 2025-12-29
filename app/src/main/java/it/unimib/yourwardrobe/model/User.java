@@ -3,42 +3,24 @@ package it.unimib.yourwardrobe.model;
 public class User {
     private String uid;
     private String email;
-    private String username;
+    private String displayName;
+    // Puoi aggiungere altri campi come photoUrl se ti servono
 
-
-    public User() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class
-
-}
-
-    public User(String uid) {
+    public User(String uid, String email, String displayName) {
         this.uid = uid;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
+        this.displayName = displayName;
     }
 
     public String getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public String getEmail() {
+        return email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getDisplayName() {
+        return displayName;
     }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
 }
-
-

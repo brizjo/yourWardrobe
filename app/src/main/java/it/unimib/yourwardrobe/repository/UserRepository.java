@@ -3,55 +3,81 @@ package it.unimib.yourwardrobe.repository;
 import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
+import it.unimib.yourwardrobe.model.User;
+import it.unimib.yourwardrobe.source.AuthCallback;
 import it.unimib.yourwardrobe.source.AuthRemoteDataSource;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
 
 public class UserRepository {
 
     private final AuthRemoteDataSource authRemoteDataSource;
+    private final MutableLiveData<LoginViewModel.AuthenticationResult> authenticationResult;
 
     public UserRepository() {
         this.authRemoteDataSource = new AuthRemoteDataSource();
+        this.authenticationResult = new MutableLiveData<>();
     }
 
-    public void signInWithGoogle(Context context, final MutableLiveData<LoginViewModel.AuthenticationResult> resultLiveData) {
-        authRemoteDataSource.signInWithGoogle(context, new AuthRemoteDataSource.AuthCallback() {
+    public MutableLiveData<LoginViewModel.AuthenticationResult> getAuthenticationResult() {
+        return authenticationResult;
+    }
+
+    public MutableLiveData<LoginViewModel.AuthenticationResult> getUser(String email, String password, boolean isUserRegistered) {
+        if (isUserRegistered) {
+            signInWithEmail(email, password);
+        } else {
+            signUp(email, password);
+        }
+        return authenticationResult;
+    }
+
+    public MutableLiveData<LoginViewModel.AuthenticationResult> getGoogleUser(Context context) {
+        signInWithGoogle(context);
+        return authenticationResult;
+    }
+
+    public User getCurrentUser() {
+        return authRemoteDataSource.getCurrentUser();
+    }
+
+    private void signInWithGoogle(Context context) {
+        authRemoteDataSource.signInWithGoogle(context, new AuthCallback() {
             @Override
-            public void onSuccess() {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(true, null));
+            public void onSuccess(User user) {
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(true, user, null));
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(false, errorMessage));
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(false, null, errorMessage));
             }
         });
     }
 
-    public void signInWithEmail(String email, String password, final MutableLiveData<LoginViewModel.AuthenticationResult> resultLiveData) {
-        authRemoteDataSource.signInWithEmail(email, password, new AuthRemoteDataSource.AuthCallback() {
+    private void signInWithEmail(String email, String password) {
+        authRemoteDataSource.signInWithEmail(email, password, new AuthCallback() {
             @Override
-            public void onSuccess() {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(true, null));
+            public void onSuccess(User user) {
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(true, user, null));
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(false, errorMessage));
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(false, null, errorMessage));
             }
         });
     }
 
-    public void signUp(String email, String password, final MutableLiveData<LoginViewModel.AuthenticationResult> resultLiveData) {
-        authRemoteDataSource.signUp(email, password, new AuthRemoteDataSource.AuthCallback() {
+    private void signUp(String email, String password) {
+        authRemoteDataSource.signUp(email, password, new AuthCallback() {
             @Override
-            public void onSuccess() {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(true, null));
+            public void onSuccess(User user) {
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(true, user, null));
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                resultLiveData.postValue(new LoginViewModel.AuthenticationResult(false, errorMessage));
+                authenticationResult.postValue(new LoginViewModel.AuthenticationResult(false, null, errorMessage));
             }
         });
     }

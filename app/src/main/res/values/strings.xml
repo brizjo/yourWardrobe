@@ -25,4 +25,6 @@
     <string name="daily_outfit">Outfit del giorno</string>
     <string name="conferma_password">conferma password</string>
     <string name="sign_up_frase">entra subito nel tuo wardrobe personale</string>
+    <string name="ciao">"Ciao, "</string>
+    <string name="ciao_guest">Ciao, ospite</string>
 </resources>

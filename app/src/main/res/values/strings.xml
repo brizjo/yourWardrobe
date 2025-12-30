@@ -27,4 +27,5 @@
     <string name="sign_up_frase">entra subito nel tuo wardrobe personale</string>
     <string name="ciao">"Ciao, "</string>
     <string name="ciao_guest">Ciao, ospite</string>
+    <string name="username_signup">username</string>
 </resources>

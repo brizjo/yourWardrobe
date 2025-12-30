@@ -31,6 +31,7 @@ public class SignUpFragment extends Fragment {
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private TextInputEditText confirmPasswordEditText;
+    private  TextInputEditText usernameEditText;
     private long lastClickTime = 0;
 
     public SignUpFragment() {
@@ -58,6 +59,7 @@ public class SignUpFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         loginViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
         emailEditText = view.findViewById(R.id.signUpEmail);
+        usernameEditText = view.findViewById(R.id.username_signup);
         passwordEditText = view.findViewById(R.id.signUpPassword);
         confirmPasswordEditText = view.findViewById(R.id.signUpConfirmPassword);
         LoginButton signUpButton = view.findViewById(R.id.confirm_sign_up_button);
@@ -72,9 +74,9 @@ public class SignUpFragment extends Fragment {
             String email = emailEditText.getText() != null ? emailEditText.getText().toString().trim() : "";
             String password = passwordEditText.getText() != null ? passwordEditText.getText().toString().trim() : "";
             String confirmPassword = confirmPasswordEditText.getText() != null ? confirmPasswordEditText.getText().toString().trim() : "";
-
+            String username = usernameEditText.getText() != null ? usernameEditText.getText().toString().trim() : "";
             // Chiama il metodo signUp nel ViewModel
-            loginViewModel.signUp(email, password, confirmPassword);
+            loginViewModel.signUp(username, email, password, confirmPassword);
         });
         loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
 

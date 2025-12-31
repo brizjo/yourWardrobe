@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -58,6 +59,9 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         public void bind(Integer imageResId) {
             if (cardWardrobe != null && imageResId != null) {
                 cardWardrobe.setCardImage(ContextCompat.getDrawable(itemView.getContext(), imageResId));
+                cardWardrobe.setOnCardClickListener(v -> {
+                    Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_garmentFragment);
+                });
             }
         }
     }

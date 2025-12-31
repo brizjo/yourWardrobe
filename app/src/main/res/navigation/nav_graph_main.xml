@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_clothesFragment_to_wardrobeFragment"
             app:destination="@id/wardrobeFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_garmentFragment"
+            app:destination="@id/garmentFragment" />
     </fragment>
     <fragment
         android:id="@+id/outfitFragment"
@@ -50,5 +53,10 @@
             android:id="@+id/action_outfitFragment_to_wardrobeFragment"
             app:destination="@id/wardrobeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/garmentFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.GarmentFragment"
+        android:label="fragment_garment"
+        tools:layout="@layout/fragment_garment" />
 
 </navigation>

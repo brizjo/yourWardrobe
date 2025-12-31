@@ -8,14 +8,14 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.HomeFragment"
-        android:label="@string/home"
+
         tools:layout="@layout/fragment_home"
         />
 
     <fragment
         android:id="@+id/wardrobeFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.WardrobeFragment"
-        android:label="@string/wardrobe"
+
         tools:layout="@layout/fragment_wardrobe"
         >
         <action
@@ -29,13 +29,13 @@
     <fragment
         android:id="@+id/personalStylistFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.PersonalStylistFragment"
-        android:label="@string/personal_stylist"
+
         tools:layout="@layout/fragment_personal_stylist"
         />
     <fragment
         android:id="@+id/clothesFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
-        android:label="fragment_clothes"
+
         tools:layout="@layout/fragment_clothes" >
         <action
             android:id="@+id/action_clothesFragment_to_wardrobeFragment"
@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/outfitFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.OutfitFragment"
-        android:label="fragment_outfit"
+
         tools:layout="@layout/fragment_outfit" >
         <action
             android:id="@+id/action_outfitFragment_to_wardrobeFragment"
@@ -56,7 +56,7 @@
     <fragment
         android:id="@+id/garmentFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.GarmentFragment"
-        android:label="fragment_garment"
+
         tools:layout="@layout/fragment_garment" />
 
 </navigation>

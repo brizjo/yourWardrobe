@@ -35,11 +35,11 @@
         app:itemActiveIndicatorStyle="@style/Widget.App.BottomNavActiveIndicator"
         app:menu="@menu/nav_menu_main" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
         android:paddingHorizontal="@dimen/md"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -50,8 +50,8 @@
             android:layout_height="40dp"
             android:scaleType="centerCrop"
             android:src="@drawable/profile_avatar_placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/lg"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
         <TextView
@@ -60,9 +60,11 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textSize="@dimen/text_lg"
+            android:textAppearance="@style/AppLogo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/design_default_color_on_primary"/>
+    </com.google.android.material.appbar.MaterialToolbar>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

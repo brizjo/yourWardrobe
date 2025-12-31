@@ -59,13 +59,9 @@ public class ClothesFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Button button = view.findViewById(R.id.back_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_clothesFragment_to_wardrobeFragment);
-            }
-        });
+        ClothesAdapter.OnItemClickListener listener = (v, item) -> {
+            Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_garmentFragment);
+        };
         RecyclerView recyclerViewMagliette = view.findViewById(R.id.magliette_recycler_view);
         recyclerViewMagliette.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         //dati di prova
@@ -75,15 +71,15 @@ public class ClothesFragment extends Fragment {
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
-        recyclerViewMagliette.setAdapter(new ClothesAdapter(i));
+        recyclerViewMagliette.setAdapter(new ClothesAdapter(i, listener));
         recyclerViewMagliette.setNestedScrollingEnabled(false);
         RecyclerView recyclerViewFelpe = view.findViewById(R.id.felpe_recycler_view);
         recyclerViewFelpe.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-        recyclerViewFelpe.setAdapter(new ClothesAdapter(i));
+        recyclerViewFelpe.setAdapter(new ClothesAdapter(i, listener));
         recyclerViewFelpe.setNestedScrollingEnabled(false);
         RecyclerView recyclerViewPantaloni = view.findViewById(R.id.pantaloni_recycler_view);
         recyclerViewPantaloni.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-        recyclerViewPantaloni.setAdapter(new ClothesAdapter(i));
+        recyclerViewPantaloni.setAdapter(new ClothesAdapter(i, listener));
         recyclerViewPantaloni.setNestedScrollingEnabled(false);
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,7 +78,9 @@ public class OutfitFragment extends Fragment {
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
-        recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid));
+        ClothesAdapter.OnItemClickListener listener = (v, item) -> {
+            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_wardrobeFragment);};
+        recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid, listener));
 
     }
 }

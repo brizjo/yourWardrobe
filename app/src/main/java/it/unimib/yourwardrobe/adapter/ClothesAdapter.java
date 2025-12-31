@@ -18,15 +18,20 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
 
     private final List<Integer> clothesList; // Lista di ID immagini
     private final int layoutId; // ID del layout da utilizzare
+    private final OnItemClickListener onItemClickListener;
 
-
-    public ClothesAdapter(List<Integer> clothesList, int layoutId) {
-        this.clothesList = clothesList;
-        this.layoutId = layoutId;
+    public interface OnItemClickListener {
+        void onItemClick(View view, Integer imageResId);
     }
 
-    public ClothesAdapter(List<Integer> clothesList) {
-        this(clothesList, R.layout.item_clothes_carousel);
+    public ClothesAdapter(List<Integer> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
+        this.clothesList = clothesList;
+        this.layoutId = layoutId;
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public ClothesAdapter(List<Integer> clothesList, OnItemClickListener onItemClickListener) {
+        this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
     }
 
     @NonNull
@@ -40,7 +45,7 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     @Override
     public void onBindViewHolder(@NonNull ClothesViewHolder holder, int position) {
         Integer imageResId = clothesList.get(position);
-        holder.bind(imageResId);
+        holder.bind(imageResId, onItemClickListener);
     }
 
     @Override
@@ -56,11 +61,13 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
             cardWardrobe = itemView.findViewById(R.id.clothesCard);
         }
 
-        public void bind(Integer imageResId) {
+        public void bind(Integer imageResId, OnItemClickListener listener) {
             if (cardWardrobe != null && imageResId != null) {
                 cardWardrobe.setCardImage(ContextCompat.getDrawable(itemView.getContext(), imageResId));
                 cardWardrobe.setOnCardClickListener(v -> {
-                    Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_garmentFragment);
+                    if (listener != null) {
+                        listener.onItemClick(v, imageResId);
+                    }
                 });
             }
         }

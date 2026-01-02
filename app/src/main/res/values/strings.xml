@@ -38,4 +38,6 @@
     <string name="parte_inferiore">Parte inferiore</string>
     <string name="accessori">Accessori</string>
     <string name="scarpe">Scarpe</string>
+    <string name="ciao">"Ciao, "</string>
+    <string name="ciao_guest">Ciao, ospite</string>
 </resources>

@@ -1,79 +1,84 @@
 package it.unimib.yourwardrobe.ui.welcome.viewmodel;
 
+import android.content.Context;
 import android.util.Patterns;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import it.unimib.yourwardrobe.model.User;
+import it.unimib.yourwardrobe.repository.UserRepository;
+
 public class LoginViewModel extends ViewModel {
 
-    // LiveData per notificare il fragment del risultato del login
-    private final MutableLiveData<AuthenticationResult> authenticationResult = new MutableLiveData<>();
+    private final UserRepository userRepository;
+    private final MutableLiveData<AuthenticationResult> authenticationResult;
 
-    // Metodo chiamato dal Fragment quando l'utente preme "Login"
+    public LoginViewModel() {
+        this.userRepository = new UserRepository();
+        // Osserviamo lo stesso LiveData del repository
+        this.authenticationResult = userRepository.getAuthenticationResult();
+    }
+
     public void login(String email, String password) {
-        //  Validazione dell'input
         if (!isEmailValid(email)) {
-            authenticationResult.setValue(new AuthenticationResult(false, "Formato email non valido"));
+            authenticationResult.setValue(new AuthenticationResult(false, null, "Formato email non valido"));
             return;
         }
 
         if (!isPasswordValid(password)) {
-            authenticationResult.setValue(new AuthenticationResult(false, "La password deve avere almeno 6 caratteri"));
+            authenticationResult.setValue(new AuthenticationResult(false, null, "La password deve avere almeno 6 caratteri"));
             return;
         }
 
-        // Logica di Autenticazione (per ora simulato)
-        // Qui chiamata a Repository o Firebase
-        if (/*email.equals("user@example.com") && password.equals("password123")*/ true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        } else {
-            authenticationResult.setValue(new AuthenticationResult(false, "Credenziali errate"));
-        }
+        // Usa il nuovo metodo getUser con flag isUserRegistered = true (Login)
+        userRepository.getUser(email, password, true);
+    }
+
+    public void loginGoogle(Context context){
+        // Usa il nuovo metodo getGoogleUser
+        userRepository.getGoogleUser(context);
     }
 
     public void signUp(String email, String password, String confirmPassword) {
-        //Validazione dell'input
         if (!isEmailValid(email)) {
-            authenticationResult.setValue(new AuthenticationResult(false, "Formato email non valido"));
+            authenticationResult.setValue(new AuthenticationResult(false, null, "Formato email non valido"));
             return;
         }
         if (!isPasswordValid(password)) {
-            authenticationResult.setValue(new AuthenticationResult(false, "La password deve avere almeno 6 caratteri"));
+            authenticationResult.setValue(new AuthenticationResult(false, null, "La password deve avere almeno 6 caratteri"));
             return;
         }
         if (!password.equals(confirmPassword)) {
-            authenticationResult.setValue(new AuthenticationResult(false,"Le password non coincidono"));
+            authenticationResult.setValue(new AuthenticationResult(false, null, "Le password non coincidono"));
             return;
         }
-        //qui chiamata a repository o firebase
-        if (true) {
-            authenticationResult.setValue(new AuthenticationResult(true, null));
-        }
+
+        // Usa il nuovo metodo getUser con flag isUserRegistered = false (SignUp)
+        userRepository.getUser(email, password, false);
     }
+
     public LiveData<AuthenticationResult> getAuthenticationResult() {
         return authenticationResult;
     }
 
-    // Helper per validare l'email
     private boolean isEmailValid(String email) {
         return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    // Helper per validare la password
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;
     }
 
-    // Classe interna per gestire lo stato del risultato
     public static class AuthenticationResult {
         public final boolean success;
+        public final User user;
         public final String errorMessage;
 
-        public AuthenticationResult(boolean success, String errorMessage) {
+        public AuthenticationResult(boolean success, User user, String errorMessage) {
             this.success = success;
+            this.user = user;
             this.errorMessage = errorMessage;
         }
     }
 }
-

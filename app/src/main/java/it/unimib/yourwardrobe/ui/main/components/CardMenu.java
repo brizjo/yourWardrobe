@@ -4,10 +4,12 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -16,6 +18,7 @@ import it.unimib.yourwardrobe.R;
 public class CardMenu extends LinearLayout {
 
     private MaterialCardView materialCardView;
+    private ImageView imageView;
 
     public CardMenu(Context context){
         super(context, null);
@@ -36,11 +39,14 @@ public class CardMenu extends LinearLayout {
 
         // 2. Find the button ID defined in your XML
         materialCardView = findViewById(R.id.card);
+        imageView = findViewById(R.id.card_image);
+        materialCardView.setCardBackgroundColor(ContextCompat.getColorStateList(context, R.color.md_theme_background));
     }
     public void setCardText(String text) {
         if (materialCardView != null) {
             TextView textView = materialCardView.findViewById(R.id.text_view);
             textView.setText(text);
+            textView.setVisibility(VISIBLE);
         }
     }
 
@@ -57,8 +63,15 @@ public class CardMenu extends LinearLayout {
         }
     }
     public void setCardImage(Drawable drawable) {
+        if(imageView != null){
+            imageView.setImageDrawable(drawable);
+        }
         if (materialCardView != null) {
-           materialCardView.setBackgroundDrawable(drawable);
+           materialCardView.setClipToOutline(true);
+           LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialCardView.getLayoutParams();
+           params.height =(int) (100 * getResources().getDisplayMetrics().density);
+           params.bottomMargin =(int) (16 * getResources().getDisplayMetrics().density);
+           materialCardView.setLayoutParams(params);
         }
     }
 

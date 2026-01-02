@@ -8,35 +8,79 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.HomeFragment"
-        android:label="@string/home"
+
         tools:layout="@layout/fragment_home"
         />
 
     <fragment
         android:id="@+id/wardrobeFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.WardrobeFragment"
-        android:label="@string/wardrobe"
+
         tools:layout="@layout/fragment_wardrobe"
         >
         <action
             android:id="@+id/action_wardrobeFragment_to_clothesFragment"
             app:destination="@id/clothesFragment" />
+        <action
+            android:id="@+id/action_wardrobeFragment_to_outfitFragment"
+            app:destination="@id/outfitFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/personalStylistFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.PersonalStylistFragment"
-        android:label="@string/personal_stylist"
+
         tools:layout="@layout/fragment_personal_stylist"
         />
     <fragment
         android:id="@+id/clothesFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
-        android:label="fragment_clothes"
+
         tools:layout="@layout/fragment_clothes" >
         <action
             android:id="@+id/action_clothesFragment_to_wardrobeFragment"
             app:destination="@id/wardrobeFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_garmentFragment"
+            app:destination="@id/garmentFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_addGarmentFragment"
+            app:destination="@id/addGarmentFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/outfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.OutfitMenuFragment"
+
+        tools:layout="@layout/fragment_outfit_menu" >
+        <action
+            android:id="@+id/action_outfitFragment_to_wardrobeFragment"
+            app:destination="@id/wardrobeFragment" />
+        <action
+            android:id="@+id/action_outfitFragment_to_singleOutfitFragment"
+            app:destination="@id/singleOutfitFragment" />
+        <action
+            android:id="@+id/action_outfitFragment_to_createOutfitFragment"
+            app:destination="@id/createOutfitFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/garmentFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.GarmentFragment"
+
+        tools:layout="@layout/fragment_garment" />
+    <fragment
+        android:id="@+id/singleOutfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.SingleOutfitFragment"
+
+        tools:layout="@layout/fragment_single_outfit" />
+    <fragment
+        android:id="@+id/createOutfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.CreateOutfitFragment"
+        android:label="fragment_create_outfit"
+        tools:layout="@layout/fragment_create_outfit" />
+    <fragment
+        android:id="@+id/addGarmentFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.AddGarmentFragment"
+        android:label="fragment_add_garment"
+        tools:layout="@layout/fragment_add_garment" />
 
 </navigation>

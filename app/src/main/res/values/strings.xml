@@ -34,4 +34,7 @@
     <string name="caratteristiche_principali">Caratteristiche principali</string>
     <string name="componenti_dell_outfit">Componenti dell\'outfit</string>
     <string name="componi_outfit">componi outfit</string>
+    <string name="parte_superiore">Parte superiore</string>
+    <string name="parte_inferiore">Parte inferiore</string>
+    <string name="accessori">Accessori</string>
 </resources>

@@ -42,6 +42,7 @@ public class WardrobeFragment extends Fragment {
         clothesCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
         clothesCard.setCardText(getString(R.string.vestiario));
         clothesCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        clothesCard.setCardImage(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add));
         clothesCard.setOnCardClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,6 +53,7 @@ public class WardrobeFragment extends Fragment {
         outfitCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
         outfitCard.setCardText(getString(R.string.outfit));
         outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        outfitCard.setCardImage(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add));
         outfitCard.setOnCardClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

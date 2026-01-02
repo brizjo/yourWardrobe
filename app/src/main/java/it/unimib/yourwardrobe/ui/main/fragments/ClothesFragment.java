@@ -81,5 +81,8 @@ public class ClothesFragment extends Fragment {
         recyclerViewPantaloni.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         recyclerViewPantaloni.setAdapter(new ClothesAdapter(i, listener));
         recyclerViewPantaloni.setNestedScrollingEnabled(false);
+        Button addButton = view.findViewById(R.id.add_button);
+        addButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_addGarmentFragment));
+
     }
 }

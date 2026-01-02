@@ -60,6 +60,11 @@ public class CardMenu extends LinearLayout {
     public void setCardImage(Drawable drawable) {
         if (materialCardView != null) {
            materialCardView.setBackgroundDrawable(drawable);
+           materialCardView.setClipToOutline(true);
+           LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialCardView.getLayoutParams();
+           params.height =(int) (100 * getResources().getDisplayMetrics().density);
+           params.bottomMargin =(int) (16 * getResources().getDisplayMetrics().density);
+           materialCardView.setLayoutParams(params);
         }
     }
 

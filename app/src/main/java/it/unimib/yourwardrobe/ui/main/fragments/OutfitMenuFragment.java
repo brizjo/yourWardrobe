@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,7 @@ public class OutfitMenuFragment extends Fragment {
         ClothesAdapter.OnItemClickListener listener = (v, item) -> {
             Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment);};
         recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid, listener));
-
+        Button createOutfitButton = view.findViewById(R.id.create_outfit_button);
+        createOutfitButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_createOutfitFragment));
     }
 }

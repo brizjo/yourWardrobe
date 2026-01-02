@@ -13,9 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.carousel.CarouselLayoutManager;
-import com.google.android.material.carousel.UncontainedCarouselStrategy;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +21,15 @@ import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link OutfitFragment#newInstance} factory method to
+ * Use the {@link OutfitMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OutfitFragment extends Fragment {
+public class OutfitMenuFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    public OutfitFragment() {
+    public OutfitMenuFragment() {
         // Required empty public constructor
     }
 
@@ -42,8 +39,8 @@ public class OutfitFragment extends Fragment {
      *
      * @return A new instance of fragment OutfitFragment.
      */
-    public static OutfitFragment newInstance() {
-        OutfitFragment fragment = new OutfitFragment();
+    public static OutfitMenuFragment newInstance() {
+        OutfitMenuFragment fragment = new OutfitMenuFragment();
         return fragment;
     }
 
@@ -56,7 +53,7 @@ public class OutfitFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_outfit, container, false);
+        return inflater.inflate(R.layout.fragment_outfit_menu, container, false);
     }
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -79,7 +76,7 @@ public class OutfitFragment extends Fragment {
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
         ClothesAdapter.OnItemClickListener listener = (v, item) -> {
-            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_wardrobeFragment);};
+            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment);};
         recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid, listener));
 
     }

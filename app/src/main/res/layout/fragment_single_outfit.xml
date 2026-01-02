@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.main.fragments.GarmentFragment">
+    tools:context=".ui.main.fragments.SingleOutfitFragment">
+
 
     <ImageView
         android:id="@+id/imageLogin"
@@ -16,6 +17,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
         android:text="@string/caratteristiche_principali"
         android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
         android:textColor="@color/md_theme_primary"/>
@@ -23,7 +25,23 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="@dimen/sm"
-        android:layout_marginEnd="@dimen/sm"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
         android:background="@color/md_theme_primary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:text="@string/componenti_dell_outfit"
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textColor="@color/md_theme_primary"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        android:background="@color/md_theme_primary" />
+
 </LinearLayout>

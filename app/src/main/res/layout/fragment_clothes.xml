@@ -18,67 +18,105 @@
         android:layout_height="wrap_content"
         android:text="@string/aggiungi_capo" />
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/magliette"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/sm"
-        android:layout_marginEnd="@dimen/sm"
-        android:background="@color/md_theme_primary" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/magliette_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="196dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/magliette"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                android:textColor="@color/md_theme_primary"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/sm"
+                android:layout_marginEnd="@dimen/sm"
+                android:layout_marginBottom="@dimen/md"
+                android:background="@color/md_theme_primary" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/felpe"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="@dimen/sm"
-        android:layout_marginEnd="@dimen/sm"
-        android:background="@color/md_theme_primary" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/felpe_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="196dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pantaloni"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="@dimen/sm"
-        android:layout_marginEnd="@dimen/sm"
-        android:background="@color/md_theme_primary" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/pantaloni_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="196dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/magliette_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/felpe"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                android:textColor="@color/md_theme_primary"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/sm"
+                android:layout_marginEnd="@dimen/sm"
+                android:layout_marginBottom="@dimen/md"
+                android:background="@color/md_theme_primary" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/felpe_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pantaloni"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                android:textColor="@color/md_theme_primary"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/sm"
+                android:layout_marginEnd="@dimen/sm"
+                android:layout_marginBottom="@dimen/md"
+                android:background="@color/md_theme_primary" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pantaloni_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scarpe"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                android:textColor="@color/md_theme_primary"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/sm"
+                android:layout_marginEnd="@dimen/sm"
+                android:layout_marginBottom="@dimen/md"
+                android:background="@color/md_theme_primary" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/scarpe_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

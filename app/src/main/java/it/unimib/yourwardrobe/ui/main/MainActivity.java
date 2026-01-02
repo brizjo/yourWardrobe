@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
                         toolbar.getPaddingBottom()
                 );
             }
-
             BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
             if (bottomNav != null) {
                 bottomNav.setPadding(0, 0, 0, systemBars.bottom);
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
             return insets;
         });
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
                 findFragmentById(R.id.nav_host_fragment);
 
@@ -55,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = navHostFragment.getNavController();
             BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
             NavigationUI.setupWithNavController(bottomNav, navController);
+            navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                if (destination.getId() == R.id.addGarmentFragment) {
+                    bottomNav.setVisibility(android.view.View.GONE);
+                } else {
+                    bottomNav.setVisibility(android.view.View.VISIBLE);
+                }
+            });
             MaterialToolbar toolbar = findViewById(R.id.top_bar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);

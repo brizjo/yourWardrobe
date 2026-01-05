@@ -13,9 +13,7 @@
     <string name="dressinlogin">dressinLogin</string>
     <string name="o">o</string>
 
-    <string name="example_weather_status">Cloudy</string>
-    <string name="example_weather_date">October, 14</string>
-    <string name="example_weather_time">9:41</string>
+    <string name="cloudy">Cloudy</string>
     <string name="example_weather_temp">30</string>
     <string name="degree_symbol">°</string>
     <string name="home">Home</string>

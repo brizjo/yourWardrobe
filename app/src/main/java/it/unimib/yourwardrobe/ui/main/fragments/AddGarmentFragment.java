@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 public class AddGarmentFragment extends Fragment {
 
     private ImageView addGarmentImageView;
+
+    private AutoCompleteTextView autoCompleteTextView;
 
     // 1. Launcher per la richiesta dei permessi
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -89,6 +93,23 @@ public class AddGarmentFragment extends Fragment {
                 // Altrimenti, richiedi il permesso
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             }
+        });
+        // 1. Trova l'AutoCompleteTextView
+        autoCompleteTextView = view.findViewById(R.id.auto_complete_text_view);
+
+        // 2. Prendi l'array di stringhe dalle risorse
+        String[] tipologie = getResources().getStringArray(R.array.seasons);
+
+        // 3. Crea un ArrayAdapter per collegare i dati al menu
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, tipologie);
+
+        // 4. Imposta l'adapter
+        autoCompleteTextView.setAdapter(adapter);
+
+        // Opzionale: aggiungi un listener per sapere quando l'utente seleziona un'opzione
+        autoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            Toast.makeText(getContext(), "Selezionato: " + selectedItem, Toast.LENGTH_SHORT).show();
         });
     }
     private void launchCamera() {

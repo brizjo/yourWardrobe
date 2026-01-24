@@ -40,6 +40,27 @@
     <string name="ciao_guest">Ciao, ospite</string>
     <string name="season">Stagione</string>
     <string name="winter">Inverno</string>
+    <string name="spring">Primavera</string>
+    <string name="summer">Estate</string>
+    <string name="autumn">Autunno</string>
+    <string name="seleziona_colori">Seleziona Colori</string>
     <string name="color">Colore</string>
     <string name="red">Rosso</string>
+    <string name="blue">Blu</string>
+    <string name="green">Verde</string>
+    <string name="black">Nero</string>
+    <string name="yellow">Giallo</string>
+    <string name="white">Bianco</string>
+    <string name="pink">Rosa</string>
+    <string name="purple">Viola</string>
+    <string name="orange">Arancione</string>
+    <string name="grey">Grigio</string>
+    <string name="brown">Marrone</string>
+    <string name="magenta">Magenta</string>
+    <string name="beige">Beige</string>
+    <string name="cyan">Ciano</string>
+    <string name="silver">Argento</string>
+    <string name="gold">Oro</string>
+    <string name="ok">ok</string>
+
 </resources>

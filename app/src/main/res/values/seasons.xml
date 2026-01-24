@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="seasons">
-        <item>Inverno</item>
-        <item>Primavera</item>
-        <item>Estate</item>
-        <item>Autunno</item>
+        <item>@string/winter</item>
+        <item>@string/spring</item>
+        <item>@string/summer</item>
+        <item>@string/autumn</item>
     </string-array>
 </resources>

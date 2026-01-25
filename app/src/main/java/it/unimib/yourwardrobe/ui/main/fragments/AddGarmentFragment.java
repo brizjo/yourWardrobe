@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.chip.Chip;
@@ -42,8 +43,9 @@ import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
 public class AddGarmentFragment extends Fragment {
 
     private ImageView addGarmentImageView;
-    private AutoCompleteTextView autoCompleteTextView;
+    private AutoCompleteTextView categoryTextView;
     private ChipGroup colorChipGroup;
+    private ChipGroup styleChipGroup;
     private AddGarmentViewModel viewModel;
     private TextInputEditText garmentNameEditText;
     private Button addGarmentButton;
@@ -100,20 +102,25 @@ public class AddGarmentFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
         addGarmentImageView = view.findViewById(R.id.addGarmentImage);
-        autoCompleteTextView = view.findViewById(R.id.auto_complete_text_view);
+        categoryTextView = view.findViewById(R.id.category_text_view);
         colorChipGroup = view.findViewById(R.id.chip_group_color);
+        styleChipGroup = view.findViewById(R.id.chip_group_style);
         garmentNameEditText = view.findViewById(R.id.garmentName);
         addGarmentButton = view.findViewById(R.id.add_garment_button);
 
         addGarmentImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
 
-        viewModel.getAllSeasons().observe(getViewLifecycleOwner(), seasons -> {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, seasons);
-            autoCompleteTextView.setAdapter(adapter);
+        viewModel.getAllCategories().observe(getViewLifecycleOwner(), categories -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
+            categoryTextView.setAdapter(adapter);
         });
 
         viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors -> {
-            updateMainChipGroup(colors);
+            updateMainChipGroup(colorChipGroup, colors, selected ->viewModel.updateSelectedColors(colors));
+        });
+
+        viewModel.getSelectedStyles().observe(getViewLifecycleOwner(), styles -> {
+            updateMainChipGroup(styleChipGroup, styles, selected ->viewModel.updateSelectedStyles(selected));
         });
 
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled -> {
@@ -144,12 +151,14 @@ public class AddGarmentFragment extends Fragment {
             }
         });
 
-        setupAddChip();
+        setupAddChip(colorChipGroup, "color");
+        setupAddChip(styleChipGroup, "style");
+
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione
-        autoCompleteTextView.setOnItemClickListener((parent, view1, position, id) -> {
+        categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
             String selectedItem = (String) parent.getItemAtPosition(position);
             Toast.makeText(getContext(), "Selezionato: " + selectedItem, Toast.LENGTH_SHORT).show();
-            viewModel.setSelectedSeason(selectedItem);
+            viewModel.setSelectedCategory(selectedItem);
         });
     }
 
@@ -157,29 +166,52 @@ public class AddGarmentFragment extends Fragment {
         takePictureLauncher.launch(null);
     }
 
-    private void setupAddChip() {
+    private void setupAddChip(ChipGroup chipGroup, final String type) {
         Chip addChip = new Chip(requireContext());
         addChip.setText("+");
         addChip.setOnClickListener(v -> {
-            // Chiedi al ViewModel la lista completa dei colori per mostrarla nel dialog
-            List<String> allColors = viewModel.getAllColors().getValue();
-            // Chiedi al ViewModel quali colori sono già selezionati
-            List<String> currentSelection = viewModel.getSelectedColors().getValue();
-            if (allColors != null && currentSelection != null) {
-                showChipSelectionDialog(allColors, currentSelection);
+            List<String> allOptions = null;
+            List<String> currentSelection = null;
+            String dialogTitle = "";
+
+            if ("color".equals(type)) {
+                allOptions = viewModel.getAllColors().getValue();
+                currentSelection = viewModel.getSelectedColors().getValue();
+                dialogTitle = "Seleziona Colori";
+            } else if ("style".equals(type)) {
+                allOptions = viewModel.getAllStyles().getValue();
+                currentSelection = viewModel.getSelectedStyles().getValue();
+                dialogTitle = "Seleziona Stili";
+            }
+
+            if (allOptions != null && currentSelection != null) {
+                showChipSelectionDialog(dialogTitle, allOptions, currentSelection, newSelection -> {
+                    if ("color".equals(type)) {
+                        viewModel.updateSelectedColors(newSelection);
+                    } else if ("style".equals(type)) {
+                        viewModel.updateSelectedStyles(newSelection);
+                    }
+                });
             }
         });
-        colorChipGroup.addView(addChip, 0);
+        chipGroup.addView(addChip, 0);
     }
 
-    private void showChipSelectionDialog(List<String> allOptions, List<String> currentSelection) {
+    interface OnSelectionConfirmedListener {
+        void onConfirmed(List<String> newSelection);
+    }
+
+    private void showChipSelectionDialog(String title, List<String> allOptions, List<String> currentSelection, OnSelectionConfirmedListener listener) {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.chip_selector, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(dialogView);
 
+        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
         Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
+
+        dialogTitle.setText(title);
 
         // Popola il dialog
         for (String option : allOptions) {
@@ -205,22 +237,20 @@ public class AddGarmentFragment extends Fragment {
                 Chip selectedChip = dialogChipGroup.findViewById(id);
                 newSelection.add(selectedChip.getText().toString());
             }
-            // --- NOTIFICA IL VIEWMODEL ---
-            // Invece di modificare la UI direttamente, aggiorna il ViewModel.
-            // Sarà l'observer a chiamare updateMainChipGroup.
-            viewModel.updateSelectedColors(newSelection);
+            // Usa il listener per notificare il ViewModel
+            listener.onConfirmed(newSelection);
             dialog.dismiss();
         });
 
         dialog.show();
     }
 
-    private void updateMainChipGroup(List<String> selectedItems) {
+    private void updateMainChipGroup(ChipGroup chipGroup, List<String> selectedItems, OnSelectionConfirmedListener listener) {
         // Rimuovi tutte le chip tranne quella "+"
-        for (int i = colorChipGroup.getChildCount() - 1; i >= 0; i--) {
-            View child = colorChipGroup.getChildAt(i);
+        for (int i = chipGroup.getChildCount() - 1; i >= 0; i--) {
+            View child = chipGroup.getChildAt(i);
             if (child instanceof Chip && !((Chip) child).getText().toString().equals("+")) {
-                colorChipGroup.removeView(child);
+                chipGroup.removeView(child);
             }
         }
 
@@ -231,11 +261,11 @@ public class AddGarmentFragment extends Fragment {
             chip.setCloseIconVisible(true);
             chip.setOnCloseIconClickListener(v -> {
                 // Notifica il ViewModel della rimozione di un elemento
-                List<String> currentSelection = new ArrayList<>(viewModel.getSelectedColors().getValue());
+                List<String> currentSelection = new ArrayList<>(selectedItems);
                 currentSelection.remove(chip.getText().toString());
-                viewModel.updateSelectedColors(currentSelection);
+                listener.onConfirmed(currentSelection);
             });
-            colorChipGroup.addView(chip);
+            chipGroup.addView(chip);
         }
     }
 

@@ -55,12 +55,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:text="@string/season"
+        android:text="@string/Category"
         android:visibility="visible"
         android:layout_marginTop="@dimen/lg"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/menu_seasons"
+        android:id="@+id/menu_category"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,11 +69,11 @@
         android:layout_marginEnd="@dimen/md">
 
         <AutoCompleteTextView
-            android:id="@+id/auto_complete_text_view"
+            android:id="@+id/category_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
-            android:text="@string/winter"
+            android:text="@string/top_garment"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -96,7 +96,24 @@
 
     </com.google.android.material.chip.ChipGroup>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginTop="@dimen/md"
+        android:text="@string/style"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        app:singleSelection="true"> <!-- Permette di selezionare solo una chip alla volta -->
+
+    </com.google.android.material.chip.ChipGroup>
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

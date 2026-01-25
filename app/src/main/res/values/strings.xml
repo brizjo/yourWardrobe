@@ -62,5 +62,23 @@
     <string name="silver">Argento</string>
     <string name="gold">Oro</string>
     <string name="ok">ok</string>
-
+    <string name="Category">Categoria</string>
+    <string name="top_garment">Parte superiore</string>
+    <string name="bottom_garment">Parte inferiore</string>
+    <string name="accessory">Accessorio</string>
+    <string name="style_casual">Casual</string>
+    <string name="style_elegant">Elegante</string>
+    <string name="style_sporty">Sportivo</string>
+    <string name="style_boho">Boho</string>
+    <string name="style_minimalist">Minimalista</string>
+    <string name="style_streetwear">Streetwear</string>
+    <string name="style_vintage">Vintage</string>
+    <string name="style_preppy">Preppy</string>
+    <string name="style_grunge">Grunge</string>
+    <string name="style_chic">Chic</string>
+    <string name="style_punk">Punk</string>
+    <string name="style_goth">Goth</string>
+    <string name="style_artsy">Artsy</string>
+    <string name="style_y2k">Y2K</string>
+    <string name="style">Stile</string>
 </resources>

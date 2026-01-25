@@ -17,13 +17,15 @@ public class AddGarmentViewModel extends AndroidViewModel {
 
     // LiveData per i dati "statici" (le liste complete)
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
-    private final MutableLiveData<List<String>> allSeasons = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> allCategories = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
 
     // LiveData per lo stato "dinamico" (le selezioni dell'utente)
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> garmentImage = new MutableLiveData<>();
     private final MutableLiveData<String> garmentName = new MutableLiveData<>();
-    private final MutableLiveData<String> selectedSeason = new MutableLiveData<>();
+    private final MutableLiveData<String> selectedCategory = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> selectedStyles = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
     public AddGarmentViewModel(@NonNull Application application) {
@@ -32,28 +34,32 @@ public class AddGarmentViewModel extends AndroidViewModel {
         loadInitialData();
         // Inizializza la lista delle selezioni come vuota
         selectedColors.setValue(new ArrayList<>());
+        selectedStyles.setValue(new ArrayList<>());
         isButtonEnabled.setValue(false); // Inizialmente disabilitato
 
         // Aggiungi le sorgenti da osservare
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
-        isButtonEnabled.addSource(selectedSeason, value -> validateForm());
+        isButtonEnabled.addSource(selectedCategory, value -> validateForm());
         isButtonEnabled.addSource(getSelectedColors(), value -> validateForm());
+        isButtonEnabled.addSource(getSelectedStyles(), value -> validateForm());
     }
 
     // Metodo per caricare i dati dalle risorse (potrebbe venire da un Repository in futuro)
     private void loadInitialData() {
         allColors.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_color)));
-        allSeasons.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.seasons)));
+        allCategories.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.categories)));
+        allStyles.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_styles)));
     }
 
     private void validateForm() {
         boolean hasImage = garmentImage.getValue() != null;
         boolean hasName = garmentName.getValue() != null && !garmentName.getValue().isEmpty();
-        boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
+        boolean hasSeason = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
         boolean hasColors = getSelectedColors().getValue() != null && !getSelectedColors().getValue().isEmpty();
+        boolean hasStyles = getSelectedStyles().getValue() != null && !getSelectedStyles().getValue().isEmpty();
 
-        isButtonEnabled.setValue(hasImage && hasName && hasSeason && hasColors);
+        isButtonEnabled.setValue(hasImage && hasName && hasSeason && hasColors && hasStyles);
     }
 
     public LiveData<Boolean> isButtonEnabled() {
@@ -69,19 +75,22 @@ public class AddGarmentViewModel extends AndroidViewModel {
         garmentName.setValue(name);
     }
 
-    // Chiamato dal Fragment quando la stagione viene selezionata
-    public void setSelectedSeason(String season) {
-        selectedSeason.setValue(season);
+    // Chiamato dal Fragment quando la categoria viene selezionata
+    public void setSelectedCategory(String category) {
+        selectedCategory.setValue(category);
     }
     // Espone i LiveData (sola lettura) al Fragment
     public LiveData<List<String>> getAllColors() {
         return allColors;
     }
 
-    public LiveData<List<String>> getAllSeasons() {
-        return allSeasons;
+    public LiveData<List<String>> getAllCategories() {
+        return allCategories;
     }
 
+    public LiveData<List<String>> getAllStyles() {
+        return allStyles;
+    }
     public LiveData<List<String>> getSelectedColors() {
         return selectedColors;
     }
@@ -89,5 +98,12 @@ public class AddGarmentViewModel extends AndroidViewModel {
     // Metodo chiamato dal Fragment quando l'utente conferma la selezione dei colori
     public void updateSelectedColors(List<String> newSelection) {
         selectedColors.setValue(newSelection);
+    }
+
+    public LiveData<List<String>> getSelectedStyles() {
+        return selectedStyles;
+    }
+    public void updateSelectedStyles(List<String> newSelection) {
+        selectedStyles.setValue(newSelection);
     }
 }

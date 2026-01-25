@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="garment_styles">
+        <item>@string/style_casual</item>
+        <item>@string/style_elegant</item>
+        <item>@string/style_sporty</item>
+        <item>@string/style_boho</item>
+        <item>@string/style_minimalist</item>
+        <item>@string/style_streetwear</item>
+        <item>@string/style_vintage</item>
+        <item>@string/style_preppy</item>
+        <item>@string/style_grunge</item>
+        <item>@string/style_chic</item>
+        <item>@string/style_punk</item>
+        <item>@string/style_goth</item>
+        <item>@string/style_artsy</item>
+        <item>@string/style_y2k</item>
+    </string-array>
+</resources>

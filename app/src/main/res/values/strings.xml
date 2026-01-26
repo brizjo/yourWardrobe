@@ -81,4 +81,20 @@
     <string name="style_artsy">Artsy</string>
     <string name="style_y2k">Y2K</string>
     <string name="style">Stile</string>
+    <string name="fabric_cotton">Cotone</string>
+    <string name="fabric_linen">Lino</string>
+    <string name="fabric_hemp">Canapa</string>
+    <string name="fabric_wool">Lana</string>
+    <string name="fabric_cashmere">Cachemire</string>
+    <string name="fabric_silk">Seta</string>
+    <string name="fabric_viscose">Viscosa</string>
+    <string name="fabric_modal">Modal</string>
+    <string name="fabric_lyocell">Lyocell</string>
+    <string name="fabric_polyester">Poliestere</string>
+    <string name="fabric_nylon">Nylon</string>
+    <string name="fabric_acrylic">Acrilico</string>
+    <string name="fabric_elastane">Elastan</string>
+    <string name="fabric_synthetic_leather">Pelle sintetica</string>
+    <string name="fabric_fleece">Pile</string>
+    <string name="tessuto">Tessuto</string>
 </resources>

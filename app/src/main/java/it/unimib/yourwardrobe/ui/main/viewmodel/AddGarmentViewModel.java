@@ -19,6 +19,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allCategories = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
 
     // LiveData per lo stato "dinamico" (le selezioni dell'utente)
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
@@ -26,6 +27,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<String> garmentName = new MutableLiveData<>();
     private final MutableLiveData<String> selectedCategory = new MutableLiveData<>();
     private final MutableLiveData<List<String>> selectedStyles = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
     public AddGarmentViewModel(@NonNull Application application) {
@@ -35,6 +37,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         // Inizializza la lista delle selezioni come vuota
         selectedColors.setValue(new ArrayList<>());
         selectedStyles.setValue(new ArrayList<>());
+        selectedFabrics.setValue(new ArrayList<>());
         isButtonEnabled.setValue(false); // Inizialmente disabilitato
 
         // Aggiungi le sorgenti da osservare
@@ -43,6 +46,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         isButtonEnabled.addSource(selectedCategory, value -> validateForm());
         isButtonEnabled.addSource(getSelectedColors(), value -> validateForm());
         isButtonEnabled.addSource(getSelectedStyles(), value -> validateForm());
+        isButtonEnabled.addSource(getSelectedFabrics(), value -> validateForm());
     }
 
     // Metodo per caricare i dati dalle risorse (potrebbe venire da un Repository in futuro)
@@ -50,6 +54,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         allColors.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_color)));
         allCategories.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.categories)));
         allStyles.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_styles)));
+        allFabrics.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.fabric_types)));
     }
 
     private void validateForm() {
@@ -58,8 +63,9 @@ public class AddGarmentViewModel extends AndroidViewModel {
         boolean hasSeason = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
         boolean hasColors = getSelectedColors().getValue() != null && !getSelectedColors().getValue().isEmpty();
         boolean hasStyles = getSelectedStyles().getValue() != null && !getSelectedStyles().getValue().isEmpty();
+        boolean hasFabrics = getSelectedFabrics().getValue() != null && !getSelectedFabrics().getValue().isEmpty();
 
-        isButtonEnabled.setValue(hasImage && hasName && hasSeason && hasColors && hasStyles);
+        isButtonEnabled.setValue(hasImage && hasName && hasSeason && hasColors && hasStyles && hasFabrics);
     }
 
     public LiveData<Boolean> isButtonEnabled() {
@@ -91,6 +97,10 @@ public class AddGarmentViewModel extends AndroidViewModel {
     public LiveData<List<String>> getAllStyles() {
         return allStyles;
     }
+
+    public LiveData<List<String>> getAllFabrics() {
+        return allFabrics;
+    }
     public LiveData<List<String>> getSelectedColors() {
         return selectedColors;
     }
@@ -105,5 +115,12 @@ public class AddGarmentViewModel extends AndroidViewModel {
     }
     public void updateSelectedStyles(List<String> newSelection) {
         selectedStyles.setValue(newSelection);
+    }
+
+    public LiveData<List<String>> getSelectedFabrics() {
+        return selectedFabrics;
+    }
+    public void updateSelectedFabrics(List<String> newSelection) {
+        selectedFabrics.setValue(newSelection);
     }
 }

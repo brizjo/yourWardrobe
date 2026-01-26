@@ -17,13 +17,17 @@
         android:clickable="true"
         android:focusable="true"
         android:scaleType="centerInside"
+        android:layout_marginBottom="@dimen/lg"
         />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
         android:text="@string/caratteristiche_principali"
         android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textSize="@dimen/text_lg"
         android:textColor="@color/md_theme_primary"/>
 
     <View
@@ -55,9 +59,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        android:layout_marginTop="@dimen/lg"
         android:text="@string/Category"
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
         android:visibility="visible"
-        android:layout_marginTop="@dimen/lg"/>
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/menu_category"
@@ -83,7 +91,7 @@
         android:layout_marginStart="@dimen/md"
         android:layout_marginTop="@dimen/md"
         android:text="@string/color"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
 
     <com.google.android.material.chip.ChipGroup
@@ -102,7 +110,7 @@
         android:layout_marginStart="@dimen/md"
         android:layout_marginTop="@dimen/md"
         android:text="@string/style"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
 
     <com.google.android.material.chip.ChipGroup
@@ -114,6 +122,26 @@
         app:singleSelection="true"> <!-- Permette di selezionare solo una chip alla volta -->
 
     </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginTop="@dimen/md"
+        android:text="@string/tessuto"
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_fabric"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        app:singleSelection="true"> <!-- Permette di selezionare solo una chip alla volta -->
+
+    </com.google.android.material.chip.ChipGroup>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

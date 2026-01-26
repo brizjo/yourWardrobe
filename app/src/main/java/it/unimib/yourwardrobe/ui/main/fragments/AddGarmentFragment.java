@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -46,6 +47,7 @@ public class AddGarmentFragment extends Fragment {
     private AutoCompleteTextView categoryTextView;
     private ChipGroup colorChipGroup;
     private ChipGroup styleChipGroup;
+    private ChipGroup fabricChipGroup;
     private AddGarmentViewModel viewModel;
     private TextInputEditText garmentNameEditText;
     private Button addGarmentButton;
@@ -105,6 +107,7 @@ public class AddGarmentFragment extends Fragment {
         categoryTextView = view.findViewById(R.id.category_text_view);
         colorChipGroup = view.findViewById(R.id.chip_group_color);
         styleChipGroup = view.findViewById(R.id.chip_group_style);
+        fabricChipGroup = view.findViewById(R.id.chip_group_fabric);
         garmentNameEditText = view.findViewById(R.id.garmentName);
         addGarmentButton = view.findViewById(R.id.add_garment_button);
 
@@ -116,11 +119,15 @@ public class AddGarmentFragment extends Fragment {
         });
 
         viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors -> {
-            updateMainChipGroup(colorChipGroup, colors, selected ->viewModel.updateSelectedColors(colors));
+            updateMainChipGroup(colorChipGroup, colors, selected ->viewModel.updateSelectedColors(selected));
         });
 
         viewModel.getSelectedStyles().observe(getViewLifecycleOwner(), styles -> {
             updateMainChipGroup(styleChipGroup, styles, selected ->viewModel.updateSelectedStyles(selected));
+        });
+
+        viewModel.getSelectedFabrics().observe(getViewLifecycleOwner(), fabrics -> {
+            updateMainChipGroup(fabricChipGroup, fabrics, selected ->viewModel.updateSelectedFabrics(selected));
         });
 
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled -> {
@@ -153,6 +160,7 @@ public class AddGarmentFragment extends Fragment {
 
         setupAddChip(colorChipGroup, "color");
         setupAddChip(styleChipGroup, "style");
+        setupAddChip(fabricChipGroup, "fabric");
 
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione
         categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -169,6 +177,8 @@ public class AddGarmentFragment extends Fragment {
     private void setupAddChip(ChipGroup chipGroup, final String type) {
         Chip addChip = new Chip(requireContext());
         addChip.setText("+");
+        addChip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        addChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         addChip.setOnClickListener(v -> {
             List<String> allOptions = null;
             List<String> currentSelection = null;
@@ -183,6 +193,11 @@ public class AddGarmentFragment extends Fragment {
                 currentSelection = viewModel.getSelectedStyles().getValue();
                 dialogTitle = "Seleziona Stili";
             }
+            else if ("fabric".equals(type)) {
+                allOptions = viewModel.getAllFabrics().getValue();
+                currentSelection = viewModel.getSelectedFabrics().getValue();
+                dialogTitle = "Seleziona Tessuti";
+            }
 
             if (allOptions != null && currentSelection != null) {
                 showChipSelectionDialog(dialogTitle, allOptions, currentSelection, newSelection -> {
@@ -190,6 +205,9 @@ public class AddGarmentFragment extends Fragment {
                         viewModel.updateSelectedColors(newSelection);
                     } else if ("style".equals(type)) {
                         viewModel.updateSelectedStyles(newSelection);
+                    }
+                    else if ("fabric".equals(type)) {
+                        viewModel.updateSelectedFabrics(newSelection);
                     }
                 });
             }
@@ -212,12 +230,39 @@ public class AddGarmentFragment extends Fragment {
         Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
 
         dialogTitle.setText(title);
+        int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer);
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[] {-android.R.attr.state_checked}  // Stato: non selezionato
+        };
+        int[] colors = new int[] {
+                colorSelected,
+                colorDefault
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
+
+        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
+
+        int[][] textStates = new int[][] {
+                new int[] { android.R.attr.state_checked},
+                new int[] {-android.R.attr.state_checked}
+        };
+        int[] textColors = new int[] {
+                textColorSelected,
+                textColorDefault
+        };
+        ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
 
         // Popola il dialog
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
             chip.setCheckable(true);
+            chip.setChipBackgroundColor(colorStateList);
+            chip.setTextColor(chipTextColorStateList);
+
             if (currentSelection.contains(option)) {
                 chip.setChecked(true);
             }
@@ -259,6 +304,8 @@ public class AddGarmentFragment extends Fragment {
             Chip chip = new Chip(requireContext());
             chip.setText(item);
             chip.setCloseIconVisible(true);
+            chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
             chip.setOnCloseIconClickListener(v -> {
                 // Notifica il ViewModel della rimozione di un elemento
                 List<String> currentSelection = new ArrayList<>(selectedItems);

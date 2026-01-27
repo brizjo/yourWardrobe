@@ -27,89 +27,16 @@
 
     </LinearLayout>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_weather"
-        style="?attr/materialCardViewElevatedStyle"
+    <it.unimib.yourwardrobe.ui.main.components.CardWeather
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/card_weather"
         android:layout_marginTop="@dimen/xl"
         app:layout_constraintTop_toBottomOf="@id/layout_welcome"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        >
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_weather"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/cloudy"
-            android:padding="@dimen/lg">
-
-            <TextView
-                android:id="@+id/tv_weather_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="@string/example_weather_time"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_3xl"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_weather_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/montserrat_regular"
-                android:text="@string/example_weather_date"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_lg"
-                app:layout_constraintStart_toStartOf="@+id/tv_weather_time"
-                app:layout_constraintTop_toBottomOf="@+id/tv_weather_time" />
-
-            <TextView
-                android:id="@+id/tv_weather_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xs"
-                android:drawablePadding="@dimen/xs"
-                android:gravity="center"
-                android:text="@string/example_weather_status"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_lg"
-                app:drawableEndCompat="@drawable/ic_cloudy"
-                app:drawableTint="@android:color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <TextView
-                    android:id="@+id/tv_weather_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:text="@string/example_weather_temp"
-                    android:textColor="@android:color/black"
-                    android:textSize="@dimen/text_3xl" />
-
-                <TextView
-                    android:id="@+id/tv_weather_degree_symbol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:text="@string/degree_symbol"
-                    android:textColor="@android:color/black"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+        app:layout_constraintBottom_toTopOf="@id/layout_outfit"
+        />
 
     <LinearLayout
         android:id="@+id/layout_outfit"

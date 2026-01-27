@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="garment_color">
+        <item>@string/red</item>
+        <item>@string/blue</item>
+        <item>@string/green</item>
+        <item>@string/black</item>
+        <item>@string/yellow</item>
+        <item>@string/white</item>
+        <item>@string/pink</item>
+        <item>@string/purple</item>
+        <item>@string/orange</item>
+        <item>@string/grey</item>
+        <item>@string/brown</item>
+        <item>@string/beige</item>
+        <item>@string/cyan</item>
+        <item>@string/magenta</item>
+        <item>@string/silver</item>
+        <item>@string/gold</item>
+    </string-array>
+</resources>

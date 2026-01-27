@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".ui.main.fragments.WardrobeFragment">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Wardrobe" />
 
     <it.unimib.yourwardrobe.ui.main.components.CardMenu
         android:layout_width="match_parent"
@@ -17,6 +14,17 @@
         android:layout_gravity="center"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
+        android:layout_marginBottom="@dimen/xl"
         />
 
-</FrameLayout>
+    <it.unimib.yourwardrobe.ui.main.components.CardMenu
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/outfitCard"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        />
+
+</LinearLayout>

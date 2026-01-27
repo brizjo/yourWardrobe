@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/carousel_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:layout_marginStart="@dimen/xs"
+    android:layout_marginEnd="@dimen/xs"
+    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+
+    <it.unimib.yourwardrobe.ui.main.components.CardWardrobe
+        android:id="@+id/clothesCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"/>
+
+</FrameLayout>

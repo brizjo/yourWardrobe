@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="fabric_types">
+        <item>@string/fabric_cotton</item>
+        <item>@string/fabric_linen</item>
+        <item>@string/fabric_hemp</item>
+        <item>@string/fabric_wool</item>
+        <item>@string/fabric_cashmere</item>
+        <item>@string/fabric_silk</item>
+        <item>@string/fabric_viscose</item>
+        <item>@string/fabric_modal</item>
+        <item>@string/fabric_lyocell</item>
+        <item>@string/fabric_polyester</item>
+        <item>@string/fabric_nylon</item>
+        <item>@string/fabric_acrylic</item>
+        <item>@string/fabric_elastane</item>
+        <item>@string/fabric_synthetic_leather</item>
+        <item>@string/fabric_fleece</item>
+    </string-array>
+</resources>

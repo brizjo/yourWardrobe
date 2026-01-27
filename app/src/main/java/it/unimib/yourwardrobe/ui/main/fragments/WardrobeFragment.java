@@ -39,13 +39,25 @@ public class WardrobeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         CardMenu clothesCard = view.findViewById(R.id.clothesCard);
-        clothesCard.setCardStroke(R.color.md_theme_onPrimaryContainer, 3);
-        clothesCard.setCardText("vestiario");
+        clothesCard.setCardStroke(ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer_mediumContrast), 10);
+        clothesCard.setCardText(getString(R.string.vestiario));
         clothesCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        clothesCard.setCardImage(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add));
         clothesCard.setOnCardClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.action_wardrobeFragment_to_clothesFragment);
+            }
+        });
+        CardMenu outfitCard = view.findViewById(R.id.outfitCard);
+        outfitCard.setCardStroke(ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer_mediumContrast), 10);
+        outfitCard.setCardText(getString(R.string.outfit));
+        outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        outfitCard.setCardImage(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add));
+        outfitCard.setOnCardClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_wardrobeFragment_to_outfitFragment);
             }
         });
     }

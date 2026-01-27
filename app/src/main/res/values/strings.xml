@@ -38,6 +38,7 @@
     <string name="scarpe">Scarpe</string>
     <string name="ciao">"Ciao, "</string>
     <string name="ciao_guest">Ciao, ospite</string>
+    <string name="username_signup">username</string>
     <string name="season">Stagione</string>
     <string name="winter">Inverno</string>
     <string name="spring">Primavera</string>

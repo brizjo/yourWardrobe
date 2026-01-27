@@ -44,11 +44,11 @@ public class HomeFragment extends Fragment {
         TextView hi_user = view.findViewById(R.id.hi_user);
         
         User currentUser = userRepository.getCurrentUser();
+        //TODO: FIXARE IL PERCHE NON VIENE DISPLAYATO LO USERNAME
         if (currentUser != null && currentUser.getDisplayName() != null) {
-            hi_user.setText(getString(R.string.ciao) + currentUser.getDisplayName());
-        } else if (currentUser != null && currentUser.getEmail() != null) {
-            hi_user.setText(getString(R.string.ciao) + currentUser.getEmail());
-        } else {
+            hi_user.setText(getString(R.string.ciao) + " " +currentUser.getDisplayName());
+        }
+        else {
              hi_user.setText(R.string.ciao_guest);
         }
     }

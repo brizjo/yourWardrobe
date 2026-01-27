@@ -43,7 +43,52 @@
         android:text="@string/accessori"
         android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
         android:textColor="@color/md_theme_primary"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        android:background="@color/md_theme_primary" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:text="@string/caratteristiche_principali"
+        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+        android:textColor="@color/md_theme_primary"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        android:background="@color/md_theme_primary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="@string/season"
+        android:visibility="visible"
+        android:layout_marginTop="@dimen/lg"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/menu_seasons"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginTop="@dimen/xs"
+        android:layout_marginEnd="@dimen/md">
+
+        <AutoCompleteTextView
+            android:id="@+id/season_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:text="@string/winter"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

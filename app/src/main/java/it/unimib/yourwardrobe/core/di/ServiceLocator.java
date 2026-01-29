@@ -5,9 +5,7 @@ import android.app.Application;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.source.api.WeatherApiService;
-import it.unimib.yourwardrobe.source.remote.AuthRemoteDataSource;
 import it.unimib.yourwardrobe.source.remote.WeatherRemoteDataSource;
-import it.unimib.yourwardrobe.source.repository.UserRepositoryImpl;
 import it.unimib.yourwardrobe.source.repository.WeatherRepositoryImpl;
 import it.unimib.yourwardrobe.utils.Constants;
 import retrofit2.Retrofit;
@@ -45,9 +43,4 @@ public class ServiceLocator {
         return new WeatherRepositoryImpl(weatherRemoteDataSource);
     }
 
-    public UserRepositoryImpl getUserRepository(Application application) {
-        var context = application.getApplicationContext();
-        var authRemoteDataSource = new AuthRemoteDataSource();
-        return new UserRepositoryImpl(context, authRemoteDataSource);
-    }
 }

@@ -23,11 +23,11 @@ public class UserRepository {
         return authenticationResult;
     }
 
-    public MutableLiveData<LoginViewModel.AuthenticationResult> getUser(String email, String password, boolean isUserRegistered) {
+    public MutableLiveData<LoginViewModel.AuthenticationResult> getUser(String username, String email, String password, boolean isUserRegistered) {
         if (isUserRegistered) {
             signInWithEmail(email, password);
         } else {
-            signUp(email, password);
+            signUp(username, email, password);
         }
         return authenticationResult;
     }
@@ -69,8 +69,8 @@ public class UserRepository {
         });
     }
 
-    private void signUp(String email, String password) {
-        authRemoteDataSource.signUp(email, password, new AuthCallback() {
+    private void signUp(String username, String email, String password) {
+        authRemoteDataSource.signUp(username, email, password, new AuthCallback() {
             @Override
             public void onSuccess(User user) {
                 authenticationResult.postValue(new LoginViewModel.AuthenticationResult(true, user, null));

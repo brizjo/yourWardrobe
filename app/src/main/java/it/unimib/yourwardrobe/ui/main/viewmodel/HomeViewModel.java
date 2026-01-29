@@ -10,8 +10,8 @@ import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
-import it.unimib.yourwardrobe.domain.repository.UserRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.repository.UserRepository;
 
 public class HomeViewModel extends ViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();

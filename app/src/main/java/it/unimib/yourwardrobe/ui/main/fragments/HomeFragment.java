@@ -27,6 +27,7 @@ import com.google.android.gms.location.Priority;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.di.ServiceLocator;
+import it.unimib.yourwardrobe.repository.UserRepository;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModelFactory;
@@ -59,14 +60,10 @@ public class HomeFragment extends Fragment {
                         requireActivity().getApplication()
                 );
 
-        var userRepository = ServiceLocator
-                .getInstance().getUserRepository(
-                        requireActivity().getApplication()
-                );
 
-        this.homeViewModel = new ViewModelProvider(
-                requireActivity(),
-                new HomeViewModelFactory(weatherRepository, userRepository)).get(HomeViewModel.class);
+        this.homeViewModel =
+                new ViewModelProvider(requireActivity(), new HomeViewModelFactory(weatherRepository, new UserRepository()))
+                        .get(HomeViewModel.class);
 
     }
 

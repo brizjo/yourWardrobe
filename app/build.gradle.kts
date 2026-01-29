@@ -61,4 +61,8 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.lottie)
+
+
+    implementation("com.google.firebase:firebase-firestore:25.1.0") // O la versione compatibile con il tuo BOM
+
 }

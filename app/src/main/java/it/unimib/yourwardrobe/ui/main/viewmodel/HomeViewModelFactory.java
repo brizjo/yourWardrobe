@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import it.unimib.yourwardrobe.domain.repository.UserRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.repository.UserRepository;
 
 public class HomeViewModelFactory implements ViewModelProvider.Factory {
     private final WeatherRepository weatherRepository;

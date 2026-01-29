@@ -33,7 +33,7 @@ public class LoginViewModel extends ViewModel {
         }
 
         // Usa il nuovo metodo getUser con flag isUserRegistered = true (Login)
-        userRepository.getUser(email, password, true);
+        userRepository.getUser(null, email, password, true);
     }
 
     public void loginGoogle(Context context) {
@@ -41,7 +41,9 @@ public class LoginViewModel extends ViewModel {
         userRepository.getGoogleUser(context);
     }
 
-    public void signUp(String email, String password, String confirmPassword) {
+    public void signUp(String username, String email, String password, String confirmPassword) {
+        //TODO; CONTROLLO CAMPO USERNAME
+
         if (!isEmailValid(email)) {
             authenticationResult.setValue(new AuthenticationResult(false, null, "Formato email non valido"));
             return;
@@ -56,7 +58,7 @@ public class LoginViewModel extends ViewModel {
         }
 
         // Usa il nuovo metodo getUser con flag isUserRegistered = false (SignUp)
-        userRepository.getUser(email, password, false);
+        userRepository.getUser(username, email, password, false);
     }
 
     public LiveData<AuthenticationResult> getAuthenticationResult() {

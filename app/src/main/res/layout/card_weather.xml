@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
         style="?attr/materialCardViewElevatedStyle"
-        android:elevation="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:elevation="10dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_weather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/cloudy"
             android:padding="@dimen/lg">
 
             <TextClock
@@ -24,8 +21,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_bold"
-                android:format24Hour="HH:mm"
                 android:format12Hour="HH:mm"
+                android:format24Hour="HH:mm"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_3xl"
                 app:layout_constraintStart_toStartOf="parent"
@@ -37,27 +34,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:fontFamily="@font/montserrat_regular"
-                android:textColor="@android:color/black"
                 android:format12Hour="MMMM, dd"
                 android:format24Hour="MMMM, dd"
+                android:textColor="@android:color/black"
                 android:textSize="@dimen/text_lg"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_weather_time" />
 
-            <TextView
-                android:id="@+id/tv_weather_condition"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xs"
-                android:drawablePadding="@dimen/xs"
                 android:gravity="center"
-                android:text="@string/cloudy"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_lg"
-                app:drawableEndCompat="@drawable/ic_cloudy"
-                app:drawableTint="@android:color/black"
+                app:flow_horizontalGap="@dimen/sm"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_weather_condition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="N/D"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_lg"
+                    app:drawableTint="@android:color/black" />
+
+                <ImageView
+                    android:id="@+id/iv_weather_condition_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:layout_constraintStart_toEndOf="@id/tv_weather_condition"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -70,18 +81,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_bold"
-                    android:text="@string/example_weather_temp"
+                    android:text="N/D"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/text_3xl" />
 
-                <TextView
-                    android:id="@+id/tv_weather_degree_symbol"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:text="@string/degree_symbol"
-                    android:textColor="@android:color/black"
-                    android:textSize="30sp" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

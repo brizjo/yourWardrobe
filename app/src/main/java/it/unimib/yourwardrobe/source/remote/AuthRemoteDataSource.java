@@ -1,7 +1,8 @@
-package it.unimib.yourwardrobe.source;
+package it.unimib.yourwardrobe.source.remote;
 
 import android.content.Context;
 import android.os.CancellationSignal;
+
 import androidx.core.content.ContextCompat;
 import androidx.credentials.Credential;
 import androidx.credentials.CredentialManager;
@@ -15,11 +16,11 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;//utente di firebase
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.model.User;
+import it.unimib.yourwardrobe.domain.model.User;
 
 public class AuthRemoteDataSource {
 

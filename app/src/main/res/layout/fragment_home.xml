@@ -16,14 +16,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/playfairdisplay_medium"
             android:textSize="@dimen/text_2xl"
-            android:id="@+id/hi_user"/>
+            android:text="Ciao, "
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_2xl"
+            android:fontFamily="@font/playfairdisplay_medium"
+            android:id="@+id/tv_username" />
 
     </LinearLayout>
 

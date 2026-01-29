@@ -1,0 +1,64 @@
+package it.unimib.yourwardrobe.ui.main.viewmodel;
+
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+import it.unimib.yourwardrobe.core.functional.Callback;
+import it.unimib.yourwardrobe.core.functional.Result;
+import it.unimib.yourwardrobe.domain.model.User;
+import it.unimib.yourwardrobe.domain.model.WeatherInfo;
+import it.unimib.yourwardrobe.domain.repository.UserRepository;
+import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+
+public class HomeViewModel extends ViewModel {
+    private static final String TAG = HomeViewModel.class.getSimpleName();
+    private final WeatherRepository weatherRepository;
+    private final UserRepository userRepository;
+
+    private final MutableLiveData<Result<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
+    public final LiveData<Result<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
+
+    private final MutableLiveData<Result<User>> _currentUser = new MutableLiveData<>();
+    public final LiveData<Result<User>> currentUser = _currentUser;
+
+
+    public HomeViewModel(WeatherRepository weatherRepository, UserRepository userRepository) {
+        this.weatherRepository = weatherRepository;
+        this.userRepository = userRepository;
+    }
+
+    public void getCurrentUser() {
+        _currentUser.setValue(Result.loading(null));
+        var user = this.userRepository.getCurrentUser();
+
+        if (user == null) {
+            _currentUser.postValue(Result.error("User not logged in", null));
+        } else {
+            _currentUser.postValue(Result.success(user));
+        }
+    }
+
+    public void getCurrentWeather(double lat, double lon) {
+        _currentWeatherResult.setValue(Result.loading(null));
+        this.weatherRepository
+                .getCurrentWeather(
+                        lat,
+                        lon,
+                        new Callback<>() {
+                            @Override
+                            public void onSuccess(WeatherInfo data) {
+                                _currentWeatherResult.setValue(Result.success(data));
+                            }
+
+                            @Override
+                            public void onFailure(String errorMessage, Throwable t) {
+                                Log.e(TAG, errorMessage, t);
+                                _currentWeatherResult.setValue(Result.error(errorMessage, null));
+                            }
+                        });
+    }
+
+}

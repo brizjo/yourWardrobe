@@ -2,11 +2,12 @@ package it.unimib.yourwardrobe.ui.welcome.viewmodel;
 
 import android.content.Context;
 import android.util.Patterns;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import it.unimib.yourwardrobe.model.User;
+import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.repository.UserRepository;
 
 public class LoginViewModel extends ViewModel {
@@ -35,7 +36,7 @@ public class LoginViewModel extends ViewModel {
         userRepository.getUser(email, password, true);
     }
 
-    public void loginGoogle(Context context){
+    public void loginGoogle(Context context) {
         // Usa il nuovo metodo getGoogleUser
         userRepository.getGoogleUser(context);
     }

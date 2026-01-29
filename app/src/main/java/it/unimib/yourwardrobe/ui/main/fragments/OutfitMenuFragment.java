@@ -1,6 +1,10 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,11 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +55,7 @@ public class OutfitMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_outfit_menu, container, false);
     }
+
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerViewOutfit = view.findViewById(R.id.outfit_recycler_view);
@@ -63,7 +63,7 @@ public class OutfitMenuFragment extends Fragment {
         recyclerViewOutfit.setLayoutManager(gridLayoutManager);
         recyclerViewOutfit.setNestedScrollingEnabled(false);
         List<Integer> i = new ArrayList<>();
-        i.add(R.drawable.cloudy);
+        i.add(R.drawable.scattered_clouds_day);
         i.add(R.drawable.ic_email);
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);
@@ -77,7 +77,8 @@ public class OutfitMenuFragment extends Fragment {
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
         ClothesAdapter.OnItemClickListener listener = (v, item) -> {
-            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment);};
+            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment);
+        };
         recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid, listener));
         Button createOutfitButton = view.findViewById(R.id.create_outfit_button);
         createOutfitButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_createOutfitFragment));

@@ -1,7 +1,8 @@
-package it.unimib.yourwardrobe.source;
+package it.unimib.yourwardrobe.source.remote;
 
 import android.content.Context;
 import android.os.CancellationSignal;
+
 import androidx.core.content.ContextCompat;
 import androidx.credentials.Credential;
 import androidx.credentials.CredentialManager;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.model.User;
+import it.unimib.yourwardrobe.domain.model.User;
 
 public class AuthRemoteDataSource {
 

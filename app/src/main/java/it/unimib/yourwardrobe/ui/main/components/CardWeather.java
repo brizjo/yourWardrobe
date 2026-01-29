@@ -3,18 +3,23 @@ package it.unimib.yourwardrobe.ui.main.components;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import java.util.Locale;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import it.unimib.yourwardrobe.R;
 
-public class CardWeather extends LinearLayout  {
+public class CardWeather extends LinearLayout {
     private TextView tvCondition;
+    private ImageView ivConditionIcon;
     private TextView tvTemperature;
     private ConstraintLayout layout;
 
@@ -36,25 +41,43 @@ public class CardWeather extends LinearLayout  {
     private void init(Context context) {
         inflate(context, R.layout.card_weather, this);
         tvCondition = findViewById(R.id.tv_weather_condition);
+        ivConditionIcon = findViewById(R.id.iv_weather_condition_icon);
         tvTemperature = findViewById(R.id.tv_weather_temperature);
         layout = findViewById(R.id.layout_weather);
     }
 
-    public void SetBackgroundImage(Drawable drawable) {
-        layout.setBackground(drawable);
+    public void setConditionBackground(int drawableResourceId) {
+        Glide.with(getContext())
+                .load(drawableResourceId)
+                .error(R.drawable.mist)
+                .into(new CustomTarget<Drawable>() {
+
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        layout.setBackground(resource);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        layout.setBackground(placeholder);
+                    }
+                });
+
     }
 
     public void setCondition(String condition) {
         tvCondition.setText(condition);
     }
 
-    public void setConditionIcon(Drawable drawable) {
-        tvCondition.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+    public void setConditionIcon(String iconUrl) {
+        Glide.with(getContext())
+                .load(iconUrl)
+                .error(R.drawable.ic_cloudy)
+                .into(ivConditionIcon);
     }
 
-    public void setTemperature(Float temperature) {
-        String temp = String.format(Locale.getDefault(),"%.1f", temperature);
-        tvTemperature.setText(temp);
+    public void setTemperature(String temperature) {
+        tvTemperature.setText(temperature);
     }
 
 }

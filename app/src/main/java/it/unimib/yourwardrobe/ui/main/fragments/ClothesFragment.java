@@ -1,18 +1,16 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.android.material.carousel.UncontainedCarouselStrategy;
@@ -22,8 +20,6 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
-import it.unimib.yourwardrobe.ui.main.components.CardMenu;
-import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +27,6 @@ import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
  * create an instance of this fragment.
  */
 public class ClothesFragment extends Fragment {
-
 
 
     public ClothesFragment() {
@@ -66,7 +61,7 @@ public class ClothesFragment extends Fragment {
         recyclerViewMagliette.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         //dati di prova
         List<Integer> i = new ArrayList<>();
-        i.add(R.drawable.cloudy);
+        i.add(R.drawable.scattered_clouds_day);
         i.add(R.drawable.ic_email);
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);

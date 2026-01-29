@@ -1,11 +1,12 @@
 package it.unimib.yourwardrobe.repository;
 
 import android.content.Context;
+
 import androidx.lifecycle.MutableLiveData;
 
-import it.unimib.yourwardrobe.model.User;
-import it.unimib.yourwardrobe.source.AuthCallback;
-import it.unimib.yourwardrobe.source.AuthRemoteDataSource;
+import it.unimib.yourwardrobe.domain.model.User;
+import it.unimib.yourwardrobe.source.remote.AuthCallback;
+import it.unimib.yourwardrobe.source.remote.AuthRemoteDataSource;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
 
 public class UserRepository {

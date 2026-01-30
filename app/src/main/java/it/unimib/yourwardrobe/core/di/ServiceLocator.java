@@ -2,6 +2,10 @@ package it.unimib.yourwardrobe.core.di;
 
 import android.app.Application;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
@@ -47,7 +51,6 @@ public class ServiceLocator {
     }
 
     public GarmentRepository getGarmentRepository() {
-
         return new GarmentRepositoryImpl(new GarmentRecognitionDataSource());
     }
 

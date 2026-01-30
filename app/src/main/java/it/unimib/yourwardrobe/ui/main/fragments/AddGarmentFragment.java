@@ -29,6 +29,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +158,13 @@ public class AddGarmentFragment extends Fragment {
             addGarmentButton.setEnabled(isEnabled);
         });
 
+        viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
+            if (success) {
+                ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
+                // Torna al fragment precedente (es. WardrobeFragment)
+                Navigation.findNavController(view).navigateUp();
+            }
+        });
         addGarmentImageView.setOnClickListener(v -> {
             // Controlla se il permesso è già stato concesso
             if (ContextCompat.checkSelfPermission(
@@ -184,6 +192,11 @@ public class AddGarmentFragment extends Fragment {
         setupAddChip(colorChipGroup, "color");
         setupAddChip(styleChipGroup, "style");
         setupAddChip(fabricChipGroup, "fabric");
+
+        addGarmentButton.setOnClickListener(v -> {
+            // Chiama il metodo nel ViewModel
+            viewModel.addGarment();
+        });
 
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione
         categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {

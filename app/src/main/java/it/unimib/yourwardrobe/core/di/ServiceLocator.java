@@ -21,7 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServiceLocator {
 
     private static ServiceLocator instance;
-    private GarmentRepository garmentRepository;
 
     private ServiceLocator() {
     }
@@ -52,20 +51,7 @@ public class ServiceLocator {
     }
 
     public GarmentRepository getGarmentRepository() {
-        if (garmentRepository == null) {
-            GarmentRecognitionDataSource garmentRecognitionDataSource = new GarmentRecognitionDataSource();
-            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-
-            garmentRepository = new GarmentRepositoryImpl(
-                    garmentRecognitionDataSource,
-                    firebaseAuth,
-                    firestore,
-                    storage
-            );
-        }
-        return garmentRepository;
+        return new GarmentRepositoryImpl(new GarmentRecognitionDataSource());
     }
 
 }

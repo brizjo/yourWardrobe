@@ -2,6 +2,10 @@ package it.unimib.yourwardrobe.core.di;
 
 import android.app.Application;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
@@ -17,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServiceLocator {
 
     private static ServiceLocator instance;
+    private GarmentRepository garmentRepository;
 
     private ServiceLocator() {
     }
@@ -47,8 +52,20 @@ public class ServiceLocator {
     }
 
     public GarmentRepository getGarmentRepository() {
+        if (garmentRepository == null) {
+            GarmentRecognitionDataSource garmentRecognitionDataSource = new GarmentRecognitionDataSource();
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            FirebaseStorage storage = FirebaseStorage.getInstance();
 
-        return new GarmentRepositoryImpl(new GarmentRecognitionDataSource());
+            garmentRepository = new GarmentRepositoryImpl(
+                    garmentRecognitionDataSource,
+                    firebaseAuth,
+                    firestore,
+                    storage
+            );
+        }
+        return garmentRepository;
     }
 
 }

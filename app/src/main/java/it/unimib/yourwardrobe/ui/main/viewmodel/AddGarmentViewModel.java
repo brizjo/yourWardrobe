@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
+import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 
 public class AddGarmentViewModel extends AndroidViewModel {
@@ -21,6 +22,8 @@ public class AddGarmentViewModel extends AndroidViewModel {
     private final GarmentRepository garmentRepository;
     private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
+
 
 
     // LiveData per i dati "statici" (le liste complete)
@@ -106,6 +109,51 @@ public class AddGarmentViewModel extends AndroidViewModel {
                 validateForm();
             }
         });
+    }
+
+    public void addGarment() {
+        Bitmap image = garmentImage.getValue();
+        String name = garmentName.getValue();
+        String category = selectedCategory.getValue();
+        List<String> colors = getSelectedColors().getValue();
+        List<String> styles = getSelectedStyles().getValue();
+        List<String> fabrics = getSelectedFabrics().getValue();
+
+        // Controllo di validità
+        if (image == null || name == null || name.isEmpty() || category == null || colors == null || colors.isEmpty()) {
+            errorMessage.postValue("Dati mancanti per creare il capo.");
+            return;
+        }
+
+        // Crea oggetto Garment
+        Garment garment = new Garment();
+        garment.setName(name);
+        garment.setCategory(category);
+        // garment.setSubCategory(...); // Se hai una sottocategoria
+        // garment.setSeason(...); // Se hai la stagione
+        garment.setColor(colors);
+        garment.setStyle(styles);
+        garment.setFabric(fabrics);
+
+        //Chiamata a repository per salvare l'immagine e i dati
+        garmentRepository.addGarment(image, garment, new Callback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                // Notifica al Fragment che l'operazione è andata a buon fine
+                garmentAddedSuccessfully.postValue(true);
+            }
+
+            @Override
+            public void onFailure(String error, Throwable t) {
+                // Notifica un errore
+                errorMessage.postValue("Errore durante il salvataggio: " + error);
+                garmentAddedSuccessfully.postValue(false);
+            }
+        });
+    }
+
+    public LiveData<Boolean> getGarmentAddedSuccessfully() {
+        return garmentAddedSuccessfully;
     }
 
     // Chiamato dal Fragment quando il testo del nome cambia

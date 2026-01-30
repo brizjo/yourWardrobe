@@ -98,4 +98,5 @@
     <string name="fabric_synthetic_leather">Pelle sintetica</string>
     <string name="fabric_fleece">Pile</string>
     <string name="tessuto">Tessuto</string>
+    <string name="name">Nome</string>
 </resources>

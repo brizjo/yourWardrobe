@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_garment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".ui.main.fragments.AddGarmentFragment">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <ImageView
         android:id="@+id/addGarmentImage"
         android:layout_width="150dp"
@@ -44,15 +54,14 @@
         android:layout_marginStart="@dimen/md"
         android:layout_marginTop="@dimen/lg"
         android:layout_marginEnd="@dimen/md"
-
-        android:hint="Nome">
+        android:hint="@string/name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/garmentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:inputType="" />
+            android:inputType="text|textCapSentences"
+            android:imeOptions="actionDone"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -148,7 +157,9 @@
         android:layout_weight="1"
 
         />
+        </LinearLayout>
 
+    </androidx.core.widget.NestedScrollView>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

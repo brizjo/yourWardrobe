@@ -3,9 +3,12 @@ package it.unimib.yourwardrobe.core.di;
 import android.app.Application;
 
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.source.api.WeatherApiService;
+import it.unimib.yourwardrobe.source.remote.GarmentRecognitionDataSource;
 import it.unimib.yourwardrobe.source.remote.WeatherRemoteDataSource;
+import it.unimib.yourwardrobe.source.repository.GarmentRepositoryImpl;
 import it.unimib.yourwardrobe.source.repository.WeatherRepositoryImpl;
 import it.unimib.yourwardrobe.utils.Constants;
 import retrofit2.Retrofit;
@@ -41,6 +44,11 @@ public class ServiceLocator {
                 application.getString(R.string.weather_api_appid)
         );
         return new WeatherRepositoryImpl(weatherRemoteDataSource);
+    }
+
+    public GarmentRepository getGarmentRepository() {
+
+        return new GarmentRepositoryImpl(new GarmentRecognitionDataSource());
     }
 
 }

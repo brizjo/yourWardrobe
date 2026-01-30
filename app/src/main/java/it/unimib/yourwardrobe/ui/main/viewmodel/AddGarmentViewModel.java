@@ -12,8 +12,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.core.functional.Callback;
+import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 
 public class AddGarmentViewModel extends AndroidViewModel {
+
+
+    private final GarmentRepository garmentRepository;
+    private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+
 
     // LiveData per i dati "statici" (le liste complete)
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
@@ -30,8 +38,9 @@ public class AddGarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
-    public AddGarmentViewModel(@NonNull Application application) {
+    public AddGarmentViewModel(@NonNull Application application, GarmentRepository garmentRepository) {
         super(application);
+        this.garmentRepository = garmentRepository;
         // Inizializza le liste di dati
         loadInitialData();
         // Inizializza la lista delle selezioni come vuota
@@ -41,6 +50,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         isButtonEnabled.setValue(false); // Inizialmente disabilitato
 
         // Aggiungi le sorgenti da osservare
+        isButtonEnabled.addSource(isImageValid, value -> validateForm());
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
         isButtonEnabled.addSource(selectedCategory, value -> validateForm());
@@ -58,6 +68,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     }
 
     private void validateForm() {
+        boolean imageOk = garmentImage.getValue() != null && Boolean.TRUE.equals(isImageValid.getValue());
         boolean hasImage = garmentImage.getValue() != null;
         boolean hasName = garmentName.getValue() != null && !garmentName.getValue().isEmpty();
         boolean hasSeason = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
@@ -65,7 +76,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         boolean hasStyles = getSelectedStyles().getValue() != null && !getSelectedStyles().getValue().isEmpty();
         boolean hasFabrics = getSelectedFabrics().getValue() != null && !getSelectedFabrics().getValue().isEmpty();
 
-        isButtonEnabled.setValue(hasImage && hasName && hasSeason && hasColors && hasStyles && hasFabrics);
+        isButtonEnabled.setValue(imageOk && hasImage && hasName && hasSeason && hasColors && hasStyles && hasFabrics);
     }
 
     public LiveData<Boolean> isButtonEnabled() {
@@ -74,6 +85,27 @@ public class AddGarmentViewModel extends AndroidViewModel {
 
     public void setGarmentImage(Bitmap bitmap) {
         garmentImage.setValue(bitmap);
+
+        // Avvia la validazione AI
+        garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                isImageValid.postValue(result);
+                if (!result) {
+                    errorMessage.postValue("L'immagine non sembra un capo d'abbigliamento.");
+                } else {
+                    errorMessage.postValue(null);
+                }
+                validateForm(); // Ricalcola se il bottone deve essere attivo
+            }
+
+            @Override
+            public void onFailure(String error, Throwable t) { // Aggiunto Throwable t
+                isImageValid.postValue(false);
+                errorMessage.postValue("Errore durante il riconoscimento: " + error);
+                validateForm();
+            }
+        });
     }
 
     // Chiamato dal Fragment quando il testo del nome cambia
@@ -122,5 +154,9 @@ public class AddGarmentViewModel extends AndroidViewModel {
     }
     public void updateSelectedFabrics(List<String> newSelection) {
         selectedFabrics.setValue(newSelection);
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
     }
 }

@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.lottie)
 
 
+    implementation("com.google.mlkit:image-labeling:17.0.9")
+
     implementation("com.google.firebase:firebase-firestore:25.1.0") // O la versione compatibile con il tuo BOM
 
 }

@@ -34,8 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
+import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModelFactory;
+import it.unimib.yourwardrobe.utils.ToastHelper;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link AddGarmentFragment#newInstance} factory method to
@@ -102,7 +106,19 @@ public class AddGarmentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
+        // 1. Recupera il repository dal ServiceLocator
+        GarmentRepository garmentRepository = it.unimib.yourwardrobe.core.di.ServiceLocator
+                .getInstance()
+                .getGarmentRepository();
+
+        // 2. Crea la Factory passando Application e il Repository
+        AddGarmentViewModelFactory factory = new AddGarmentViewModelFactory(
+                requireActivity().getApplication(),
+                garmentRepository
+        );
+
+
+        viewModel = new ViewModelProvider(this, factory).get(AddGarmentViewModel.class);
         addGarmentImageView = view.findViewById(R.id.addGarmentImage);
         categoryTextView = view.findViewById(R.id.category_text_view);
         colorChipGroup = view.findViewById(R.id.chip_group_color);
@@ -128,6 +144,13 @@ public class AddGarmentFragment extends Fragment {
 
         viewModel.getSelectedFabrics().observe(getViewLifecycleOwner(), fabrics -> {
             updateMainChipGroup(fabricChipGroup, fabrics, selected ->viewModel.updateSelectedFabrics(selected));
+        });
+
+        //todo: vedere geterrormessage
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                ToastHelper.show(getContext(), error, false);
+            }
         });
 
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled -> {

@@ -2,45 +2,58 @@ package it.unimib.yourwardrobe.source.repository;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.source.remote.GarmentRecognitionDataSource;
+import it.unimib.yourwardrobe.source.remote.GarmentRemoteDataSource;
 
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
-    private final GarmentRecognitionDataSource dataSource;
+    private final GarmentRemoteDataSource dataSource;
 
 
-    public GarmentRepositoryImpl(GarmentRecognitionDataSource dataSource) {
+    public GarmentRepositoryImpl(GarmentRemoteDataSource dataSource) {
         this.dataSource = dataSource;
 
     }
 
-    @Override //todo
-    public void addGarment(Bitmap image, Garment garment, Callback<Void> callback) {
-        Log.d("GarmentRepositoryImpl", "addGarment called with image: " + image);
-        /*FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser == null) {
-            String errorMsg = "Utente non autenticato. Impossibile aggiungere il capo.";
-            callback.onFailure(errorMsg, new IllegalStateException(errorMsg));
-            return;
-        }
-        String userId = currentUser.getUid();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 90, baos); // Qualità 90 per ridurre le dimensioni
-        byte[] data = baos.toByteArray();
-        String imagePath = "garments/" + userId + "/" + UUID.randomUUID().toString() + ".jpg";
-        StorageReference imageRef = storage.getReference().child(imagePath);
 
-        UploadTask uploadTask = imageRef.putBytes(data);
-        */
-    }
 
     @Override
     public void validateGarment(Bitmap garmentBitmap, Callback<Boolean> callback) {
 
         dataSource.isGarment( garmentBitmap, callback);
+    }
+
+
+    @Override
+    public void addGarment(Bitmap image, Garment garment, Callback<Boolean> callback) {
+        dataSource.uploadImage(image, new Callback<String>() {
+            @Override
+            public void onSuccess(String imageUrl){
+                garment.setImageUrl(imageUrl);
+                dataSource.saveGarmentDocument(garment, new Callback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        Log.d("GarmentRepositoryImpl", "Documento salvato con successo.");
+                        callback.onSuccess(true);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage, Throwable t) {
+                        callback.onFailure("Errore salvataggio dati: " + errorMessage, t);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage, Throwable t) {
+                callback.onFailure("Errore caricamento immagine: " + errorMessage, t);
+            }
+
+
+        });
+
     }
 
 

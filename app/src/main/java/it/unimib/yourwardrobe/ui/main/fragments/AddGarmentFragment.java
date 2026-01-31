@@ -195,7 +195,7 @@ public class AddGarmentFragment extends Fragment {
 
         addGarmentButton.setOnClickListener(v -> {
             // Chiama il metodo nel ViewModel
-            viewModel.addGarment();
+            viewModel.saveGarment();
         });
 
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione

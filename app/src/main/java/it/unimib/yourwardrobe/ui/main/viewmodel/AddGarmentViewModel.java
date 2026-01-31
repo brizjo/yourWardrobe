@@ -111,7 +111,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
         });
     }
 
-    public void addGarment() {
+    public void saveGarment() {
         Bitmap image = garmentImage.getValue();
         String name = garmentName.getValue();
         String category = selectedCategory.getValue();
@@ -136,9 +136,9 @@ public class AddGarmentViewModel extends AndroidViewModel {
         garment.setFabric(fabrics);
 
         //Chiamata a repository per salvare l'immagine e i dati
-        garmentRepository.addGarment(image, garment, new Callback<Void>() {
+        garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
             @Override
-            public void onSuccess(Void result) {
+            public void onSuccess(Boolean result) {
                 // Notifica al Fragment che l'operazione è andata a buon fine
                 garmentAddedSuccessfully.postValue(true);
             }

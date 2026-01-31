@@ -16,7 +16,6 @@ public class Garment {
     public Garment() {
     }
 
-    // 2. Costruttore completo per facilitare la creazione nel ViewModel/Repository
     public Garment(String id, String name, String category, String subCategory,
                    String season, String imageUrl, List<String> color,
                    List<String> fabric, List<String> style) {

@@ -7,9 +7,10 @@
     tools:context=".ui.main.fragments.GarmentFragment">
 
     <ImageView
+        android:layout_margin="@dimen/xl"
         android:id="@+id/garmentImage"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_gravity="center"
         android:scaleType="centerInside"/>
 

@@ -41,7 +41,7 @@ public class AuthRemoteDataSource {
         this.database = FirebaseFirestore.getInstance();
     }
 
-    public User getCurrentUser() {
+    public  User getCurrentUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
             return new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName());

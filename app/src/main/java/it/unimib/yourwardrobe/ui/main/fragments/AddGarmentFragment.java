@@ -36,9 +36,8 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModelFactory;
+import it.unimib.yourwardrobe.ui.main.viewmodel.factory.AddGarmentViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 /**
@@ -162,7 +161,7 @@ public class AddGarmentFragment extends Fragment {
             if (success) {
                 ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
                 // Torna al fragment precedente (es. WardrobeFragment)
-                Navigation.findNavController(view).navigateUp();
+                //Navigation.findNavController(view).navigateUp();
             }
         });
         addGarmentImageView.setOnClickListener(v -> {

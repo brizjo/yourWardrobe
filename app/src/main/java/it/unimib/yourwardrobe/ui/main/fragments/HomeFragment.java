@@ -30,7 +30,7 @@ import it.unimib.yourwardrobe.core.di.ServiceLocator;
 import it.unimib.yourwardrobe.repository.UserRepository;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModelFactory;
+import it.unimib.yourwardrobe.ui.main.viewmodel.factory.HomeViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 

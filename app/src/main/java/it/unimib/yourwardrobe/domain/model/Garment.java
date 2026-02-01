@@ -1,8 +1,9 @@
 package it.unimib.yourwardrobe.domain.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Garment {
+public class Garment  implements Serializable {
     // Attributi corrispondenti ai campi Firestore
     private String id; // Utile per gestire il documento in locale
     private String name;private String category;
@@ -30,7 +31,7 @@ public class Garment {
         this.style = style;
     }
 
-    // 3. Getter e Setter (Necessari per Firestore)
+
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }

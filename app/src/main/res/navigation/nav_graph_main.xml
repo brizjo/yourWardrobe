@@ -65,8 +65,13 @@
     <fragment
         android:id="@+id/garmentFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.GarmentFragment"
+        android:label="fragment_garment"
+        tools:layout="@layout/fragment_garment" >
 
-        tools:layout="@layout/fragment_garment" />
+        <argument android:name="garment"
+            app:argType="it.unimib.yourwardrobe.domain.model.Garment" />
+
+    </fragment>
     <fragment
         android:id="@+id/singleOutfitFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.SingleOutfitFragment"

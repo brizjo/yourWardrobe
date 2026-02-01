@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.ui.main.viewmodel;
+package it.unimib.yourwardrobe.ui.main.viewmodel.factory;
 
 import android.app.Application;
 
@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
 
 public class AddGarmentViewModelFactory implements ViewModelProvider.Factory {
 

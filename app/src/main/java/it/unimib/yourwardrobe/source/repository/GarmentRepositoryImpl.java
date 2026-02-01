@@ -8,6 +8,8 @@ import it.unimib.yourwardrobe.source.remote.GarmentRemoteDataSource;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.List;
+
 public class GarmentRepositoryImpl implements GarmentRepository {
     private final GarmentRemoteDataSource dataSource;
 
@@ -54,6 +56,19 @@ public class GarmentRepositoryImpl implements GarmentRepository {
 
         });
 
+    }
+
+
+    @Override
+    public void deleteGarment(Garment garment, Callback<Boolean> callback) {
+        dataSource.deleteGarment(garment, callback);
+
+
+    }
+
+    @Override
+    public void getGarments(Callback<List<Garment>> callback) {
+            dataSource.getGarments(callback);
     }
 
 

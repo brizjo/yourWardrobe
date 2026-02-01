@@ -99,4 +99,6 @@
     <string name="fabric_fleece">Pile</string>
     <string name="tessuto">Tessuto</string>
     <string name="name">Nome</string>
+    <string name="applica_modifiche">Applica Modifiche</string>
+    <string name="elimina_capo">Elimina Capo</string>
 </resources>

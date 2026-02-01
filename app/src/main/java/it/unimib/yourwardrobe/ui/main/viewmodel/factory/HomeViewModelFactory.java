@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.ui.main.viewmodel;
+package it.unimib.yourwardrobe.ui.main.viewmodel.factory;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.repository.UserRepository;
+import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 
 public class HomeViewModelFactory implements ViewModelProvider.Factory {
     private final WeatherRepository weatherRepository;

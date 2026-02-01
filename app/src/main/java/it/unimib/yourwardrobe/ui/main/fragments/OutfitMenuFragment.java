@@ -18,6 +18,7 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
+import it.unimib.yourwardrobe.adapter.OutfitAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -76,10 +77,10 @@ public class OutfitMenuFragment extends Fragment {
         i.add(R.drawable.ic_password);
         i.add(R.drawable.ic_google);
         i.add(R.drawable.ic_bot_filled);
-        ClothesAdapter.OnItemClickListener listener = (v, item) -> {
+        OutfitAdapter.OnItemClickListener listener = (v, item) -> {
             Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment);
         };
-        recyclerViewOutfit.setAdapter(new ClothesAdapter(i, R.layout.item_outfit_grid, listener));
+        recyclerViewOutfit.setAdapter(new OutfitAdapter(i, R.layout.item_outfit_grid, listener));
         Button createOutfitButton = view.findViewById(R.id.create_outfit_button);
         createOutfitButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_createOutfitFragment));
     }

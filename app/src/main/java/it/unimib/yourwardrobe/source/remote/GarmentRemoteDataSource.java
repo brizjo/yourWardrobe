@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.source.remote;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -15,6 +16,7 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
@@ -116,6 +118,8 @@ public class GarmentRemoteDataSource {
     public void saveGarmentDocument(Garment garment, Callback<Boolean> callback){
 
         User currentUser = auth.getCurrentUser();
+
+
         String uid = currentUser.getUid();
         if ( uid == null){
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
@@ -133,15 +137,56 @@ public class GarmentRemoteDataSource {
 
 
         newDoc.set(garment)
-                .addOnCompleteListener(aVoid ->callback.onSuccess(true))
-                .addOnFailureListener(e -> callback.onFailure("errore durante l'upload del documento su firestore", e));
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("FIRESTORE_SUCCESS", "Documento scritto correttamente su Firestore");
+                    callback.onSuccess(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FIRESTORE_ERROR", "Errore durante la scrittura: " + e.getMessage());
+                    callback.onFailure("Errore durante l'upload del documento su firestore", e);
+                });
+    }
 
 
+    public void deleteGarment(Garment garment, Callback<Boolean> callback){
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        }
+        if(garment.getId() == null){
+            callback.onFailure("Vestito non trovato: dati mancanti", new IllegalStateException("ID non valido"));
+        }
 
+        db.collection("user")
+                .document(uid)
+                .collection("garments")
+                .document(garment.getId())
+                .delete()
+                .addOnSuccessListener(x -> callback.onSuccess(true))
+                .addOnFailureListener(e -> callback.onFailure("errore durante la cancellazione del documento", e));
 
+    }
 
+    public void getGarments(Callback<List<Garment>> callback) {
+        User currentuser = auth.getCurrentUser();
+        String uid = currentuser.getUid();
+        if (uid == null){
+            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+            return;
+        }
+        db.collection("user").document(uid).collection("garments")
+                .addSnapshotListener((value, error) ->{
+                    if (error != null){
+                        callback.onFailure(error.getMessage(), error);
+                        return;
+                    }
+                    if (value != null){
+                        List<Garment> garments = value.toObjects(Garment.class);
+                        callback.onSuccess(garments);
 
+                    }
 
+                });
 
     }
 }

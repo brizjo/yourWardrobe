@@ -26,13 +26,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.di.ServiceLocator;
-import it.unimib.yourwardrobe.repository.UserRepository;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
-
 
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
@@ -54,16 +50,9 @@ public class HomeFragment extends Fragment {
         fusedLocationClient = LocationServices
                 .getFusedLocationProviderClient(requireActivity());
 
-        var weatherRepository = ServiceLocator
-                .getInstance()
-                .getWeatherRepository(
-                        requireActivity().getApplication()
-                );
 
-
-        this.homeViewModel =
-                new ViewModelProvider(requireActivity(), new HomeViewModelFactory(weatherRepository, new UserRepository()))
-                        .get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity())
+                .get(HomeViewModel.class);
 
     }
 
@@ -142,12 +131,19 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation();
-        }
+        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarseLocationPermission = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasFineLocationPermission && hasCoarseLocationPermission) {
+            getCurrentLocation();
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
     }
 
     private void getCurrentLocation() {
@@ -168,32 +164,41 @@ public class HomeFragment extends Fragment {
     }
 
     private void fetchLastLocationFallback() {
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
-            } else {
-                // 3. ULTIMATE FALLBACK: If both are null, the GPS is likely "cold".
-                // You should start a brief Location Callback here to force the hardware to wake up.
-                requestNewLocationData();
-            }
-        });
+        try {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                } else {
+                    // 3. ULTIMATE FALLBACK: If both are null, the GPS is likely "cold".
+                    // You should start a brief Location Callback here to force the hardware to wake up.
+                    requestNewLocationData();
+                }
+            });
+        } catch (SecurityException e) {
+            Log.e(TAG, "Security Exception", e);
+        }
     }
 
     private void requestNewLocationData() {
-        com.google.android.gms.location.LocationRequest locationRequest =
-                new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-                        .setMaxUpdates(1)
-                        .build();
+        try {
+            com.google.android.gms.location.LocationRequest locationRequest =
+                    new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+                            .setMaxUpdates(1)
+                            .build();
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                var location = locationResult.getLastLocation();
-                if (location != null) {
-                    homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+            fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    var location = locationResult.getLastLocation();
+                    if (location != null) {
+                        homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                    }
                 }
-            }
-        }, android.os.Looper.getMainLooper());
+            }, android.os.Looper.getMainLooper());
+
+        } catch (SecurityException e) {
+            Log.e(TAG, "Security Exception", e);
+        }
     }
 
 

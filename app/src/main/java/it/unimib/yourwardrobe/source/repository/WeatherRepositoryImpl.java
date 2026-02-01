@@ -2,6 +2,8 @@ package it.unimib.yourwardrobe.source.repository;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
@@ -13,6 +15,7 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     private static final String TAG = WeatherRepositoryImpl.class.getSimpleName();
     private final WeatherRemoteDataSource remoteDataSource;
 
+    @Inject
     public WeatherRepositoryImpl(WeatherRemoteDataSource remoteDataSource) {
         this.remoteDataSource = remoteDataSource;
     }

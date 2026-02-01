@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.User;
@@ -13,6 +16,7 @@ import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.repository.UserRepository;
 
+@HiltViewModel
 public class HomeViewModel extends ViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     private final WeatherRepository weatherRepository;
@@ -25,9 +29,10 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Result<User>> currentUser = _currentUser;
 
 
-    public HomeViewModel(WeatherRepository weatherRepository, UserRepository userRepository) {
+    @Inject
+    public HomeViewModel(WeatherRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
-        this.userRepository = userRepository;
+        this.userRepository = new UserRepository();
     }
 
     public void getCurrentUser() {

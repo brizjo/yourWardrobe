@@ -18,8 +18,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.HashSet;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     @Override

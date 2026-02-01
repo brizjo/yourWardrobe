@@ -2,6 +2,7 @@ package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
@@ -111,7 +112,8 @@ public class AddGarmentFragment extends Fragment {
 
                     // Converti l'URI in Bitmap e passalo al ViewModel
                     try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+                        ImageDecoder.Source source = ImageDecoder.createSource(requireActivity().getContentResolver(), uri);
+                        Bitmap bitmap = ImageDecoder.decodeBitmap(source);
                         viewModel.setGarmentImage(bitmap);
                     } catch (IOException e) {
                         ToastHelper.show(getContext(), "Errore nel caricare l'immagine", true);
@@ -229,6 +231,7 @@ public class AddGarmentFragment extends Fragment {
         addGarmentButton.setOnClickListener(v -> {
             // Chiama il metodo nel ViewModel
             viewModel.saveGarment();
+            Navigation.findNavController(v).navigate(R.id.action_addGarmentFragment_to_clothesFragment);
         });
 
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione

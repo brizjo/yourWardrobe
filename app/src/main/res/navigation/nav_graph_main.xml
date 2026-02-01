@@ -86,6 +86,10 @@
         android:id="@+id/addGarmentFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.AddGarmentFragment"
         android:label="fragment_add_garment"
-        tools:layout="@layout/fragment_add_garment" />
+        tools:layout="@layout/fragment_add_garment" >
+        <action
+            android:id="@+id/action_addGarmentFragment_to_clothesFragment"
+            app:destination="@id/clothesFragment" />
+    </fragment>
 
 </navigation>

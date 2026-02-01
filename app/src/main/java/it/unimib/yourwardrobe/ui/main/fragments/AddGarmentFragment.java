@@ -1,10 +1,13 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,8 +15,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
@@ -31,6 +37,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +45,8 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
 import it.unimib.yourwardrobe.ui.main.viewmodel.factory.AddGarmentViewModelFactory;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import androidx.activity.result.PickVisualMediaRequest;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 /**
@@ -57,8 +66,8 @@ public class AddGarmentFragment extends Fragment {
     private Button addGarmentButton;
 
 
-    // 1. Launcher per la richiesta dei permessi
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
+    //Launcher per la richiesta dei permessi (fotocamera)
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     // Permesso concesso, lancia la fotocamera
@@ -69,7 +78,7 @@ public class AddGarmentFragment extends Fragment {
                 }
             });
 
-    // 2. Launcher per ricevere il risultato dalla fotocamera
+    //Launcher per ricevere il risultato dalla fotocamera
     private final ActivityResultLauncher<Void> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 if (bitmap != null) {
@@ -80,6 +89,39 @@ public class AddGarmentFragment extends Fragment {
                     viewModel.setGarmentImage(bitmap);
                 }
             });
+
+    private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    launchGallery(); // Se concesso, lancia la galleria
+                } else {
+                    Toast.makeText(getContext(), "Permesso galleria necessario per scegliere una foto", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    // Immagine selezionata, mostrala nell'ImageView
+                    // Usa Glide per caricare l'URI in modo efficiente
+                    Glide.with(requireContext())
+                            .load(uri)
+                            .centerCrop()
+                            .into(addGarmentImageView);
+
+                    // Converti l'URI in Bitmap e passalo al ViewModel
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+                        viewModel.setGarmentImage(bitmap);
+                    } catch (IOException e) {
+                        ToastHelper.show(getContext(), "Errore nel caricare l'immagine", true);
+                    }
+
+                } else {
+                    Log.d("PhotoPicker", "Nessuna immagine selezionata");
+                }
+            });
+
 
     public AddGarmentFragment() {
         // Required empty public constructor
@@ -165,15 +207,7 @@ public class AddGarmentFragment extends Fragment {
             }
         });
         addGarmentImageView.setOnClickListener(v -> {
-            // Controlla se il permesso è già stato concesso
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                // Se sì, lancia la fotocamera
-                launchCamera();
-            } else {
-                // Altrimenti, richiedi il permesso
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
-            }
+            showImagePickerDialog();
         });
 
         garmentNameEditText.addTextChangedListener(new TextWatcher() { //controllo inserimento testo
@@ -205,8 +239,52 @@ public class AddGarmentFragment extends Fragment {
         });
     }
 
+    private void showImagePickerDialog() {
+        String[] options = getResources().getStringArray(R.array.image_picker_options);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Scegli immagine")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) { // "Scatta una foto"
+                        checkCameraPermissionAndLaunch();
+                    } else if (which == 1) { // "Scegli dalla galleria"
+                        checkGalleryPermissionAndLaunch();
+                    }
+                })
+                .show();
+    }
+
+    // Metodo helper per controllare i permessi della FOTOCAMERA e lanciarla
+    private void checkCameraPermissionAndLaunch() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            launchCamera();
+        } else {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void checkGalleryPermissionAndLaunch() {
+        // Da Android 13 (API 33) in su, serve un permesso specifico
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+                launchGallery();
+            } else {
+                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+        } else { // Per versioni precedenti, il permesso di lettura è sufficiente (o non serve per il Photo Picker)
+            launchGallery();
+        }
+    }
+
     private void launchCamera() {
         takePictureLauncher.launch(null);
+    }
+
+    private void launchGallery() {
+        // Lancia il Photo Picker di Android
+        // Chiede di selezionare solo immagini.
+        pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 
     private void setupAddChip(ChipGroup chipGroup, final String type) {

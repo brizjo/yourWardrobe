@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="image_picker_options">
+        <item>Scatta una foto</item>
+        <item>Scegli dalla galleria</item>
+    </string-array>
+</resources>

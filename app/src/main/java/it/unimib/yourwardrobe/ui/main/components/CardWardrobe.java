@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import it.unimib.yourwardrobe.R;
 
 public class CardWardrobe  extends LinearLayout {
     private MaterialCardView materialCardView;
+    private ImageView imageView;
 
     public CardWardrobe(Context context){
         super(context, null);
@@ -30,10 +32,11 @@ public class CardWardrobe  extends LinearLayout {
 
     private void init(Context context) {
         // 1. Inflate the layout (button_component.xml) and attach it to this class
-        LayoutInflater.from(context).inflate(R.layout.card_component, this, true);
+        LayoutInflater.from(context).inflate(R.layout.card_garment, this, true);
 
         // 2. Find the button ID defined in your XML
         materialCardView = findViewById(R.id.card);
+        imageView = findViewById(R.id.card_wardrobe_image);
     }
 
     public void setCardImage(Drawable drawable) {

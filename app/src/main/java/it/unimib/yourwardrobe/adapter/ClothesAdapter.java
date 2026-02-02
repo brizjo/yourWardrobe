@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
@@ -61,10 +62,12 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     public static class ClothesViewHolder extends RecyclerView.ViewHolder {
 
         private final CardWardrobe cardWardrobe;
+        private final ImageView targetImageView;
 
         public ClothesViewHolder(@NonNull View itemView) {
             super(itemView);
             cardWardrobe = itemView.findViewById(R.id.clothesCard);
+            targetImageView = cardWardrobe.findViewById(R.id.card_wardrobe_image);
         }
 
         public void bind(Garment garment, OnItemClickListener listener) {
@@ -73,17 +76,7 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
                         .load(garment.getImageUrl())
                         .placeholder(R.drawable.ic_launcher_background)
                         .centerCrop()
-                        .into(new CustomTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                cardWardrobe.setCardImage(resource);
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                                cardWardrobe.setCardImage(placeholder);
-                            }
-                        });
+                        .into(targetImageView);
 
                 cardWardrobe.setOnCardClickListener(v -> {
                     if (listener != null) {

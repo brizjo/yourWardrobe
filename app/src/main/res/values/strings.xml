@@ -101,4 +101,5 @@
     <string name="name">Nome</string>
     <string name="applica_modifiche">Applica Modifiche</string>
     <string name="elimina_capo">Elimina Capo</string>
+    <string name="filter_garments">filtra vestiti</string>
 </resources>

@@ -6,17 +6,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.main.fragments.ClothesFragment">
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="@dimen/md"
-        app:icon="@drawable/ic_add"
-        app:iconGravity="textStart"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/aggiungi_capo" />
+        android:layout_marginTop="@dimen/md"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp">
+        <ImageView
+            android:id="@+id/filter_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_filter"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="@string/filter_garments" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/md"
+            app:icon="@drawable/ic_add"
+            app:iconGravity="textStart"
+            android:text="@string/aggiungi_capo" />
+    </RelativeLayout>
+    <HorizontalScrollView
+        android:id="@+id/active_filters_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:visibility="gone">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/active_filters_chipgroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:singleLine="true"/>
+    </HorizontalScrollView>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -31,7 +62,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/magliette"
+                android:text="@string/parte_superiore"
+                android:layout_marginStart="@dimen/sm"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
                 android:textColor="@color/md_theme_primary"/>
             <View
@@ -43,7 +75,7 @@
                 android:background="@color/md_theme_primary" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/magliette_recycler_view"
+                android:id="@+id/parte_superiore_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="196dp"
                 android:clipChildren="false"
@@ -53,7 +85,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/felpe"
+                android:layout_marginStart="@dimen/sm"
+                android:text="@string/parte_inferiore"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
                 android:textColor="@color/md_theme_primary"/>
             <View
@@ -64,7 +97,7 @@
                 android:layout_marginBottom="@dimen/md"
                 android:background="@color/md_theme_primary" />
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/felpe_recycler_view"
+                android:id="@+id/parte_inferiore_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="196dp"
                 android:clipChildren="false"
@@ -74,7 +107,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pantaloni"
+                android:layout_marginStart="@dimen/sm"
+                android:text="@string/accessori"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
                 android:textColor="@color/md_theme_primary"/>
             <View
@@ -85,28 +119,7 @@
                 android:layout_marginBottom="@dimen/md"
                 android:background="@color/md_theme_primary" />
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/pantaloni_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="196dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/scarpe"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                android:textColor="@color/md_theme_primary"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="@dimen/sm"
-                android:layout_marginEnd="@dimen/sm"
-                android:layout_marginBottom="@dimen/md"
-                android:background="@color/md_theme_primary" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/scarpe_recycler_view"
+                android:id="@+id/accessori_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="196dp"
                 android:clipChildren="false"

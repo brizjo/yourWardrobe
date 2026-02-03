@@ -4,11 +4,13 @@ public class User {
     private final String uid;
     private final String email;
     private final String displayName;
+    private final String photoUrl;
 
-    public User(String uid, String email, String displayName) {
+    public User(String uid, String email, String displayName, String photoUrl) {
         this.uid = uid;
         this.email = email;
         this.displayName = displayName;
+        this.photoUrl = photoUrl;
     }
 
     public String getUid() {
@@ -20,6 +22,11 @@ public class User {
     }
 
     public String getDisplayName() {
-        return displayName != null ? displayName : email != null ? email : "Ospite";
+        return displayName;
     }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
 }

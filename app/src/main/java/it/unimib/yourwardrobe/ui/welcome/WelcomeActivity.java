@@ -8,8 +8,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 
+@AndroidEntryPoint
 public class WelcomeActivity extends AppCompatActivity {
 
     @Override

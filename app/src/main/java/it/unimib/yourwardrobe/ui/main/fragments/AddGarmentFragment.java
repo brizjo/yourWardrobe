@@ -1,17 +1,9 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
-import android.content.res.ColorStateList;
-import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
+import android.content.res.ColorStateList;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,28 +16,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.ui.main.components.CardMenu;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddGarmentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AddGarmentFragment extends Fragment {
 
     private ImageView addGarmentImageView;
@@ -54,21 +45,6 @@ public class AddGarmentFragment extends Fragment {
     private ChipGroup styleChipGroup;
     private ChipGroup fabricChipGroup;
     private AddGarmentViewModel viewModel;
-    private TextInputEditText garmentNameEditText;
-    private Button addGarmentButton;
-
-
-    // 1. Launcher per la richiesta dei permessi
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permesso concesso, lancia la fotocamera
-                    launchCamera();
-                } else {
-                    // Permesso negato, informa l'utente
-                    Toast.makeText(getContext(), "Permesso fotocamera necessario per scattare una foto", Toast.LENGTH_SHORT).show();
-                }
-            });
 
     // 2. Launcher per ricevere il risultato dalla fotocamera
     private final ActivityResultLauncher<Void> takePictureLauncher =
@@ -81,16 +57,20 @@ public class AddGarmentFragment extends Fragment {
                     viewModel.setGarmentImage(bitmap);
                 }
             });
+    // 1. Launcher per la richiesta dei permessi
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permesso concesso, lancia la fotocamera
+                    launchCamera();
+                } else {
+                    // Permesso negato, informa l'utente
+                    Toast.makeText(getContext(), "Permesso fotocamera necessario per scattare una foto", Toast.LENGTH_SHORT).show();
+                }
+            });
+    private TextInputEditText garmentNameEditText;
+    private Button addGarmentButton;
 
-    public AddGarmentFragment() {
-        // Required empty public constructor
-    }
-
-
-    public static AddGarmentFragment newInstance(String param1, String param2) {
-        AddGarmentFragment fragment = new AddGarmentFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,18 +88,10 @@ public class AddGarmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // 1. Recupera il repository dal ServiceLocator
-        GarmentRepository garmentRepository = it.unimib.yourwardrobe.core.di.ServiceLocator
-                .getInstance()
-                .getGarmentRepository();
 
         // 2. Crea la Factory passando Application e il Repository
-        AddGarmentViewModelFactory factory = new AddGarmentViewModelFactory(
-                requireActivity().getApplication(),
-                garmentRepository
-        );
 
-
-        viewModel = new ViewModelProvider(this, factory).get(AddGarmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
         addGarmentImageView = view.findViewById(R.id.addGarmentImage);
         categoryTextView = view.findViewById(R.id.category_text_view);
         colorChipGroup = view.findViewById(R.id.chip_group_color);
@@ -136,15 +108,15 @@ public class AddGarmentFragment extends Fragment {
         });
 
         viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors -> {
-            updateMainChipGroup(colorChipGroup, colors, selected ->viewModel.updateSelectedColors(selected));
+            updateMainChipGroup(colorChipGroup, colors, selected -> viewModel.updateSelectedColors(selected));
         });
 
         viewModel.getSelectedStyles().observe(getViewLifecycleOwner(), styles -> {
-            updateMainChipGroup(styleChipGroup, styles, selected ->viewModel.updateSelectedStyles(selected));
+            updateMainChipGroup(styleChipGroup, styles, selected -> viewModel.updateSelectedStyles(selected));
         });
 
         viewModel.getSelectedFabrics().observe(getViewLifecycleOwner(), fabrics -> {
-            updateMainChipGroup(fabricChipGroup, fabrics, selected ->viewModel.updateSelectedFabrics(selected));
+            updateMainChipGroup(fabricChipGroup, fabrics, selected -> viewModel.updateSelectedFabrics(selected));
         });
 
         //todo: vedere geterrormessage
@@ -179,9 +151,13 @@ public class AddGarmentFragment extends Fragment {
 
         garmentNameEditText.addTextChangedListener(new TextWatcher() { //controllo inserimento testo
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 // Notifica il ViewModel del nuovo nome
@@ -228,8 +204,7 @@ public class AddGarmentFragment extends Fragment {
                 allOptions = viewModel.getAllStyles().getValue();
                 currentSelection = viewModel.getSelectedStyles().getValue();
                 dialogTitle = "Seleziona Stili";
-            }
-            else if ("fabric".equals(type)) {
+            } else if ("fabric".equals(type)) {
                 allOptions = viewModel.getAllFabrics().getValue();
                 currentSelection = viewModel.getSelectedFabrics().getValue();
                 dialogTitle = "Seleziona Tessuti";
@@ -241,18 +216,13 @@ public class AddGarmentFragment extends Fragment {
                         viewModel.updateSelectedColors(newSelection);
                     } else if ("style".equals(type)) {
                         viewModel.updateSelectedStyles(newSelection);
-                    }
-                    else if ("fabric".equals(type)) {
+                    } else if ("fabric".equals(type)) {
                         viewModel.updateSelectedFabrics(newSelection);
                     }
                 });
             }
         });
         chipGroup.addView(addChip, 0);
-    }
-
-    interface OnSelectionConfirmedListener {
-        void onConfirmed(List<String> newSelection);
     }
 
     private void showChipSelectionDialog(String title, List<String> allOptions, List<String> currentSelection, OnSelectionConfirmedListener listener) {
@@ -268,11 +238,11 @@ public class AddGarmentFragment extends Fragment {
         dialogTitle.setText(title);
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
         int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer);
-        int[][] states = new int[][] {
-                new int[] { android.R.attr.state_checked}, // Stato: selezionato (checked)
-                new int[] {-android.R.attr.state_checked}  // Stato: non selezionato
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
         };
-        int[] colors = new int[] {
+        int[] colors = new int[]{
                 colorSelected,
                 colorDefault
         };
@@ -281,11 +251,11 @@ public class AddGarmentFragment extends Fragment {
         int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
         int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
 
-        int[][] textStates = new int[][] {
-                new int[] { android.R.attr.state_checked},
-                new int[] {-android.R.attr.state_checked}
+        int[][] textStates = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
         };
-        int[] textColors = new int[] {
+        int[] textColors = new int[]{
                 textColorSelected,
                 textColorDefault
         };
@@ -350,6 +320,10 @@ public class AddGarmentFragment extends Fragment {
             });
             chipGroup.addView(chip);
         }
+    }
+
+    interface OnSelectionConfirmedListener {
+        void onConfirmed(List<String> newSelection);
     }
 
 }

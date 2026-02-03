@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.welcome.fragments.LoginFragment">
+    tools:context=".ui.welcome.fragments.SignInFragment">
 
     <TextView
         android:layout_width="match_parent"
@@ -20,10 +20,9 @@
         android:id="@+id/imageLogin"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:src="@drawable/dressing_login"
-        android:scaleType="centerInside"
         android:contentDescription="@string/dressinlogin"
-        />
+        android:scaleType="centerInside"
+        android:src="@drawable/dressing_login" />
 
 
     <ScrollView
@@ -33,21 +32,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/lg"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/lg">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/benvenuto"
                 android:layout_marginStart="@dimen/md"
+                android:text="@string/benvenuto"
                 android:textAppearance="@style/MyHeadlineLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/registrato"
                 android:layout_marginStart="@dimen/md"
+                android:text="@string/registrato"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -102,9 +101,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/xl"
                 android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"/>
+                android:layout_marginTop="@dimen/xl"
+                android:layout_marginEnd="50dp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -143,8 +142,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginTop="@dimen/md"/>
+                android:layout_marginTop="@dimen/md"
+                android:layout_marginEnd="50dp" />
 
             <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
                 android:id="@+id/sign_up_button"
@@ -152,8 +151,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginTop="@dimen/md"/>
+                android:layout_marginTop="@dimen/md"
+                android:layout_marginEnd="50dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

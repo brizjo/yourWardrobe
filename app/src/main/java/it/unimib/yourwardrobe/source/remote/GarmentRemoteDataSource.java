@@ -1,7 +1,7 @@
 package it.unimib.yourwardrobe.source.remote;
+
 import android.graphics.Bitmap;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -17,17 +17,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.User;
 
 public class GarmentRemoteDataSource {
-
-    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
-
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final AuthRemoteDataSource auth = new AuthRemoteDataSource();
 
     private static final Set<String> KEYWORDS_GARMENT = new HashSet<>(Arrays.asList(
             // Categorie Generali (Rimosso "Fashion", "Textile", "Pattern" perché troppo generici)
@@ -47,9 +43,18 @@ public class GarmentRemoteDataSource {
             // Accessori
             "Scarf", "Tie", "Belt", "Gloves", "Hat"
     ));
+    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
+    private final FirebaseFirestore firestore;
+    private final FirebaseStorage storage;
+    private final AuthRemoteDataSource auth;
     //TODO: SI POTREBBE FARE CIO PER OGNI CATEGORIA (ESEMPIO: SE L'UTETNTE INSERISCE UN VESTITO DA SEZIONE MAGLIETTE E NON è UNA MAGLIETTA ALLORA RIFIUTA)
-    public GarmentRemoteDataSource(){
-        //todo: commentare
+
+    @Inject
+    public GarmentRemoteDataSource(AuthRemoteDataSource auth, FirebaseStorage storage, FirebaseFirestore firestore) {
+        this.auth = auth;
+        this.firestore = firestore;
+        this.storage = storage;
+        //TODO: spostare la creazione del classifier in un singleton per non ricrearlo ogni volta
         this.classifier = ImageLabeling.getClient(new ImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.6f)
                 .build());
@@ -78,51 +83,50 @@ public class GarmentRemoteDataSource {
     }
 
 
-
-        public void uploadImage(Bitmap image, Callback<String> callback) {
+    public void uploadImage(Bitmap image, Callback<String> callback) {
 
         User currentUser = auth.getCurrentUser();
         String uid = currentUser.getUid();
-        if (uid == null){
+        if (uid == null) {
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
             return;
         }
 
 
-            String fileName = currentUser.getUid()+"_"+System.currentTimeMillis()+".jpg";
-            StorageReference storageRef = storage.getReference()
-                    .child("users")
-                    .child(uid)
-                    .child("garments")
-                    .child(fileName);
+        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+        StorageReference storageRef = storage.getReference()
+                .child("users")
+                .child(uid)
+                .child("garments")
+                .child(fileName);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
-            byte [] byteFoto = baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
+        byte[] byteFoto = baos.toByteArray();
 
-            storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot->{
+        storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot -> {
 
-                storageRef.getDownloadUrl()
-                        .addOnFailureListener(e -> callback.onFailure("errore nella creazione url foto", e))
-                        .addOnSuccessListener(uri -> callback.onSuccess(uri.toString()));
+                    storageRef.getDownloadUrl()
+                            .addOnFailureListener(e -> callback.onFailure("errore nella creazione url foto", e))
+                            .addOnSuccessListener(uri -> callback.onSuccess(uri.toString()));
 
-            })
-                    .addOnFailureListener(e -> callback.onFailure("errore durante l'upload della foto", e));
+                })
+                .addOnFailureListener(e -> callback.onFailure("errore durante l'upload della foto", e));
 
 
     }
 
 
-    public void saveGarmentDocument(Garment garment, Callback<Boolean> callback){
+    public void saveGarmentDocument(Garment garment, Callback<Boolean> callback) {
 
         User currentUser = auth.getCurrentUser();
         String uid = currentUser.getUid();
-        if ( uid == null){
+        if (uid == null) {
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
             return;
         }
 
-        DocumentReference newDoc = db.collection("user")
+        DocumentReference newDoc = firestore.collection("user")
                 .document(uid)
                 .collection("garments")
                 .document(); // Genera l'ID
@@ -131,16 +135,9 @@ public class GarmentRemoteDataSource {
         garment.setId(newDoc.getId());
 
 
-
         newDoc.set(garment)
-                .addOnCompleteListener(aVoid ->callback.onSuccess(true))
+                .addOnCompleteListener(aVoid -> callback.onSuccess(true))
                 .addOnFailureListener(e -> callback.onFailure("errore durante l'upload del documento su firestore", e));
-
-
-
-
-
-
 
 
     }

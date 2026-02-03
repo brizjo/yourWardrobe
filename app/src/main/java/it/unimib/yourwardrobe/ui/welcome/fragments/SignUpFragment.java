@@ -2,46 +2,31 @@ package it.unimib.yourwardrobe.ui.welcome.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
+import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SignUpFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SignUpFragment extends Fragment {
 
-    private LoginViewModel loginViewModel;
+    private AuthViewModel authViewModel;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private TextInputEditText confirmPasswordEditText;
-    private  TextInputEditText usernameEditText;
+    private TextInputEditText usernameEditText;
     private long lastClickTime = 0;
-
-    public SignUpFragment() {
-        // Required empty public constructor
-    }
-
-    public static SignUpFragment newInstance() {
-        SignUpFragment fragment = new SignUpFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +42,7 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loginViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         emailEditText = view.findViewById(R.id.signUpEmail);
         usernameEditText = view.findViewById(R.id.username_signup);
         passwordEditText = view.findViewById(R.id.signUpPassword);
@@ -75,27 +60,27 @@ public class SignUpFragment extends Fragment {
             String password = passwordEditText.getText() != null ? passwordEditText.getText().toString().trim() : "";
             String confirmPassword = confirmPasswordEditText.getText() != null ? confirmPasswordEditText.getText().toString().trim() : "";
             String username = usernameEditText.getText() != null ? usernameEditText.getText().toString().trim() : "";
-            // Chiama il metodo signUp nel ViewModel
-            loginViewModel.signUp(username, email, password, confirmPassword);
+
+            authViewModel.signUp(username, email, password, confirmPassword);
         });
-        loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
 
-
-            if (result.success) {
-                // Registrazione avvenuta con successo
-                ToastHelper.show(getContext(), "Registrazione completata!", false);
-
-                // Avvia MainActivity e pulisce lo stack di navigazione
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                requireActivity().finish();
-
-            } else if (!result.success) {
-                // Mostra l'errore di validazione o registrazione
-                String errorMessage = ((LoginViewModel.AuthenticationResult) result).errorMessage;
-                ToastHelper.show(getContext(), errorMessage, true);
-            }
-        });
+        authViewModel.
+                authResult
+                .observe(getViewLifecycleOwner(), result -> {
+                    switch (result.status) {
+                        case LOADING:
+                            break;
+                        case SUCCESS:
+                            ToastHelper.show(getContext(), "Registrazione completata!", false);
+                            // Avvia MainActivity e pulisce lo stack di navigazione
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            requireActivity().finish();
+                        case ERROR:
+                            ToastHelper.show(getContext(), result.message, true);
+                            break;
+                    }
+                });
     }
 }

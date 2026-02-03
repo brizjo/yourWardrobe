@@ -20,6 +20,7 @@ import it.unimib.yourwardrobe.R;
 public class GarmentViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
+    private Garment originalGarment;
     private final MutableLiveData<Garment> garment = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isDeleted = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -45,6 +46,7 @@ public class GarmentViewModel extends AndroidViewModel {
     }
     public void setGarment(Garment garment){
         this.garment.postValue(garment);
+        this.originalGarment = new Garment(garment);
     }
 
     public void deleteGarment(){
@@ -70,9 +72,11 @@ public class GarmentViewModel extends AndroidViewModel {
 
     public void updateGarment() {
         Garment currentGarment = garment.getValue();
-        if (currentGarment == null) {
-            // Gestisci l'errore, anche se non dovrebbe succedere
-            return;
+        if (currentGarment != null && currentGarment.equals(originalGarment)) {
+            Log.i("GarmentViewModel", "Nessuna modifica rilevata. Aggiornamento saltato.");
+            exitEditMode();
+            garmentUpdatedSuccessfully.postValue(true);
+            return; // Interrompi l'esecuzione qui
         }
         garmentRepository.updateGarment(currentGarment, new Callback<Boolean>() {
             @Override
@@ -91,6 +95,13 @@ public class GarmentViewModel extends AndroidViewModel {
         });
     }
 
+    public void setGarmentName(String name) {
+        Garment currentGarment = garment.getValue();
+        if (currentGarment != null && !name.equals(currentGarment.getName())) {
+            currentGarment.setName(name);
+            garment.setValue(currentGarment);
+        }
+    }
     public List<String> getAllColors() {
         // recupera i dati da array di risorse
         return Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_color));

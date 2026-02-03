@@ -1,5 +1,8 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
+import static com.google.android.material.internal.ViewUtils.hideKeyboard;
+import static com.google.android.material.internal.ViewUtils.showKeyboard;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -8,13 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.MenuHost;
-import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +30,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +53,16 @@ import it.unimib.yourwardrobe.utils.ToastHelper;
 public class GarmentFragment extends Fragment {
 
     private GarmentViewModel viewModel;
+    private boolean isInitialGarmentLoad = true;
     private ImageView garmentImageView;
     private TextView nameTextView;
+    private TextInputLayout nameGarmentInputLayout;
+    private TextInputEditText nameGarmentEditText;
     private ChipGroup colorChipGroup;
     private ChipGroup styleChipGroup;
     private ChipGroup fabricChipGroup;
     private View editButtonsContainer;
+    private FloatingActionButton editFab;
 
     public GarmentFragment() {
         // Required empty public constructor
@@ -81,27 +87,13 @@ public class GarmentFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MenuHost menuHost = requireActivity();
-        menuHost.addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                // Gonfia il tuo menu, esattamente come facevi prima in onCreateOptionsMenu
-                menuInflater.inflate(R.menu.garment_details_menu, menu);
-            }
 
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                // Gestisci il click, esattamente come facevi prima in onOptionsItemSelected
-                if (menuItem.getItemId() == R.id.action_edit_garment) {
-                    viewModel.enterEditMode();
-                    return true; // Indica che l'evento è stato gestito
-                }
-                return false; // L'evento non è stato gestito da questo provider
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         garmentImageView = view.findViewById(R.id.garmentImage); // Assicurati l'ID sia corretto nel layout
         nameTextView = view.findViewById(R.id.nameGarmentText);
+        nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
+        nameGarmentEditText = view.findViewById(R.id.nameGarmentEditText);
         editButtonsContainer = view.findViewById(R.id.edit_buttons_container);
+        editFab = view.findViewById(R.id.edit_fab);
         Button deleteButton = view.findViewById(R.id.delete_button);
         Button updateButton = view.findViewById(R.id.update_button);
         colorChipGroup = view.findViewById(R.id.chip_group_garment_color);
@@ -119,6 +111,19 @@ public class GarmentFragment extends Fragment {
                 viewModel.setGarment(garment);
             }
         }
+        nameGarmentEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                viewModel.setGarmentName(s.toString());
+            }
+        });
+
+        editFab.setOnClickListener(v -> {
+            viewModel.enterEditMode();
+        });
 
         observeViewModel();
         if (deleteButton != null) {
@@ -130,7 +135,10 @@ public class GarmentFragment extends Fragment {
     private void observeViewModel() {
         viewModel.getGarment().observe(getViewLifecycleOwner(), garment -> {
             nameTextView.setText(garment.getName());
-
+            if (isInitialGarmentLoad) {
+                nameGarmentEditText.setText(garment.getName());
+                isInitialGarmentLoad = false; // Imposta il flag a false dopo il primo caricamento
+            }
             // CARICAMENTO OTTIMIZZATO
             Glide.with(this)
                     .load(garment.getImageUrl())
@@ -149,9 +157,21 @@ public class GarmentFragment extends Fragment {
 
         viewModel.getIsEditMode().observe(getViewLifecycleOwner(), isInEditMode -> {
             if (isInEditMode) {
+                nameTextView.setVisibility(View.GONE);
+                nameGarmentInputLayout.setVisibility(View.VISIBLE);
                 editButtonsContainer.setVisibility(View.VISIBLE);
+                editFab.setVisibility(View.GONE);
+
+                nameGarmentEditText.requestFocus();
+                showKeyboard(nameGarmentEditText);
             } else {
+                nameTextView.setVisibility(View.VISIBLE);
+                nameGarmentInputLayout.setVisibility(View.GONE);
                 editButtonsContainer.setVisibility(View.GONE);
+                editFab.setVisibility(View.VISIBLE);
+
+                nameGarmentEditText.clearFocus();
+                hideKeyboard(nameGarmentEditText);
             }
             Garment currentGarment = viewModel.getGarment().getValue();
             populateChips(currentGarment);

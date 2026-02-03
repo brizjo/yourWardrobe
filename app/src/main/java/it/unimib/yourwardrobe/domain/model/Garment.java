@@ -1,20 +1,34 @@
 package it.unimib.yourwardrobe.domain.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Garment  implements Serializable {
     // Attributi corrispondenti ai campi Firestore
     private String id; // Utile per gestire il documento in locale
     private String name;private String category;
     private String subCategory;
-    private String season;
+
     private String imageUrl;
     private List<String> color;  // Firestore Array -> Java List
     private List<String> fabric; // Firestore Array -> Java List
     private List<String> style;  // Firestore Array -> Java List
 
     public Garment() {
+    }
+
+    public Garment(Garment other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.imageUrl = other.imageUrl;
+        this.category = other.category;
+        // nuove liste per evitare di modificare la stessa istanza in memoria
+        this.color = (other.color != null) ? new ArrayList<>(other.color) : null;
+        this.style = (other.style != null) ? new ArrayList<>(other.style) : null;
+        this.fabric = (other.fabric != null) ? new ArrayList<>(other.fabric) : null;
+
     }
 
     public Garment(String id, String name, String category, String subCategory,
@@ -24,7 +38,6 @@ public class Garment  implements Serializable {
         this.name = name;
         this.category = category;
         this.subCategory = subCategory;
-        this.season = season;
         this.imageUrl = imageUrl;
         this.color = color;
         this.fabric = fabric;
@@ -45,9 +58,6 @@ public class Garment  implements Serializable {
     public String getSubCategory() { return subCategory; }
     public void setSubCategory(String subCategory) { this.subCategory = subCategory; }
 
-    public String getSeason() { return season; }
-    public void setSeason(String season) { this.season = season; }
-
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
@@ -67,5 +77,22 @@ public class Garment  implements Serializable {
                 "name='" + name + '\'' +
                 ", category='" + category + '\'' +
                 '}';
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Garment garment = (Garment) o;
+        return Objects.equals(id, garment.id) &&
+                Objects.equals(name, garment.name) &&
+                Objects.equals(imageUrl, garment.imageUrl) &&
+                Objects.equals(category, garment.category) &&
+                Objects.equals(color, garment.color) &&
+                Objects.equals(style, garment.style) &&
+                Objects.equals(fabric, garment.fabric);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, imageUrl, category, color, style, fabric);
     }
 }

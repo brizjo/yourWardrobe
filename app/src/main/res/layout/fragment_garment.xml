@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/layout_bottoni"
+        android:layout_above="@id/edit_buttons_container"
         android:padding="@dimen/md">
 
         <LinearLayout
@@ -42,18 +42,67 @@
                 android:background="@color/md_theme_primary" />
 
             <!-- Aggiungi qui eventuali altre TextView per colore, tessuto, etc. -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginTop="@dimen/md"
+                android:text="@string/color"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_garment_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginEnd="@dimen/md">
+            </com.google.android.material.chip.ChipGroup>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginTop="@dimen/md"
+                android:text="@string/style"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_garment_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginEnd="@dimen/md">
+
+            </com.google.android.material.chip.ChipGroup>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginTop="@dimen/md"
+                android:text="@string/tessuto"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_garment_fabric"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginEnd="@dimen/md">
+
+            </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
     </ScrollView>
 
     <!-- Contenitore fissato in basso per i bottoni -->
     <LinearLayout
-        android:id="@+id/layout_bottoni"
+        android:id="@+id/edit_buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="@dimen/lg"
+        android:gravity="center"
+        android:visibility="gone"
         android:weightSum="2">
 
         <Button

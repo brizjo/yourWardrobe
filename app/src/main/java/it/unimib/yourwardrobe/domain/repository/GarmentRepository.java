@@ -16,6 +16,6 @@ public interface GarmentRepository {
 
     public void getGarments(Callback<List<Garment>> callback);
 
-
+    void updateGarment(Garment garment, Callback<Boolean> callback);
 
 }

@@ -167,6 +167,31 @@ public class GarmentRemoteDataSource {
 
     }
 
+    public void updateGarment(Garment garment, Callback<Boolean> callback) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            callback.onFailure("Utente non autenticato.", new IllegalStateException("Utente non autenticato"));
+            return;
+        }
+        if (garment == null || garment.getId() == null) {
+            callback.onFailure("Dati del capo non validi.", new IllegalArgumentException("Garment o Garment ID è null"));
+            return;
+        }
+
+        Log.d("GarmentDataSource", "Aggiornamento del capo con ID: " + garment.getId());
+        db.collection("user").document(uid)
+                .collection("garments").document(garment.getId())
+                .set(garment) // .set() sovrascrive il documento con i nuovi dati
+                .addOnSuccessListener(aVoid -> {
+                    Log.i("GarmentDataSource", "Capo aggiornato con successo su Firestore.");
+                    callback.onSuccess(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("GarmentDataSource", "Errore durante l'aggiornamento del capo.", e);
+                    callback.onFailure("Errore durante l'aggiornamento.", e);
+                });
+    }
+
     public void getGarments(Callback<List<Garment>> callback) {
         User currentuser = auth.getCurrentUser();
         String uid = currentuser.getUid();

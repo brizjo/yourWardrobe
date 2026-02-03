@@ -62,8 +62,10 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     @Override
     public void deleteGarment(Garment garment, Callback<Boolean> callback) {
         dataSource.deleteGarment(garment, callback);
+    }
 
-
+    public void updateGarment(Garment garment, Callback<Boolean> callback) {
+        dataSource.updateGarment(garment, callback);
     }
 
     @Override

@@ -12,4 +12,6 @@ public interface AuthRepository {
     void signUp(String username, String email, String password, Callback<User> callback);
 
     void signInWithGoogle(Callback<User> callback);
+
+    void signOut();
 }

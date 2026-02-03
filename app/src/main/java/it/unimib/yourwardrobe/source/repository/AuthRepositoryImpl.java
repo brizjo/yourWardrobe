@@ -43,4 +43,9 @@ public class AuthRepositoryImpl implements AuthRepository {
         this.authRemoteDataSource.signInWithGoogle(context, callback);
 
     }
+
+    @Override
+    public void signOut() {
+        this.authRemoteDataSource.signOut();
+    }
 }

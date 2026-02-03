@@ -17,13 +17,13 @@ import it.unimib.yourwardrobe.domain.repository.AuthRepository;
 @HiltViewModel
 public class AuthViewModel extends ViewModel {
 
-    private final AuthRepository userRepository;
+    private final AuthRepository authRepository;
     private final MutableLiveData<Result<User>> _authResult = new MutableLiveData<>();
     public final LiveData<Result<User>> authResult = _authResult;
 
     @Inject
     public AuthViewModel(AuthRepository authRepository) {
-        this.userRepository = authRepository;
+        this.authRepository = authRepository;
     }
 
     public void signInWithEmail(String email, String password) {
@@ -38,7 +38,7 @@ public class AuthViewModel extends ViewModel {
         }
 
         this._authResult.postValue(Result.loading(null));
-        this.userRepository.signInWithEmail(email, password, new Callback<User>() {
+        this.authRepository.signInWithEmail(email, password, new Callback<User>() {
 
             @Override
             public void onSuccess(User data) {
@@ -55,7 +55,7 @@ public class AuthViewModel extends ViewModel {
 
     public void signInWithGoogle() {
         _authResult.postValue(Result.loading(null));
-        this.userRepository.signInWithGoogle(new Callback<>() {
+        this.authRepository.signInWithGoogle(new Callback<>() {
             @Override
             public void onSuccess(User data) {
                 _authResult.postValue(Result.success(data));
@@ -85,7 +85,7 @@ public class AuthViewModel extends ViewModel {
             return;
         }
 
-        this.userRepository.signUp(username, email, password, new Callback<>() {
+        this.authRepository.signUp(username, email, password, new Callback<>() {
 
             @Override
             public void onSuccess(User data) {
@@ -99,8 +99,12 @@ public class AuthViewModel extends ViewModel {
         });
     }
 
+    public void signOut() {
+        this.authRepository.signOut();
+    }
+
     public void getCurrentUser() {
-        var user = this.userRepository.getCurrentUser();
+        var user = this.authRepository.getCurrentUser();
         if (user != null) {
             _authResult.postValue(Result.success(user));
         }

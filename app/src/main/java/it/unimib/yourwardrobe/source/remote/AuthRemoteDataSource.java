@@ -138,6 +138,10 @@ public class AuthRemoteDataSource {
                 });
     }
 
+    public void signOut() {
+        auth.signOut();
+    }
+
     private void updateUserProfile(FirebaseUser firebaseUser, String username, Callback<User> callback) {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(username)
@@ -166,4 +170,5 @@ public class AuthRemoteDataSource {
                 getUserPhotoUrl(firebaseUser)
         );
     }
+
 }

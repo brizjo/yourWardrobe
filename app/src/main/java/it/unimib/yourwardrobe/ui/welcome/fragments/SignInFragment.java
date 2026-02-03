@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.ui.welcome.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
@@ -92,7 +94,10 @@ public class SignInFragment extends Fragment {
     }
 
     private void navigateToMainActivity() {
-        Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_mainActivity);
+        var intent = new Intent(requireActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     private void navigateToSignUpFragment() {

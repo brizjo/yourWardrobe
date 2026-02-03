@@ -99,6 +99,13 @@ public class AuthViewModel extends ViewModel {
         });
     }
 
+    public void getCurrentUser() {
+        var user = this.userRepository.getCurrentUser();
+        if (user != null) {
+            _authResult.postValue(Result.success(user));
+        }
+    }
+
     private boolean isEmailValid(String email) {
         return email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }

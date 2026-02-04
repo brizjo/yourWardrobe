@@ -95,6 +95,14 @@ public class GarmentViewModel extends AndroidViewModel {
         });
     }
 
+    public void cancelChanges() {
+        // Ripristina il LiveData con la copia originale non modificata
+        if (originalGarment != null) {
+            garment.setValue(new Garment(originalGarment));
+        }
+        exitEditMode();
+    }
+
     public void setGarmentName(String name) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null && !name.equals(currentGarment.getName())) {
@@ -116,68 +124,74 @@ public class GarmentViewModel extends AndroidViewModel {
     public void addColors(List<String> colorsToAdd) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null) {
-            if (currentGarment.getColor() == null) {
-                currentGarment.setColor(new ArrayList<>());
+            Garment newGarment = new Garment(currentGarment);
+            if (newGarment.getColor() == null) {
+                newGarment.setColor(new ArrayList<>());
             }
             // Aggiunge solo gli elementi non già presenti per sicurezza
             for (String color : colorsToAdd) {
-                if (!currentGarment.getColor().contains(color)) {
-                    currentGarment.getColor().add(color);
+                if (!newGarment.getColor().contains(color)) {
+                    newGarment.getColor().add(color);
                 }
             }
-            garment.setValue(currentGarment); // Notifica l'aggiornamento alla UI
+            garment.setValue(newGarment); // Notifica l'aggiornamento alla UI
         }
     }
     public void addStyles(List<String> stylesToAdd) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null) {
-            if (currentGarment.getStyle() == null) {
-                currentGarment.setStyle(new ArrayList<>());
+            Garment newGarment = new Garment(currentGarment);
+            if (newGarment.getStyle() == null) {
+                newGarment.setStyle(new ArrayList<>());
             }
             for (String style : stylesToAdd) {
-                if (!currentGarment.getStyle().contains(style)) {
-                    currentGarment.getStyle().add(style);
+                if (!newGarment.getStyle().contains(style)) {
+                    newGarment.getStyle().add(style);
                 }
             }
-            garment.setValue(currentGarment);
+            garment.setValue(newGarment);
         }
     }
     public void addFabrics(List<String> fabricsToAdd) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null) {
-            if (currentGarment.getFabric() == null) {
-                currentGarment.setFabric(new ArrayList<>());
+            Garment newGarment = new Garment(currentGarment);
+            if (newGarment.getFabric() == null) {
+                newGarment.setFabric(new ArrayList<>());
             }
             for (String fabric : fabricsToAdd) {
-                if (!currentGarment.getFabric().contains(fabric)) {
-                    currentGarment.getFabric().add(fabric);
+                if (!newGarment.getFabric().contains(fabric)) {
+                    newGarment.getFabric().add(fabric);
                 }
             }
-            garment.setValue(currentGarment);
+            garment.setValue(newGarment);
         }
     }
     public void removeColor(String colorToRemove) {
-        Garment currentGarment = garment.getValue();
+        Garment currentGarment = this.garment.getValue();
         if (currentGarment != null && currentGarment.getColor() != null) {
-            currentGarment.getColor().remove(colorToRemove);
+            Garment newGarment = new Garment(currentGarment);
+            newGarment.getColor().remove(colorToRemove);
             // Notifica il cambiamento al LiveData per aggiornare la UI
-            garment.setValue(currentGarment);
+            this.garment.setValue(newGarment);
         }
     }
 
     public void removeStyle(String styleToRemove) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null && currentGarment.getStyle() != null) {
-            currentGarment.getStyle().remove(styleToRemove);
-            garment.setValue(currentGarment);
+            Garment newGarment = new Garment(currentGarment);
+            newGarment.getStyle().remove(styleToRemove);
+            this.garment.setValue(newGarment);
         }
     }
 
     public void removeFabric(String fabricToRemove) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null && currentGarment.getFabric() != null) {
-            currentGarment.getFabric().remove(fabricToRemove);
-            garment.setValue(currentGarment);
+            Garment newGarment = new Garment(currentGarment);
+            newGarment.getFabric().remove(fabricToRemove);
+            this.garment.setValue(newGarment);
         }
     }
 }

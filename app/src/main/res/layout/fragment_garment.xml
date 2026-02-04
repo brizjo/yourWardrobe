@@ -140,23 +140,43 @@
             android:text="@string/applica_modifiche" />
 
         <Button
-            android:id="@+id/delete_button"
+            android:id="@+id/cancel_button"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sm"
             android:layout_weight="1"
-            android:text="@string/elimina_capo"
+            android:text="@string/annulla"
             android:textColor="@color/md_theme_error" />
     </LinearLayout>
 
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+
+        >
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/edit_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="@dimen/xl"
+        android:layout_gravity="bottom|end"
+        android:contentDescription="@string/modifica"
+        app:srcCompat="@drawable/ic_edit"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/delete_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/xl"
         android:contentDescription="@string/modifica"
-        app:srcCompat="@drawable/ic_edit" />
+        app:srcCompat="@drawable/ic_delete"
+        app:backgroundTint="@color/md_theme_errorContainer_mediumContrast"/>
+    </LinearLayout>
 </FrameLayout>

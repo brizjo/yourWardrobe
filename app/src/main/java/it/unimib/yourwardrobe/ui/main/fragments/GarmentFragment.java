@@ -36,6 +36,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.di.ServiceLocator;
@@ -63,6 +64,7 @@ public class GarmentFragment extends Fragment {
     private ChipGroup fabricChipGroup;
     private View editButtonsContainer;
     private FloatingActionButton editFab;
+    private FloatingActionButton deleteFab;
 
     public GarmentFragment() {
         // Required empty public constructor
@@ -94,7 +96,8 @@ public class GarmentFragment extends Fragment {
         nameGarmentEditText = view.findViewById(R.id.nameGarmentEditText);
         editButtonsContainer = view.findViewById(R.id.edit_buttons_container);
         editFab = view.findViewById(R.id.edit_fab);
-        Button deleteButton = view.findViewById(R.id.delete_button);
+        deleteFab = view.findViewById(R.id.delete_fab);
+        Button cancelButton = view.findViewById(R.id.cancel_button);
         Button updateButton = view.findViewById(R.id.update_button);
         colorChipGroup = view.findViewById(R.id.chip_group_garment_color);
         styleChipGroup = view.findViewById(R.id.chip_group_garment_style);
@@ -125,9 +128,13 @@ public class GarmentFragment extends Fragment {
             viewModel.enterEditMode();
         });
 
+        deleteFab.setOnClickListener(v -> {
+            showDeleteConfirmationDialog();
+        });
+
         observeViewModel();
-        if (deleteButton != null) {
-            deleteButton.setOnClickListener(v -> viewModel.deleteGarment());
+        if (cancelButton != null) {
+            cancelButton.setOnClickListener(v -> viewModel.cancelChanges());
         }
         updateButton.setOnClickListener(v -> viewModel.updateGarment());
     }
@@ -161,7 +168,7 @@ public class GarmentFragment extends Fragment {
                 nameGarmentInputLayout.setVisibility(View.VISIBLE);
                 editButtonsContainer.setVisibility(View.VISIBLE);
                 editFab.setVisibility(View.GONE);
-
+                deleteFab.setVisibility(View.GONE);
                 nameGarmentEditText.requestFocus();
                 showKeyboard(nameGarmentEditText);
             } else {
@@ -169,7 +176,7 @@ public class GarmentFragment extends Fragment {
                 nameGarmentInputLayout.setVisibility(View.GONE);
                 editButtonsContainer.setVisibility(View.GONE);
                 editFab.setVisibility(View.VISIBLE);
-
+                deleteFab.setVisibility(View.VISIBLE);
                 nameGarmentEditText.clearFocus();
                 hideKeyboard(nameGarmentEditText);
             }
@@ -187,6 +194,26 @@ public class GarmentFragment extends Fragment {
                 ToastHelper.show(getContext(), "Errore durante il salvataggio delle modifiche.", true);
             }
         });
+    }
+
+    private void showDeleteConfirmationDialog() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Conferma Eliminazione")
+                .setMessage("Sei sicuro di voler eliminare questo capo? L'azione è irreversibile.")
+                .setNegativeButton("Annulla", (dialog, which) -> {
+                    // L'utente ha premuto "Annulla", chiudo dialog
+                    dialog.dismiss();
+                })
+                .setPositiveButton("Elimina", (dialog, which) -> {
+                    // L'utente ha confermato, procedo con l'eliminazione
+                    viewModel.deleteGarment();
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_error));
+        }
     }
 
     private Chip createChip(Context context, String text, boolean isRemovable, Runnable onRemove) {

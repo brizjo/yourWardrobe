@@ -104,4 +104,7 @@
     <string name="filter_garments">filtra vestiti</string>
     <string name="modifica">Modifica</string>
     <string name="annulla">Annulla</string>
+    <string name="insert_order">Ordine di Inserimento</string>
+    <string name="order_by_category">Raggruppa per Categoria</string>
+    <string name="order_by_a_z">Ordine Alfabetico (A-Z)</string>
 </resources>

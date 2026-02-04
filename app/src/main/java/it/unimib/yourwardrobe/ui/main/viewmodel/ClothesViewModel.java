@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,12 @@ import it.unimib.yourwardrobe.R;
 public class ClothesViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
+
+    public enum DisplayMode {
+        BY_CATEGORY,
+        GRID_ALPHABETICAL,
+        GRID_BY_DATE
+    }
 
     // LiveData per la lista completa e lo stato
     private final MutableLiveData<List<Garment>> allGarments = new MutableLiveData<>();
@@ -40,6 +47,9 @@ public class ClothesViewModel extends AndroidViewModel {
     private final MediatorLiveData<Map<String, List<String>>> activeFilters = new MediatorLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<DisplayMode> displayMode = new MutableLiveData<>(DisplayMode.BY_CATEGORY);
+    private final MutableLiveData<List<Garment>> gridGarments = new MutableLiveData<>();
+
 
     public ClothesViewModel(Application application, GarmentRepository garmentRepository) {
         super(application);
@@ -82,6 +92,7 @@ public class ClothesViewModel extends AndroidViewModel {
             public void onSuccess(List<Garment> data) {
                 allGarments.postValue(data);
                 filterAndPostGarments(data);
+                updateDisplayedGarments(displayMode.getValue());
                 isLoading.postValue(false);
             }
 
@@ -150,12 +161,58 @@ public class ClothesViewModel extends AndroidViewModel {
                 .collect(Collectors.toList());
 
         filterAndPostGarments(filteredList);
+        updateDisplayedGarments(displayMode.getValue(), filteredList);
     }
 
     public void resetFilters() {
         activeColorFilters.setValue(new ArrayList<>());
         activeStyleFilters.setValue(new ArrayList<>());
         activeFabricFilters.setValue(new ArrayList<>());
+    }
+
+    public void setDisplayMode(DisplayMode mode) {
+        if (this.displayMode.getValue() == mode) return; // Non fare nulla se la modalità è già quella
+
+        this.displayMode.setValue(mode);
+        updateDisplayedGarments(mode);
+    }
+
+    private void updateDisplayedGarments(DisplayMode mode, List<Garment> listToDisplay) {
+        //List<Garment> fullList = allGarments.getValue();
+        if (listToDisplay == null) return;
+
+        List<Garment> listForGrid = new ArrayList<>(listToDisplay); // Lavora su una copia
+
+        switch (mode) {
+            case GRID_ALPHABETICAL:
+                // Ordina per nome, ignorando maiuscole/minuscole
+                listForGrid.sort(Comparator.comparing(Garment::getName, String.CASE_INSENSITIVE_ORDER));
+                gridGarments.setValue(listForGrid);
+                break;
+            case GRID_BY_DATE:
+                if (listForGrid.stream().allMatch(g -> g.getCreatedAt() != null)) {
+                    listForGrid.sort(Comparator.comparing(Garment::getCreatedAt).reversed()); // reversed() per i più recenti prima
+                }
+                gridGarments.setValue(listForGrid);
+                break;
+            case BY_CATEGORY:
+            default:
+                // La logica di filtraggio per categoria rimane la stessa
+                gridGarments.setValue(new ArrayList<>());
+                break;
+        }
+    }
+
+    private void updateDisplayedGarments(DisplayMode mode) {
+        // Quando la modalità viene cambiata, riapplica i filtri esistenti
+        applyAllFilters();
+    }
+    public LiveData<DisplayMode> getDisplayMode() {
+        return displayMode;
+    }
+
+    public LiveData<List<Garment>> getGridGarments() {
+        return gridGarments;
     }
 
     public LiveData<Map<String, List<String>>> getActiveFilters() {

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -49,6 +50,8 @@ public class ClothesFragment extends Fragment {
     private ClothesAdapter.OnItemClickListener listener;
     private ChipGroup activeFiltersChipGroup;
     private HorizontalScrollView activeFiltersScrollView;
+    private NestedScrollView categoriesScrollView;
+    private RecyclerView gridRecyclerView;
 
 
     public ClothesFragment() {
@@ -82,6 +85,8 @@ public class ClothesFragment extends Fragment {
             bundle.putSerializable("garment", item);
             Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_garmentFragment, bundle);
         };
+        categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
+        gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
 
         RecyclerView recyclerViewTop = view.findViewById(R.id.parte_superiore_recycler_view);
         RecyclerView recyclerViewBottom = view.findViewById(R.id.parte_inferiore_recycler_view);
@@ -93,6 +98,14 @@ public class ClothesFragment extends Fragment {
 
         recyclerViewTop.setNestedScrollingEnabled(false);
 
+        ImageView orderButton = view.findViewById(R.id.order_button);
+        orderButton.setOnClickListener(v -> showOrderDialog());
+        Button addButton = view.findViewById(R.id.add_button);
+        addButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_addGarmentFragment));
+        ImageView filterButton = view.findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(v -> {
+            showFilterCategoryMenu();
+        });
 
         GarmentRepository repository = ServiceLocator.getInstance().getGarmentRepository();
         ClothesViewModelFactory factory = new ClothesViewModelFactory(requireActivity().getApplication(), repository);
@@ -100,6 +113,17 @@ public class ClothesFragment extends Fragment {
         activeFiltersScrollView = view.findViewById(R.id.active_filters_scrollview);
 
         clothesViewModel = new ViewModelProvider(this, factory).get(ClothesViewModel.class);
+
+        clothesViewModel.getDisplayMode().observe(getViewLifecycleOwner(), mode -> {
+            updateLayoutForDisplayMode(mode);
+        });
+
+        clothesViewModel.getGridGarments().observe(getViewLifecycleOwner(), garments -> {
+            if (garments != null) {
+                // costruttore dell'adapter che accetta il layoutId
+                gridRecyclerView.setAdapter(new ClothesAdapter(garments, R.layout.item_clothes_grid, listener));
+            }
+        });
 
         clothesViewModel.getTopGarments().observe(getViewLifecycleOwner(), topGarments -> {
             if (topGarments != null) {
@@ -165,12 +189,36 @@ public class ClothesFragment extends Fragment {
             }
 
         });
-        Button addButton = view.findViewById(R.id.add_button);
-        addButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_addGarmentFragment));
-        ImageView filterButton = view.findViewById(R.id.filter_button);
-        filterButton.setOnClickListener(v -> {
-            showFilterCategoryMenu();
-        });
+    }
+
+    private void updateLayoutForDisplayMode(ClothesViewModel.DisplayMode mode) {
+        if (mode == ClothesViewModel.DisplayMode.BY_CATEGORY) {
+            categoriesScrollView.setVisibility(View.VISIBLE);
+            gridRecyclerView.setVisibility(View.GONE);
+        } else {
+            categoriesScrollView.setVisibility(View.GONE);
+            gridRecyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showOrderDialog() {
+        String[] orderOptions = getResources().getStringArray(R.array.order_options);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Ordina per")
+                .setItems(orderOptions, (dialog, which) -> {
+                    switch (which) {
+                        case 0: // Alfabetico
+                            clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.GRID_ALPHABETICAL);
+                            break;
+                        case 1: // Data di inserimento
+                            clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.GRID_BY_DATE);
+                            break;
+                        case 2: // Categoria
+                            clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.BY_CATEGORY);
+                            break;
+                    }
+                })
+                .show();
     }
 
     private void showFilterCategoryMenu() {

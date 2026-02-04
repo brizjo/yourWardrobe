@@ -1,7 +1,10 @@
 package it.unimib.yourwardrobe.domain.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +13,10 @@ public class Garment  implements Serializable {
     private String id; // Utile per gestire il documento in locale
     private String name;private String category;
     private String subCategory;
+
+    @ServerTimestamp // Annotazione di Firestore
+    private Date createdAt;
+
 
     private String imageUrl;
     private List<String> color;  // Firestore Array -> Java List
@@ -24,6 +31,7 @@ public class Garment  implements Serializable {
         this.name = other.name;
         this.imageUrl = other.imageUrl;
         this.category = other.category;
+        this.createdAt = other.createdAt;
         // nuove liste per evitare di modificare la stessa istanza in memoria
         this.color = (other.color != null) ? new ArrayList<>(other.color) : null;
         this.style = (other.style != null) ? new ArrayList<>(other.style) : null;
@@ -45,7 +53,12 @@ public class Garment  implements Serializable {
     }
 
 
-
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

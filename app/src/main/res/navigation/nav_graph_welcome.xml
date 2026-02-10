@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="it.unimib.yourwardrobe.ui.welcome.fragments.LoginFragment"
+        android:name="it.unimib.yourwardrobe.ui.welcome.fragments.SignInFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
@@ -21,7 +21,7 @@
         android:id="@+id/signUpFragment"
         android:name="it.unimib.yourwardrobe.ui.welcome.fragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_mainActivity"
             app:destination="@id/mainActivity" />

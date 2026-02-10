@@ -37,7 +37,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +49,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.activity.result.PickVisualMediaRequest;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddGarmentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AddGarmentFragment extends Fragment {
 
     private ImageView addGarmentImageView;
@@ -156,13 +150,8 @@ public class AddGarmentFragment extends Fragment {
                 .getGarmentRepository();
 
         // 2. Crea la Factory passando Application e il Repository
-        AddGarmentViewModelFactory factory = new AddGarmentViewModelFactory(
-                requireActivity().getApplication(),
-                garmentRepository
-        );
 
-
-        viewModel = new ViewModelProvider(this, factory).get(AddGarmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
         addGarmentImageView = view.findViewById(R.id.addGarmentImage);
         categoryTextView = view.findViewById(R.id.category_text_view);
         colorChipGroup = view.findViewById(R.id.chip_group_color);
@@ -308,8 +297,7 @@ public class AddGarmentFragment extends Fragment {
                 allOptions = viewModel.getAllStyles().getValue();
                 currentSelection = viewModel.getSelectedStyles().getValue();
                 dialogTitle = "Seleziona Stili";
-            }
-            else if ("fabric".equals(type)) {
+            } else if ("fabric".equals(type)) {
                 allOptions = viewModel.getAllFabrics().getValue();
                 currentSelection = viewModel.getSelectedFabrics().getValue();
                 dialogTitle = "Seleziona Tessuti";
@@ -321,8 +309,7 @@ public class AddGarmentFragment extends Fragment {
                         viewModel.updateSelectedColors(newSelection);
                     } else if ("style".equals(type)) {
                         viewModel.updateSelectedStyles(newSelection);
-                    }
-                    else if ("fabric".equals(type)) {
+                    } else if ("fabric".equals(type)) {
                         viewModel.updateSelectedFabrics(newSelection);
                     }
                 });
@@ -348,11 +335,11 @@ public class AddGarmentFragment extends Fragment {
         dialogTitle.setText(title);
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
         int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer);
-        int[][] states = new int[][] {
-                new int[] { android.R.attr.state_checked}, // Stato: selezionato (checked)
-                new int[] {-android.R.attr.state_checked}  // Stato: non selezionato
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
         };
-        int[] colors = new int[] {
+        int[] colors = new int[]{
                 colorSelected,
                 colorDefault
         };
@@ -361,11 +348,11 @@ public class AddGarmentFragment extends Fragment {
         int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
         int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
 
-        int[][] textStates = new int[][] {
-                new int[] { android.R.attr.state_checked},
-                new int[] {-android.R.attr.state_checked}
+        int[][] textStates = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
         };
-        int[] textColors = new int[] {
+        int[] textColors = new int[]{
                 textColorSelected,
                 textColorDefault
         };

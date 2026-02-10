@@ -4,7 +4,9 @@ import static it.unimib.yourwardrobe.utils.Constants.API_APPID_ERROR;
 
 import androidx.annotation.NonNull;
 
-import it.unimib.yourwardrobe.core.di.ServiceLocator;
+import javax.inject.Inject;
+
+import it.unimib.yourwardrobe.BuildConfig;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.source.api.WeatherApiService;
 import it.unimib.yourwardrobe.source.dto.WeatherResponse;
@@ -12,16 +14,17 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class WeatherRemoteDataSource {
-    private final String appid;
+
+    private static final String API_KEY = BuildConfig.OPENWEATHERMAP_KEY;
     private final WeatherApiService weatherApiService;
 
-    public WeatherRemoteDataSource(String appid) {
-        this.appid = appid;
-        this.weatherApiService = ServiceLocator.getInstance().getWeatherApiService();
+    @Inject
+    public WeatherRemoteDataSource(WeatherApiService weatherApiService) {
+        this.weatherApiService = weatherApiService;
     }
 
     public void getCurrentWeather(double lat, double lon, Callback<WeatherResponse> callback) {
-        Call<WeatherResponse> call = weatherApiService.getCurrentWeather(appid,
+        Call<WeatherResponse> call = weatherApiService.getCurrentWeather(API_KEY,
                 lat,
                 lon,
                 "metric",

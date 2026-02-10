@@ -19,17 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.User;
 
 public class GarmentRemoteDataSource {
-
-    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
-
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final AuthRemoteDataSource auth = new AuthRemoteDataSource();
 
     private static final Set<String> KEYWORDS_GARMENT = new HashSet<>(Arrays.asList(
             // Categorie Generali (Rimosso "Fashion", "Textile", "Pattern" perché troppo generici)
@@ -49,9 +45,18 @@ public class GarmentRemoteDataSource {
             // Accessori
             "Scarf", "Tie", "Belt", "Gloves", "Hat"
     ));
+    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
+    private final FirebaseFirestore firestore;
+    private final FirebaseStorage storage;
+    private final AuthRemoteDataSource auth;
     //TODO: SI POTREBBE FARE CIO PER OGNI CATEGORIA (ESEMPIO: SE L'UTETNTE INSERISCE UN VESTITO DA SEZIONE MAGLIETTE E NON è UNA MAGLIETTA ALLORA RIFIUTA)
-    public GarmentRemoteDataSource(){
-        //todo: commentare
+
+    @Inject
+    public GarmentRemoteDataSource(AuthRemoteDataSource auth, FirebaseStorage storage, FirebaseFirestore firestore) {
+        this.auth = auth;
+        this.firestore = firestore;
+        this.storage = storage;
+        //TODO: spostare la creazione del classifier in un singleton per non ricrearlo ogni volta
         this.classifier = ImageLabeling.getClient(new ImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.6f)
                 .build());
@@ -91,16 +96,16 @@ public class GarmentRemoteDataSource {
         }
 
 
-            String fileName = currentUser.getUid()+"_"+System.currentTimeMillis()+".jpg";
-            StorageReference storageRef = storage.getReference()
-                    .child("users")
-                    .child(uid)
-                    .child("garments")
-                    .child(fileName);
+        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+        StorageReference storageRef = storage.getReference()
+                .child("users")
+                .child(uid)
+                .child("garments")
+                .child(fileName);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
-            byte [] byteFoto = baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
+        byte[] byteFoto = baos.toByteArray();
 
             storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot->{
 
@@ -118,15 +123,13 @@ public class GarmentRemoteDataSource {
     public void saveGarmentDocument(Garment garment, Callback<Boolean> callback){
 
         User currentUser = auth.getCurrentUser();
-
-
         String uid = currentUser.getUid();
         if ( uid == null){
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
             return;
         }
 
-        DocumentReference newDoc = db.collection("user")
+        DocumentReference newDoc = firestore.collection("user")
                 .document(uid)
                 .collection("garments")
                 .document(); // Genera l'ID
@@ -157,7 +160,7 @@ public class GarmentRemoteDataSource {
             callback.onFailure("Vestito non trovato: dati mancanti", new IllegalStateException("ID non valido"));
         }
 
-        db.collection("user")
+        firestore.collection("user")
                 .document(uid)
                 .collection("garments")
                 .document(garment.getId())
@@ -179,7 +182,7 @@ public class GarmentRemoteDataSource {
         }
 
         Log.d("GarmentDataSource", "Aggiornamento del capo con ID: " + garment.getId());
-        db.collection("user").document(uid)
+        firestore.collection("user").document(uid)
                 .collection("garments").document(garment.getId())
                 .set(garment) // .set() sovrascrive il documento con i nuovi dati
                 .addOnSuccessListener(aVoid -> {
@@ -199,7 +202,7 @@ public class GarmentRemoteDataSource {
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
             return;
         }
-        db.collection("user").document(uid).collection("garments")
+        firestore.collection("user").document(uid).collection("garments")
                 .addSnapshotListener((value, error) ->{
                     if (error != null){
                         callback.onFailure(error.getMessage(), error);

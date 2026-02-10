@@ -1,30 +1,31 @@
 package it.unimib.yourwardrobe.source.repository;
+
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.source.remote.GarmentRemoteDataSource;
 
 
-import android.graphics.Bitmap;
-import android.util.Log;
-
 import java.util.List;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
     private final GarmentRemoteDataSource dataSource;
 
-
+    @Inject
     public GarmentRepositoryImpl(GarmentRemoteDataSource dataSource) {
         this.dataSource = dataSource;
 
     }
 
-
-
     @Override
     public void validateGarment(Bitmap garmentBitmap, Callback<Boolean> callback) {
 
-        dataSource.isGarment( garmentBitmap, callback);
+        dataSource.isGarment(garmentBitmap, callback);
     }
 
 

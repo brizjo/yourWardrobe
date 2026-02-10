@@ -1,6 +1,10 @@
 package it.unimib.yourwardrobe.ui.welcome.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,36 +12,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.android.material.textfield.TextInputEditText;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.LoginViewModel;
+import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class LoginFragment extends Fragment {
+@AndroidEntryPoint
+public class SignInFragment extends Fragment {
 
-    private LoginViewModel loginViewModel;
+    private AuthViewModel authViewModel;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private long lastClickTime = 0;
-
-    public LoginFragment() {
-        // Required empty public constructor
-    }
-
-    public static LoginFragment newInstance() {
-        return new LoginFragment();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,42 +37,44 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         emailEditText = view.findViewById(R.id.textInputEmail);
         passwordEditText = view.findViewById(R.id.textInputPassword);
         LoginButton loginButton = view.findViewById(R.id.login_button);
         loginButton.setButtonText(getString(R.string.login));
-        loginButton.setOnButtonClickListener(v ->{
+        loginButton.setOnButtonClickListener(v -> {
             // prevenzione click ripetuti
             if (System.currentTimeMillis() - lastClickTime < 1000) {
                 return;
             }
             lastClickTime = System.currentTimeMillis();
-                String email = emailEditText.getText() != null ? emailEditText.getText().toString() : "";
-                String password = passwordEditText.getText() != null ? passwordEditText.getText().toString() : "";
+            String email = emailEditText.getText() != null ? emailEditText.getText().toString() : "";
+            String password = passwordEditText.getText() != null ? passwordEditText.getText().toString() : "";
 
-                // Passa i dati al ViewModel
-                loginViewModel.login(email, password);
+            authViewModel.signInWithEmail(email, password);
         });
 
-        // Osserva i risultati del login
-        loginViewModel.getAuthenticationResult().observe(getViewLifecycleOwner(), result -> {
-            if (result.success) {
-                // Login OK: Naviga verso la Home
-                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_mainActivity);
-                ToastHelper.show(getContext(), "Login effettuato!", false);
-            } else {
-                // Login Fallito: Mostra errore
-                ToastHelper.show(getContext(), result.errorMessage, false);
-            }
-        });
+        authViewModel
+                .authResult
+                .observe(getViewLifecycleOwner(), result -> {
+                    switch (result.status) {
+                        case LOADING:
+                            ToastHelper.show(getContext(), "Effettuando il login...", true);
+                            break;
+                        case SUCCESS:
+                            navigateToMainActivity();
+                            ToastHelper.show(getContext(), "Login effettuato!", false);
+                        case ERROR:
+                            ToastHelper.show(getContext(), result.message, false);
+                            break;
+                    }
+                });
 
         // Configurazione bottone Google
         LoginButton buttonGoogle = view.findViewById(R.id.login_button_google);
@@ -90,14 +82,25 @@ public class LoginFragment extends Fragment {
         buttonGoogle.setButtonIcon(R.drawable.ic_google);
 
         buttonGoogle.setOnButtonClickListener(v -> {
-            // Chiamata al ViewModel passando l'activity come Context per il CredentialManager
-            loginViewModel.loginGoogle(requireActivity());
+            authViewModel.signInWithGoogle();
         });
 
         LoginButton signUpButton = view.findViewById(R.id.sign_up_button);
         signUpButton.setButtonText(getString(R.string.sign_up));
         signUpButton.setOnButtonClickListener(v -> {
-            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signUpFragment);
+            navigateToSignUpFragment();
         });
+
+    }
+
+    private void navigateToMainActivity() {
+        var intent = new Intent(requireActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
+    private void navigateToSignUpFragment() {
+        Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_signUpFragment);
     }
 }

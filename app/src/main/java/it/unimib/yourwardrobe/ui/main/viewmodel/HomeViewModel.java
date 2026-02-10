@@ -6,18 +6,21 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
+import it.unimib.yourwardrobe.domain.repository.AuthRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
-import it.unimib.yourwardrobe.repository.UserRepository;
 
+@HiltViewModel
 public class HomeViewModel extends ViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
     private final WeatherRepository weatherRepository;
-    private final UserRepository userRepository;
-
+    private final AuthRepository authRepository;
     private final MutableLiveData<Result<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
     public final LiveData<Result<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
 
@@ -25,14 +28,15 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Result<User>> currentUser = _currentUser;
 
 
-    public HomeViewModel(WeatherRepository weatherRepository, UserRepository userRepository) {
+    @Inject
+    public HomeViewModel(WeatherRepository weatherRepository, AuthRepository authRepository) {
         this.weatherRepository = weatherRepository;
-        this.userRepository = userRepository;
+        this.authRepository = authRepository;
     }
 
     public void getCurrentUser() {
         _currentUser.setValue(Result.loading(null));
-        var user = this.userRepository.getCurrentUser();
+        var user = this.authRepository.getCurrentUser();
 
         if (user == null) {
             _currentUser.postValue(Result.error("User not logged in", null));

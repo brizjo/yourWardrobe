@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,14 +42,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.factory.AddGarmentViewModelFactory;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.activity.result.PickVisualMediaRequest;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
+@AndroidEntryPoint
 public class AddGarmentFragment extends Fragment {
 
     private ImageView addGarmentImageView;
@@ -59,6 +60,7 @@ public class AddGarmentFragment extends Fragment {
     private AddGarmentViewModel viewModel;
     private TextInputEditText garmentNameEditText;
     private Button addGarmentButton;
+    private ProgressBar addGarmentProgressBar;
 
 
     //Launcher per la richiesta dei permessi (fotocamera)
@@ -144,12 +146,6 @@ public class AddGarmentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 1. Recupera il repository dal ServiceLocator
-        GarmentRepository garmentRepository = it.unimib.yourwardrobe.core.di.ServiceLocator
-                .getInstance()
-                .getGarmentRepository();
-
-        // 2. Crea la Factory passando Application e il Repository
 
         viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
         addGarmentImageView = view.findViewById(R.id.addGarmentImage);
@@ -159,6 +155,7 @@ public class AddGarmentFragment extends Fragment {
         fabricChipGroup = view.findViewById(R.id.chip_group_fabric);
         garmentNameEditText = view.findViewById(R.id.garmentName);
         addGarmentButton = view.findViewById(R.id.add_garment_button);
+        addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
 
         addGarmentImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
 
@@ -179,6 +176,25 @@ public class AddGarmentFragment extends Fragment {
             updateMainChipGroup(fabricChipGroup, fabrics, selected ->viewModel.updateSelectedFabrics(selected));
         });
 
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && isLoading) {
+                // Se sta caricando: nascondi il pulsante e mostra la ProgressBar
+                addGarmentButton.setVisibility(View.GONE);
+                addGarmentProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                // Se non sta caricando: mostra il pulsante e nascondi la ProgressBar
+                addGarmentButton.setVisibility(View.VISIBLE);
+                addGarmentProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
+            if (success!=null && success) {
+                ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
+                Navigation.findNavController(view).popBackStack();
+            }
+        });
+
         //todo: vedere geterrormessage
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
@@ -190,13 +206,6 @@ public class AddGarmentFragment extends Fragment {
             addGarmentButton.setEnabled(isEnabled);
         });
 
-        viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
-            if (success) {
-                ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
-                // Torna al fragment precedente (es. WardrobeFragment)
-                //Navigation.findNavController(view).navigateUp();
-            }
-        });
         addGarmentImageView.setOnClickListener(v -> {
             showImagePickerDialog();
         });
@@ -220,7 +229,6 @@ public class AddGarmentFragment extends Fragment {
         addGarmentButton.setOnClickListener(v -> {
             // Chiama il metodo nel ViewModel
             viewModel.saveGarment();
-            Navigation.findNavController(v).navigate(R.id.action_addGarmentFragment_to_clothesFragment);
         });
 
         // Opzionale: listener per sapere quando l'utente seleziona un'opzione

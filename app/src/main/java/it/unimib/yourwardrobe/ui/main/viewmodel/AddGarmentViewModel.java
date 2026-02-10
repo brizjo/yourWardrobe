@@ -29,6 +29,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
 
     // LiveData per i dati "statici" (le liste complete)
@@ -141,12 +142,14 @@ public class AddGarmentViewModel extends ViewModel {
         garment.setStyle(styles);
         garment.setFabric(fabrics);
 
+        isLoading.postValue(true);
         //Chiamata a repository per salvare l'immagine e i dati
         garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 // Notifica al Fragment che l'operazione è andata a buon fine
                 garmentAddedSuccessfully.postValue(true);
+                isLoading.postValue(false);
             }
 
             @Override
@@ -154,6 +157,7 @@ public class AddGarmentViewModel extends ViewModel {
                 // Notifica un errore
                 errorMessage.postValue("Errore durante il salvataggio: " + error);
                 garmentAddedSuccessfully.postValue(false);
+                isLoading.postValue(false);
             }
         });
     }
@@ -216,5 +220,9 @@ public class AddGarmentViewModel extends ViewModel {
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 }

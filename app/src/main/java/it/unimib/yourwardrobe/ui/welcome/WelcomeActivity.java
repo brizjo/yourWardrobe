@@ -31,9 +31,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
         var authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         authViewModel.authResult
-                .observe(this, result -> {
-                    navigateToMainActivity();
-                    navigateToMainActivity();
+                .observe(this, event -> {
+                    if (event.getContentIfNotHandled() != null) {
+                        navigateToMainActivity();
+                    }
                 });
 
         authViewModel.getCurrentUser();

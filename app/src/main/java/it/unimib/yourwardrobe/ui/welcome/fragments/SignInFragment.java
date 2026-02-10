@@ -63,15 +63,16 @@ public class SignInFragment extends Fragment {
         authViewModel
                 .authResult
                 .observe(getViewLifecycleOwner(), result -> {
-                    switch (result.status) {
+                    switch (result.getContentIfNotHandled().status) {
                         case LOADING:
                             ToastHelper.show(getContext(), "Effettuando il login...", true);
                             break;
                         case SUCCESS:
                             navigateToMainActivity();
                             ToastHelper.show(getContext(), "Login effettuato!", false);
+                            break;
                         case ERROR:
-                            ToastHelper.show(getContext(), result.message, false);
+                            ToastHelper.show(getContext(), result.getContentIfNotHandled().message, false);
                             break;
                     }
                 });

@@ -11,13 +11,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+//import com.bumptech.glide.load.engine.Resource;
 import com.google.android.material.textfield.TextInputEditText;
+//import com.google.firebase.firestore.auth.User;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
+import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.utils.ToastHelper;
+import it.unimib.yourwardrobe.domain.model.User;
+
 
 public class SignUpFragment extends Fragment {
 
@@ -66,8 +71,9 @@ public class SignUpFragment extends Fragment {
 
         authViewModel.
                 authResult
-                .observe(getViewLifecycleOwner(), result -> {
-                    switch (result.status) {
+                .observe(getViewLifecycleOwner(), event -> {
+                    Resource<User> resource = event.getContentIfNotHandled();
+                    switch (resource.status) {
                         case LOADING:
                             break;
                         case SUCCESS:
@@ -77,8 +83,9 @@ public class SignUpFragment extends Fragment {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             requireActivity().finish();
+                            break;
                         case ERROR:
-                            ToastHelper.show(getContext(), result.message, true);
+                            ToastHelper.show(getContext(), resource.message, true);
                             break;
                     }
                 });

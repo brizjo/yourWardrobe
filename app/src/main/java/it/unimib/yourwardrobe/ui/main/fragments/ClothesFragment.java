@@ -16,7 +16,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.carousel.CarouselLayoutManager;
@@ -30,18 +32,14 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
-import it.unimib.yourwardrobe.core.di.ServiceLocator;
-import it.unimib.yourwardrobe.domain.model.Garment;
+
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.ClothesViewModel;
 import it.unimib.yourwardrobe.ui.main.viewmodel.factory.ClothesViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
+import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ClothesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 public class ClothesFragment extends Fragment {
 
 
@@ -52,7 +50,6 @@ public class ClothesFragment extends Fragment {
     private HorizontalScrollView activeFiltersScrollView;
     private NestedScrollView categoriesScrollView;
     private RecyclerView gridRecyclerView;
-
 
     public ClothesFragment() {
         // Required empty public constructor
@@ -79,11 +76,10 @@ public class ClothesFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ClothesAdapter.OnItemClickListener listener = (v, item) -> {
-
+        this.listener = (v, item) -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("garment", item);
-            Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_garmentFragment, bundle);
+            Navigation.findNavController(requireView()).navigate(R.id.action_clothesFragment_to_garmentFragment, bundle);
         };
         categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
         gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
@@ -101,18 +97,26 @@ public class ClothesFragment extends Fragment {
         ImageView orderButton = view.findViewById(R.id.order_button);
         orderButton.setOnClickListener(v -> showOrderDialog());
         Button addButton = view.findViewById(R.id.add_button);
-        addButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_addGarmentFragment));
+        addButton.setOnClickListener(v -> {
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                NavController navController = navHostFragment.getNavController();
+                navController.navigate(R.id.action_clothesFragment_to_addGarmentFragment);
+            } else {
+                // Log di errore nel caso in cui il NavHostFragment non venga trovato
+                Log.e("ClothesFragment", "NavHostFragment non trovato. Impossibile navigare.");
+            }
+        });
         ImageView filterButton = view.findViewById(R.id.filter_button);
         filterButton.setOnClickListener(v -> {
             showFilterCategoryMenu();
         });
 
-        GarmentRepository repository = ServiceLocator.getInstance().getGarmentRepository();
-        ClothesViewModelFactory factory = new ClothesViewModelFactory(requireActivity().getApplication(), repository);
         activeFiltersChipGroup = view.findViewById(R.id.active_filters_chipgroup);
         activeFiltersScrollView = view.findViewById(R.id.active_filters_scrollview);
 
-        clothesViewModel = new ViewModelProvider(this, factory).get(ClothesViewModel.class);
+        clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
 
         clothesViewModel.getDisplayMode().observe(getViewLifecycleOwner(), mode -> {
             updateLayoutForDisplayMode(mode);

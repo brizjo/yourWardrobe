@@ -15,7 +15,7 @@ import retrofit2.Response;
 
 public class WeatherRemoteDataSource {
 
-    private static final String API_KEY = BuildConfig.OPENWEATHERMAP_KEY;
+    private static final String API_KEY = BuildConfig.weather_api_appid;
     private final WeatherApiService weatherApiService;
 
     @Inject

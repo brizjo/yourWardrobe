@@ -6,7 +6,7 @@ import static com.google.android.material.internal.ViewUtils.showKeyboard;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-
+import dagger.hilt.android.AndroidEntryPoint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -39,18 +39,13 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.di.ServiceLocator;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.GarmentViewModel;
 import it.unimib.yourwardrobe.ui.main.viewmodel.factory.GarmentViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GarmentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 public class GarmentFragment extends Fragment {
 
     private GarmentViewModel viewModel;
@@ -103,9 +98,7 @@ public class GarmentFragment extends Fragment {
         styleChipGroup = view.findViewById(R.id.chip_group_garment_style);
         fabricChipGroup = view.findViewById(R.id.chip_group_garment_fabric);
 
-        GarmentRepository repository = ServiceLocator.getInstance().getGarmentRepository();
-        GarmentViewModelFactory factory = new GarmentViewModelFactory(requireActivity().getApplication(), repository);
-        viewModel = new ViewModelProvider(this, factory).get(GarmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(GarmentViewModel.class);
 
         if (getArguments() != null) {
             // GarmentFragmentArgs viene generato automaticamente dal plugin Navigation
@@ -132,11 +125,12 @@ public class GarmentFragment extends Fragment {
             showDeleteConfirmationDialog();
         });
 
-        observeViewModel();
         if (cancelButton != null) {
             cancelButton.setOnClickListener(v -> viewModel.cancelChanges());
         }
         updateButton.setOnClickListener(v -> viewModel.updateGarment());
+
+        observeViewModel();
     }
 
     private void observeViewModel() {
@@ -158,6 +152,7 @@ public class GarmentFragment extends Fragment {
 
         viewModel.getIsDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (deleted) {
+                ToastHelper.show(getContext(), "Capo eliminato", false);
                 Navigation.findNavController(requireView()).navigateUp();
             }
         });

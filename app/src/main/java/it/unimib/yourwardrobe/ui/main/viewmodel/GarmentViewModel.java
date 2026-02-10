@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import javax.inject.Inject;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.R;
 
+@HiltViewModel
 public class GarmentViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
@@ -27,6 +30,7 @@ public class GarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isEditMode = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> garmentUpdatedSuccessfully = new MutableLiveData<>();
 
+    @Inject
     public GarmentViewModel(@NonNull Application application, GarmentRepository garmentRepository) {
         super(application);
         this.garmentRepository = garmentRepository;

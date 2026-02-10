@@ -15,12 +15,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.R;
 
+@HiltViewModel
 public class ClothesViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
@@ -50,7 +53,7 @@ public class ClothesViewModel extends AndroidViewModel {
     private final MutableLiveData<DisplayMode> displayMode = new MutableLiveData<>(DisplayMode.BY_CATEGORY);
     private final MutableLiveData<List<Garment>> gridGarments = new MutableLiveData<>();
 
-
+    @Inject
     public ClothesViewModel(Application application, GarmentRepository garmentRepository) {
         super(application);
         this.garmentRepository = garmentRepository;

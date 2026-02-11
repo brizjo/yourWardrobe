@@ -29,6 +29,7 @@ public class GarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEditMode = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> garmentUpdatedSuccessfully = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
     @Inject
     public GarmentViewModel(@NonNull Application application, GarmentRepository garmentRepository) {
@@ -40,6 +41,9 @@ public class GarmentViewModel extends AndroidViewModel {
     public LiveData<Boolean> getIsDeleted(){return isDeleted;}
     public LiveData<Boolean> getIsEditMode() {
         return isEditMode;
+    }
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     public void enterEditMode() {
@@ -56,6 +60,7 @@ public class GarmentViewModel extends AndroidViewModel {
     public void deleteGarment(){
         Garment currentGarment = garment.getValue();
         if(currentGarment != null) {
+
             garmentRepository.deleteGarment(currentGarment, new Callback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
@@ -64,6 +69,7 @@ public class GarmentViewModel extends AndroidViewModel {
 
                 @Override
                 public void onFailure(String error, Throwable t) {
+                    isDeleted.postValue(false);
                     GarmentViewModel.this.error.postValue(error);
                 }
             });

@@ -1,9 +1,7 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
-import static com.google.android.material.internal.ViewUtils.hideKeyboard;
-import static com.google.android.material.internal.ViewUtils.showKeyboard;
-
 import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -12,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -23,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -36,13 +34,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
-import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.GarmentViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.factory.GarmentViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
@@ -60,6 +55,8 @@ public class GarmentFragment extends Fragment {
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
+    private ProgressBar deleteProgressBar;
+    private AlertDialog deleteConfirmationDialog;
 
     public GarmentFragment() {
         // Required empty public constructor
@@ -85,13 +82,14 @@ public class GarmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        garmentImageView = view.findViewById(R.id.garmentImage); // Assicurati l'ID sia corretto nel layout
+        garmentImageView = view.findViewById(R.id.garmentImage);
         nameTextView = view.findViewById(R.id.nameGarmentText);
         nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
         nameGarmentEditText = view.findViewById(R.id.nameGarmentEditText);
         editButtonsContainer = view.findViewById(R.id.edit_buttons_container);
         editFab = view.findViewById(R.id.edit_fab);
         deleteFab = view.findViewById(R.id.delete_fab);
+        //deleteProgressBar = view.findViewById(R.id.garment_delete_progress_bar);
         Button cancelButton = view.findViewById(R.id.cancel_button);
         Button updateButton = view.findViewById(R.id.update_button);
         colorChipGroup = view.findViewById(R.id.chip_group_garment_color);
@@ -150,10 +148,28 @@ public class GarmentFragment extends Fragment {
             populateChips(garment);
         });
 
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && isLoading) {
+                deleteProgressBar.setVisibility(View.VISIBLE);
+                editFab.hide();
+                deleteFab.hide();
+                editButtonsContainer.setVisibility(View.GONE);
+            }
+        });
+
+
         viewModel.getIsDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (deleted) {
+                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
+                    deleteConfirmationDialog.dismiss();
+                }
                 ToastHelper.show(getContext(), "Capo eliminato", false);
                 Navigation.findNavController(requireView()).navigateUp();
+            }
+            else if (deleted != null && !deleted){
+                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
+                    deleteConfirmationDialog.dismiss();
+                }
             }
         });
 
@@ -192,23 +208,33 @@ public class GarmentFragment extends Fragment {
     }
 
     private void showDeleteConfirmationDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_confirm_delete, null);
+        ProgressBar dialogProgressBar = dialogView.findViewById(R.id.dialog_progress_bar);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Conferma Eliminazione")
-                .setMessage("Sei sicuro di voler eliminare questo capo? L'azione è irreversibile.")
+                .setView(dialogView)
+                //.setMessage("Sei sicuro di voler eliminare questo capo? L'azione è irreversibile.")
                 .setNegativeButton("Annulla", (dialog, which) -> {
                     // L'utente ha premuto "Annulla", chiudo dialog
                     dialog.dismiss();
                 })
                 .setPositiveButton("Elimina", (dialog, which) -> {
                     // L'utente ha confermato, procedo con l'eliminazione
-                    viewModel.deleteGarment();
+                    //viewModel.deleteGarment();
                 });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        deleteConfirmationDialog = builder.create();
+        deleteConfirmationDialog.show();
+        Button positiveButton = deleteConfirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (positiveButton != null) {
             positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_error));
         }
+        positiveButton.setOnClickListener(v -> {
+            positiveButton.setVisibility(View.GONE);
+            deleteConfirmationDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+            dialogProgressBar.setVisibility(View.VISIBLE);
+            deleteConfirmationDialog.setCancelable(false);
+            viewModel.deleteGarment();
+        });
     }
 
     private Chip createChip(Context context, String text, boolean isRemovable, Runnable onRemove) {
@@ -355,5 +381,21 @@ public class GarmentFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    private void showKeyboard(@NonNull View view) {
+        if (view.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }
+    }
+
+    private void hideKeyboard(@NonNull View view) {
+        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

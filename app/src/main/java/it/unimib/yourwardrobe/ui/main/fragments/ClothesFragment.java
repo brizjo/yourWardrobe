@@ -195,6 +195,18 @@ public class ClothesFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Quando il fragment torna visibile (ad esempio, dopo essere tornati
+        // da GarmentFragment), chiedi al ViewModel di ricaricare i dati.
+        // Poiché il DataSource usa un listener in tempo reale, questo garantirà
+        // che la UI si aggiorni con gli ultimi cambiamenti da Firebase.
+        if (clothesViewModel != null) {
+            clothesViewModel.fetchGarments();
+        }
+    }
+
     private void updateLayoutForDisplayMode(ClothesViewModel.DisplayMode mode) {
         if (mode == ClothesViewModel.DisplayMode.BY_CATEGORY) {
             categoriesScrollView.setVisibility(View.VISIBLE);

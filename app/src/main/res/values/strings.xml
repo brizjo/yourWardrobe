@@ -101,6 +101,7 @@
     <string name="name">Nome</string>
     <string name="applica_modifiche">Applica Modifiche</string>
     <string name="elimina_capo">Elimina Capo</string>
+    <string name="delete_dialog">Sei sicuro di voler eliminare questo capo? L\'azione è irreversibile.</string>
     <string name="filter_garments">filtra vestiti</string>
     <string name="modifica">Modifica</string>
     <string name="annulla">Annulla</string>

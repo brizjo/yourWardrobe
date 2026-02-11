@@ -14,9 +14,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
+import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class WelcomeActivity extends AppCompatActivity {
+
+    private AuthViewModel authViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +32,31 @@ public class WelcomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        var authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-        authViewModel.authResult
-                .observe(this, event -> {
-                    if (event.getContentIfNotHandled() != null) {
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+
+        setUpObservers();
+    }
+
+    private void setUpObservers() {
+        authViewModel.getAuthResult().observe(this, result -> {
+            switch (result.status) {
+                case SUCCESS:
+                    if (result.data != null) {
                         navigateToMainActivity();
                     }
-                });
-
-        authViewModel.getCurrentUser();
+                    break;
+                case ERROR:
+                    ToastHelper.show(this, result.message, false);
+                    break;
+                case LOADING:
+                    // TODO:
+                    break;
+            }
+        });
     }
 
     private void navigateToMainActivity() {
-        var intent = new Intent(this, MainActivity.class);
+        var intent = new Intent(WelcomeActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

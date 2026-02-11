@@ -46,96 +46,76 @@ public class AuthRemoteDataSource {
     }
 
     public void signInWithGoogle(Context context, Callback<User> callback) {
-        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(context.getString(R.string.default_web_client_id))
-                .setAutoSelectEnabled(true)
-                .build();
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false).setServerClientId(context.getString(R.string.default_web_client_id)).setAutoSelectEnabled(true).build();
 
-        GetCredentialRequest request = new GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build();
+        GetCredentialRequest request = new GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build();
 
         CredentialManager credentialManager = CredentialManager.create(context);
 
-        credentialManager.getCredentialAsync(
-                context,
-                request,
-                new CancellationSignal(),
-                ContextCompat.getMainExecutor(context),
-                new CredentialManagerCallback<>() {
-                    @Override
-                    public void onResult(GetCredentialResponse result) {
-                        Credential credential = result.getCredential();
-                        if (credential instanceof CustomCredential &&
-                                credential.getType().equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
-                            try {
-                                var googleIdTokenCredential =
-                                        GoogleIdTokenCredential.createFrom(credential.getData());
-                                var idToken = googleIdTokenCredential.getIdToken();
+        credentialManager.getCredentialAsync(context, request, new CancellationSignal(), ContextCompat.getMainExecutor(context), new CredentialManagerCallback<>() {
+            @Override
+            public void onResult(GetCredentialResponse result) {
+                Credential credential = result.getCredential();
+                if (credential instanceof CustomCredential && credential.getType().equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
+                    try {
+                        var googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.getData());
+                        var idToken = googleIdTokenCredential.getIdToken();
 
-                                authenticateFirebaseWithGoogle(idToken, callback);
-                            } catch (Exception e) {
-                                callback.onFailure("Error while parsing Google token", e);
-                            }
-                        } else {
-                            callback.onFailure("Credential type is not supported", null);
-                        }
+                        authenticateFirebaseWithGoogle(idToken, callback);
+                    } catch (Exception e) {
+                        callback.onFailure("Error while parsing Google token", e);
                     }
-
-                    @Override
-                    public void onError(@NonNull GetCredentialException e) {
-                        callback.onFailure("Error Credential Manager", e);
-                    }
+                } else {
+                    callback.onFailure("Credential type is not supported", null);
                 }
-        );
+            }
+
+            @Override
+            public void onError(@NonNull GetCredentialException e) {
+                callback.onFailure("Error Credential Manager", e);
+            }
+        });
     }
 
     private void authenticateFirebaseWithGoogle(String idToken, Callback<User> callback) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        var firebaseUser = auth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            User user = mapFirebaseUserToUser(firebaseUser);
-                            callback.onSuccess(user);
-                        }
-                    } else {
-                        String errorMessage = task.getException() != null ? task.getException().getMessage() : "Errore login Firebase";
-                        callback.onFailure(errorMessage, null);
-                    }
-                });
+        auth.signInWithCredential(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                var firebaseUser = auth.getCurrentUser();
+                if (firebaseUser != null) {
+                    User user = mapFirebaseUserToUser(firebaseUser);
+                    callback.onSuccess(user);
+                }
+            } else {
+                String errorMessage = task.getException() != null ? task.getException().getMessage() : "Errore login Firebase";
+                callback.onFailure(errorMessage, null);
+            }
+        });
     }
 
     public void signInWithEmail(String email, String password, Callback<User> callback) {
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        var firebaseUser = auth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            User user = mapFirebaseUserToUser(firebaseUser);
-                            callback.onSuccess(user);
-                        }
-
-                    } else {
-                        callback.onFailure("Error while signing in", task.getException());
-                    }
-                });
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                var fUser = task.getResult().getUser();
+                assert fUser != null;
+                callback.onSuccess(mapFirebaseUserToUser(fUser));
+            } else {
+                callback.onFailure("AuthRemoteDataSource:signInWithEmail", task.getException());
+            }
+        });
     }
 
     public void signUp(String username, String email, String password, Callback<User> callback) {
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        var firebaseUser = auth.getCurrentUser();
-                        if (firebaseUser != null) {
-                            updateUserProfile(firebaseUser, username, callback);
-                        }
-                    } else {
-                        callback.onFailure("Error while creating user", task.getException());
-                    }
-                });
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                var fUser = task.getResult().getUser();
+                if (fUser != null) {
+                    updateUserProfile(fUser, username, callback);
+                }
+            } else {
+                callback.onFailure("AuthRemoteDatasource:signUp", task.getException());
+            }
+        });
     }
 
     public void signOut() {
@@ -143,19 +123,15 @@ public class AuthRemoteDataSource {
     }
 
     private void updateUserProfile(FirebaseUser firebaseUser, String username, Callback<User> callback) {
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(username)
-                .build();
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
 
-        firebaseUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(updateTask -> {
-                    if (updateTask.isSuccessful()) {
-                        var user = mapFirebaseUserToUser(firebaseUser);
-                        callback.onSuccess(user);
-                    } else {
-                        callback.onFailure("Errore aggiornamento profilo utente", null);
-                    }
-                });
+        firebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                callback.onSuccess(mapFirebaseUserToUser(firebaseUser));
+            } else {
+                callback.onFailure("AuthRemoteDataSource:updateUserProfile", task.getException());
+            }
+        });
     }
 
     private String getUserPhotoUrl(FirebaseUser firebaseUser) {
@@ -163,12 +139,9 @@ public class AuthRemoteDataSource {
     }
 
     private User mapFirebaseUserToUser(FirebaseUser firebaseUser) {
-        return new User(
-                firebaseUser.getUid(),
-                firebaseUser.getEmail(),
-                firebaseUser.getDisplayName(),
-                getUserPhotoUrl(firebaseUser)
-        );
+        if (firebaseUser == null) return null;
+
+        return new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), getUserPhotoUrl(firebaseUser));
     }
 
 }

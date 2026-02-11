@@ -29,6 +29,7 @@ import java.util.Set;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.ui.welcome.WelcomeActivity;
 import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 
@@ -64,50 +65,20 @@ public class MainActivity extends AppCompatActivity {
 
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
+        setUpObservers();
         setupNavigation();
-
-        var ivAvatar = (ImageView) findViewById(R.id.iv_avatar);
-        var listPopupWindow = getListPopupWindow(ivAvatar);
-        ivAvatar.setOnClickListener(v -> {
-            listPopupWindow.show();
-        });
+        setupListPopup();
     }
 
-    @NonNull
-    private ListPopupWindow getListPopupWindow(ImageView ivAvatar) {
-        var listPopupWindow = new ListPopupWindow(this);
+    public void setUpObservers() {
+        authViewModel.getAuthResult()
+                .observe(this, result -> {
+                    if (result.status == Result.Status.SUCCESS && result.data == null) {
+                        // user signed out so redirect to WelcomeActivity.class
+                        navigateToWelcomeActivity();
+                    }
+                });
 
-        String[] labels = {"Sign Out"};
-        int[] icons = {R.drawable.ic_sign_out};
-
-        var adapter = new ArrayAdapter<>(this, R.layout.profile_item_row, R.id.item_text, labels) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                ImageView itemIcon = view.findViewById(R.id.item_icon);
-                itemIcon.setImageResource(icons[position]);
-                return view;
-            }
-        };
-
-        listPopupWindow.setAdapter(adapter);
-        listPopupWindow.setAnchorView(ivAvatar);
-        listPopupWindow.setWidth(500);
-
-        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    authViewModel.signOut();
-                    navigateToWelcomeActivity();
-                }
-
-                listPopupWindow.dismiss();
-            }
-        });
-
-        return listPopupWindow;
     }
 
     @Override
@@ -145,6 +116,49 @@ public class MainActivity extends AppCompatActivity {
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         }
+    }
+
+    private void setupListPopup() {
+        var ivAvatar = (ImageView) findViewById(R.id.iv_avatar);
+        var listPopupWindow = getListPopupWindow(ivAvatar);
+        ivAvatar.setOnClickListener(v -> {
+            listPopupWindow.show();
+        });
+    }
+
+    private ListPopupWindow getListPopupWindow(ImageView ivAvatar) {
+        var listPopupWindow = new ListPopupWindow(this);
+
+        String[] labels = {"Sign Out"};
+        int[] icons = {R.drawable.ic_sign_out};
+
+        var adapter = new ArrayAdapter<>(this, R.layout.profile_item_row, R.id.item_text, labels) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                ImageView itemIcon = view.findViewById(R.id.item_icon);
+                itemIcon.setImageResource(icons[position]);
+                return view;
+            }
+        };
+
+        listPopupWindow.setAdapter(adapter);
+        listPopupWindow.setAnchorView(ivAvatar);
+        listPopupWindow.setWidth(500);
+
+        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    authViewModel.signOut();
+                }
+
+                listPopupWindow.dismiss();
+            }
+        });
+
+        return listPopupWindow;
     }
 
     private void navigateToWelcomeActivity() {

@@ -30,8 +30,8 @@ import java.util.Set;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Result;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.WelcomeActivity;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {

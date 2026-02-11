@@ -15,8 +15,8 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 
 @AndroidEntryPoint
 public class SignInFragment extends Fragment {

@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint

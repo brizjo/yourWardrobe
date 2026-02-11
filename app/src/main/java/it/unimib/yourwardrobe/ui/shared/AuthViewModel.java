@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.ui.welcome.viewmodel;
+package it.unimib.yourwardrobe.ui.shared;
 
 import android.util.Log;
 import android.util.Patterns;

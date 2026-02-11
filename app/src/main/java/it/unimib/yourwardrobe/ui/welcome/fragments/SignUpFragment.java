@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
 
 public class SignUpFragment extends Fragment {
 

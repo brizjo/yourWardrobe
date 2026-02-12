@@ -5,32 +5,34 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
+import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.main.components.CardGarment;
+import com.bumptech.glide.Glide;
+
+import android.widget.ImageView;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
-    private final List<Integer> clothesList; // Lista di ID immagini
+    private final List<Garment> clothesList; // Lista di ID immagini
     private final int layoutId; // ID del layout da utilizzare
     private final OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, Integer imageResId);
+        void onItemClick(View view, Garment garment);
     }
 
-    public ClothesAdapter(List<Integer> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
+    public ClothesAdapter(List<Garment> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
         this.clothesList = clothesList;
         this.layoutId = layoutId;
         this.onItemClickListener = onItemClickListener;
     }
 
-    public ClothesAdapter(List<Integer> clothesList, OnItemClickListener onItemClickListener) {
+    public ClothesAdapter(List<Garment> clothesList, OnItemClickListener onItemClickListener) {
         this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
     }
 
@@ -44,8 +46,8 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
 
     @Override
     public void onBindViewHolder(@NonNull ClothesViewHolder holder, int position) {
-        Integer imageResId = clothesList.get(position);
-        holder.bind(imageResId, onItemClickListener);
+        Garment garment = clothesList.get(position);
+        holder.bind(garment, onItemClickListener);
     }
 
     @Override
@@ -54,19 +56,26 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     }
     public static class ClothesViewHolder extends RecyclerView.ViewHolder {
 
-        private final CardWardrobe cardWardrobe;
+        private final CardGarment cardGarment;
+        private final ImageView targetImageView;
 
         public ClothesViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardWardrobe = itemView.findViewById(R.id.clothesCard);
+            cardGarment = itemView.findViewById(R.id.clothesCard);
+            targetImageView = cardGarment.findViewById(R.id.card_garment_image);
         }
 
-        public void bind(Integer imageResId, OnItemClickListener listener) {
-            if (cardWardrobe != null && imageResId != null) {
-                cardWardrobe.setCardImage(ContextCompat.getDrawable(itemView.getContext(), imageResId));
-                cardWardrobe.setOnCardClickListener(v -> {
+        public void bind(Garment garment, OnItemClickListener listener) {
+            if (cardGarment != null && garment != null) {// Caricamento immagine tramite Glide nell'ImageView del componente custom
+                Glide.with(itemView.getContext())
+                        .load(garment.getImageUrl())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .centerCrop()
+                        .into(targetImageView);
+
+                cardGarment.setOnCardClickListener(v -> {
                     if (listener != null) {
-                        listener.onItemClick(v, imageResId);
+                        listener.onItemClick(v, garment);
                     }
                 });
             }

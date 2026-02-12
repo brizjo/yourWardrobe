@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.dagger.hilt.android")
+    alias(libs.plugins.androidx.navigation.safeargs)
 }
 
 android {
@@ -20,6 +21,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        resValue(
+            "string", "weather_api_appid",
+            gradleLocalProperties(rootDir, providers).getProperty("weather_api_appid")
+        )
     }
 
     buildTypes {
@@ -62,8 +67,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     annotationProcessor("com.google.dagger:hilt-compiler:2.51.1")
     implementation("com.google.mlkit:image-labeling:17.0.9")
-    implementation("com.google.firebase:firebase-firestore:25.1.0") // O la versione compatibile con il tuo BOM
-    implementation("com.google.firebase:firebase-storage:22.0.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

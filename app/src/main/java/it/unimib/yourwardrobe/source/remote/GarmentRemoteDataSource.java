@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.source.remote;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -15,19 +16,16 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.User;
 
 public class GarmentRemoteDataSource {
-
-    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
-
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
-    private final AuthRemoteDataSource auth = new AuthRemoteDataSource();
 
     private static final Set<String> KEYWORDS_GARMENT = new HashSet<>(Arrays.asList(
             // Categorie Generali (Rimosso "Fashion", "Textile", "Pattern" perché troppo generici)
@@ -47,9 +45,18 @@ public class GarmentRemoteDataSource {
             // Accessori
             "Scarf", "Tie", "Belt", "Gloves", "Hat"
     ));
+    private final ImageLabeler classifier; //usato per controllare se foto è un vestito
+    private final FirebaseFirestore firestore;
+    private final FirebaseStorage storage;
+    private final AuthRemoteDataSource auth;
     //TODO: SI POTREBBE FARE CIO PER OGNI CATEGORIA (ESEMPIO: SE L'UTETNTE INSERISCE UN VESTITO DA SEZIONE MAGLIETTE E NON è UNA MAGLIETTA ALLORA RIFIUTA)
-    public GarmentRemoteDataSource(){
-        //todo: commentare
+
+    @Inject
+    public GarmentRemoteDataSource(AuthRemoteDataSource auth, FirebaseStorage storage, FirebaseFirestore firestore) {
+        this.auth = auth;
+        this.firestore = firestore;
+        this.storage = storage;
+        //TODO: spostare la creazione del classifier in un singleton per non ricrearlo ogni volta
         this.classifier = ImageLabeling.getClient(new ImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.6f)
                 .build());
@@ -89,16 +96,16 @@ public class GarmentRemoteDataSource {
         }
 
 
-            String fileName = currentUser.getUid()+"_"+System.currentTimeMillis()+".jpg";
-            StorageReference storageRef = storage.getReference()
-                    .child("users")
-                    .child(uid)
-                    .child("garments")
-                    .child(fileName);
+        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+        StorageReference storageRef = storage.getReference()
+                .child("users")
+                .child(uid)
+                .child("garments")
+                .child(fileName);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
-            byte [] byteFoto = baos.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
+        byte[] byteFoto = baos.toByteArray();
 
             storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot->{
 
@@ -122,7 +129,7 @@ public class GarmentRemoteDataSource {
             return;
         }
 
-        DocumentReference newDoc = db.collection("user")
+        DocumentReference newDoc = firestore.collection("user")
                 .document(uid)
                 .collection("garments")
                 .document(); // Genera l'ID
@@ -133,15 +140,81 @@ public class GarmentRemoteDataSource {
 
 
         newDoc.set(garment)
-                .addOnCompleteListener(aVoid ->callback.onSuccess(true))
-                .addOnFailureListener(e -> callback.onFailure("errore durante l'upload del documento su firestore", e));
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("FIRESTORE_SUCCESS", "Documento scritto correttamente su Firestore");
+                    callback.onSuccess(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FIRESTORE_ERROR", "Errore durante la scrittura: " + e.getMessage());
+                    callback.onFailure("Errore durante l'upload del documento su firestore", e);
+                });
+    }
 
 
+    public void deleteGarment(Garment garment, Callback<Boolean> callback){
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        }
+        if(garment.getId() == null){
+            callback.onFailure("Vestito non trovato: dati mancanti", new IllegalStateException("ID non valido"));
+        }
 
+        firestore.collection("user")
+                .document(uid)
+                .collection("garments")
+                .document(garment.getId())
+                .delete()
+                .addOnSuccessListener(x -> callback.onSuccess(true))
+                .addOnFailureListener(e -> callback.onFailure("errore durante la cancellazione del documento", e));
 
+    }
 
+    public void updateGarment(Garment garment, Callback<Boolean> callback) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            callback.onFailure("Utente non autenticato.", new IllegalStateException("Utente non autenticato"));
+            return;
+        }
+        if (garment == null || garment.getId() == null) {
+            callback.onFailure("Dati del capo non validi.", new IllegalArgumentException("Garment o Garment ID è null"));
+            return;
+        }
 
+        Log.d("GarmentDataSource", "Aggiornamento del capo con ID: " + garment.getId());
+        firestore.collection("user").document(uid)
+                .collection("garments").document(garment.getId())
+                .set(garment) // .set() sovrascrive il documento con i nuovi dati
+                .addOnSuccessListener(aVoid -> {
+                    Log.i("GarmentDataSource", "Capo aggiornato con successo su Firestore.");
+                    callback.onSuccess(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("GarmentDataSource", "Errore durante l'aggiornamento del capo.", e);
+                    callback.onFailure("Errore durante l'aggiornamento.", e);
+                });
+    }
 
+    public void getGarments(Callback<List<Garment>> callback) {
+        User currentuser = auth.getCurrentUser();
+        String uid = currentuser.getUid();
+        if (uid == null){
+            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+            return;
+        }
+        firestore.collection("user").document(uid).collection("garments")
+                .addSnapshotListener((value, error) ->{
+                    if (error != null){
+                        callback.onFailure(error.getMessage(), error);
+                        return;
+                    }
+                    if (value != null){
+                        List<Garment> garments = value.toObjects(Garment.class);
+                        callback.onSuccess(garments);
+
+                    }
+
+                });
 
     }
 }

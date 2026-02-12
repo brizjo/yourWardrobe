@@ -99,4 +99,16 @@
     <string name="fabric_fleece">Pile</string>
     <string name="tessuto">Tessuto</string>
     <string name="name">Nome</string>
+    <string name="applica_modifiche">Applica Modifiche</string>
+    <string name="elimina_capo">Elimina Capo</string>
+    <string name="delete_dialog">Sei sicuro di voler eliminare questo capo? L\'azione è irreversibile.</string>
+    <string name="filter_garments">filtra vestiti</string>
+    <string name="modifica">Modifica</string>
+    <string name="annulla">Annulla</string>
+    <string name="insert_order">Ordine di Inserimento</string>
+    <string name="order_by_category">Raggruppa per Categoria</string>
+    <string name="order_by_a_z">Ordine Alfabetico (A-Z)</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="item_icon">item icon</string>
+    <string name="example_item">Example Item</string>
 </resources>

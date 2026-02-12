@@ -1,29 +1,35 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
-import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 
-public class AddGarmentViewModel extends AndroidViewModel {
+@HiltViewModel
+public class AddGarmentViewModel extends ViewModel {
 
-
+    private final Context context;
     private final GarmentRepository garmentRepository;
     private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
-
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
 
     // LiveData per i dati "statici" (le liste complete)
@@ -41,8 +47,9 @@ public class AddGarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
-    public AddGarmentViewModel(@NonNull Application application, GarmentRepository garmentRepository) {
-        super(application);
+    @Inject
+    public AddGarmentViewModel(@ApplicationContext Context context, GarmentRepository garmentRepository) {
+        this.context = context;
         this.garmentRepository = garmentRepository;
         // Inizializza le liste di dati
         loadInitialData();
@@ -64,10 +71,10 @@ public class AddGarmentViewModel extends AndroidViewModel {
 
     // Metodo per caricare i dati dalle risorse (potrebbe venire da un Repository in futuro)
     private void loadInitialData() {
-        allColors.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_color)));
-        allCategories.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.categories)));
-        allStyles.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.garment_styles)));
-        allFabrics.setValue(Arrays.asList(getApplication().getResources().getStringArray(R.array.fabric_types)));
+        allColors.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_color)));
+        allCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.categories)));
+        allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
+        allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
     }
 
     private void validateForm() {
@@ -135,12 +142,14 @@ public class AddGarmentViewModel extends AndroidViewModel {
         garment.setStyle(styles);
         garment.setFabric(fabrics);
 
+        isLoading.postValue(true);
         //Chiamata a repository per salvare l'immagine e i dati
         garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 // Notifica al Fragment che l'operazione è andata a buon fine
                 garmentAddedSuccessfully.postValue(true);
+                isLoading.postValue(false);
             }
 
             @Override
@@ -148,6 +157,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
                 // Notifica un errore
                 errorMessage.postValue("Errore durante il salvataggio: " + error);
                 garmentAddedSuccessfully.postValue(false);
+                isLoading.postValue(false);
             }
         });
     }
@@ -165,6 +175,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     public void setSelectedCategory(String category) {
         selectedCategory.setValue(category);
     }
+
     // Espone i LiveData (sola lettura) al Fragment
     public LiveData<List<String>> getAllColors() {
         return allColors;
@@ -181,6 +192,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     public LiveData<List<String>> getAllFabrics() {
         return allFabrics;
     }
+
     public LiveData<List<String>> getSelectedColors() {
         return selectedColors;
     }
@@ -193,6 +205,7 @@ public class AddGarmentViewModel extends AndroidViewModel {
     public LiveData<List<String>> getSelectedStyles() {
         return selectedStyles;
     }
+
     public void updateSelectedStyles(List<String> newSelection) {
         selectedStyles.setValue(newSelection);
     }
@@ -200,11 +213,16 @@ public class AddGarmentViewModel extends AndroidViewModel {
     public LiveData<List<String>> getSelectedFabrics() {
         return selectedFabrics;
     }
+
     public void updateSelectedFabrics(List<String> newSelection) {
         selectedFabrics.setValue(newSelection);
     }
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 }

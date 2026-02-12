@@ -29,6 +29,7 @@ public class ClothesViewModel extends AndroidViewModel {
     private final GarmentRepository garmentRepository;
     private final String categoryTop;
     private final String categoryBottom;
+    private final String categoryFootWear;
     private final String categoryAccessories;
 
     public enum DisplayMode {
@@ -41,6 +42,7 @@ public class ClothesViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Garment>> allGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> topGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> bottomGarments = new MutableLiveData<>();
+    private final MutableLiveData<List<Garment>> footwearGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> accessories = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
@@ -62,6 +64,7 @@ public class ClothesViewModel extends AndroidViewModel {
         this.garmentRepository = garmentRepository;
         this.categoryTop = application.getString(R.string.top_garment);
         this.categoryBottom = application.getString(R.string.bottom_garment);
+        this.categoryFootWear = application.getString(R.string.footwear);
         this.categoryAccessories = application.getString(R.string.accessory);
         loadFilterOptions();
         fetchGarments(); // Avvia il recupero dati alla creazione
@@ -118,10 +121,12 @@ public class ClothesViewModel extends AndroidViewModel {
             topGarments.postValue(new ArrayList<>());
             bottomGarments.postValue(new ArrayList<>());
             accessories.postValue(new ArrayList<>());
+            footwearGarments.postValue(new ArrayList<>());
             return;
         }
         List<Garment> tops = new ArrayList<>();
         List<Garment> bottoms = new ArrayList<>();
+        List<Garment> shoes = new ArrayList<>();
         List<Garment> accs = new ArrayList<>();
 
         for (Garment g : fullList) {
@@ -131,14 +136,19 @@ public class ClothesViewModel extends AndroidViewModel {
                 tops.add(g);
             } else if (categoryBottom.equalsIgnoreCase(g.getCategory())) {
                 bottoms.add(g);
-            } else if (categoryAccessories.equalsIgnoreCase(g.getCategory())) {
+            } else if (categoryFootWear.equalsIgnoreCase(g.getCategory())){
+                shoes.add(g);
+            }
+            else if (categoryAccessories.equalsIgnoreCase(g.getCategory())) {
                 accs.add(g);
             }
+
         }
 
         // Aggiorna i LiveData specifici
         topGarments.postValue(tops);
         bottomGarments.postValue(bottoms);
+        footwearGarments.postValue(shoes);
         accessories.postValue(accs);
     }
 
@@ -238,6 +248,10 @@ public class ClothesViewModel extends AndroidViewModel {
 
     public LiveData<List<Garment>> getBottomGarments() {
         return bottomGarments;
+    }
+
+    public LiveData<List<Garment>> getFootwearGarments() {
+        return footwearGarments;
     }
 
     public LiveData<List<Garment>> getAccessories() {

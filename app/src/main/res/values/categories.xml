@@ -3,6 +3,7 @@
     <string-array name="categories">
         <item>@string/top_garment</item>
         <item>@string/bottom_garment</item>
+        <item>@string/footwear</item>
         <item>@string/accessory</item>
     </string-array>
 </resources>

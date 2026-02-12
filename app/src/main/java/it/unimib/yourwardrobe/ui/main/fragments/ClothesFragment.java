@@ -86,10 +86,12 @@ public class ClothesFragment extends Fragment {
 
         RecyclerView recyclerViewTop = view.findViewById(R.id.parte_superiore_recycler_view);
         RecyclerView recyclerViewBottom = view.findViewById(R.id.parte_inferiore_recycler_view);
+        RecyclerView recyclerViewFootWear = view.findViewById(R.id.calzature_recycler_view);
         RecyclerView recyclerViewAccessories = view.findViewById(R.id.accessori_recycler_view);
 
         recyclerViewTop.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         recyclerViewBottom.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewFootWear.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         recyclerViewAccessories.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
 
         recyclerViewTop.setNestedScrollingEnabled(false);
@@ -142,6 +144,12 @@ public class ClothesFragment extends Fragment {
         clothesViewModel.getBottomGarments().observe(getViewLifecycleOwner(), bottomGarments -> {
             if (bottomGarments != null) {
                 recyclerViewBottom.setAdapter(new ClothesAdapter(bottomGarments, listener));
+            }
+        });
+
+        clothesViewModel.getFootwearGarments().observe(getViewLifecycleOwner(), footwear -> {
+            if (footwear != null) {
+                recyclerViewFootWear.setAdapter(new ClothesAdapter(footwear, listener));
             }
         });
 

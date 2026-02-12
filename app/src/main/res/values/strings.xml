@@ -67,6 +67,7 @@
     <string name="top_garment">Parte superiore</string>
     <string name="bottom_garment">Parte inferiore</string>
     <string name="accessory">Accessorio</string>
+    <string name="footwear">Calzature</string>
     <string name="style_casual">Casual</string>
     <string name="style_elegant">Elegante</string>
     <string name="style_sporty">Sportivo</string>

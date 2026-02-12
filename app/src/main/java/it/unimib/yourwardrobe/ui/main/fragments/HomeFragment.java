@@ -35,8 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.adapter.OutfitAdapter;  // ⬅️ CAMBIATO IMPORT
+import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
-import it.unimib.yourwardrobe.ui.main.adapter.OutfitAdapter;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
@@ -59,15 +60,12 @@ public class HomeFragment extends Fragment {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
-
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
-
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -77,18 +75,38 @@ public class HomeFragment extends Fragment {
         TextView tvUsername = view.findViewById(R.id.tv_username);
         CardWeather cardWeather = view.findViewById(R.id.card_weather);
 
-        // inside onCreate()
+        // Setup RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.rv_outfit);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 1. Create Data
+        // 1. Create Data (esempio/demo)
         List<Outfit> data = new ArrayList<>();
-        data.add(new Outfit("https://img.shopstyle-cdn.com/sim/6e/eb/6eeb25b938ff328eeda273f650b4dec3_best/drumohr-round-neck-long-sleeves-sweather.jpg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcT4YCub5KVdWqRCbVEKqWdXQI__zFsEe4Zg&s", "https://truewerk.com/cdn/shop/files/t1_werkpants_mens_olive_flat_lay_4825e693-f588-4813-bff0-1d4c46ce82ce.jpg?v=1759203265&width=1200", "https://www.blockbluelight.co.uk/cdn/shop/products/blockbluelight-blue-light-filter-computer-glasses-clear-lens-screentime-billie-computer-glasses-black-29752330322052.jpg?v=1651274298", "https://cdn.laredoute.com/cdn-cgi/image/width=500,height=500,fit=pad,dpr=1/products/5/7/f/57f72574fc41014ee6b9d79ed387afa7.jpg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdCfDtc-lffVIzg8lCPkKPa202ZiizYrcT5A&s"));
+        List<Garment> garments = new ArrayList<>();
+        garments.add(new Garment("", "Sweater", "Top", "Sweater", "", "https://img.shopstyle-cdn.com/sim/6e/eb/6eeb25b938ff328eeda273f650b4dec3_best/drumohr-round-neck-long-sleeves-sweather.jpg", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        garments.add(new Garment("", "Jacket", "Top", "Jacket", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcT4YCub5KVdWqRCbVEKqWdXQI__zFsEe4Zg&s", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        garments.add(new Garment("", "Pants", "Bottom", "Pants", "", "https://truewerk.com/cdn/shop/files/t1_werkpants_mens_olive_flat_lay_4825e693-f588-4813-bff0-1d4c46ce82ce.jpg?v=1759203265&width=1200", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        garments.add(new Garment("", "Glasses", "Accessory", "Glasses", "", "https://www.blockbluelight.co.uk/cdn/shop/products/blockbluelight-blue-light-filter-computer-glasses-clear-lens-screentime-billie-computer-glasses-black-29752330322052.jpg?v=1651274298", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        garments.add(new Garment("", "Boots", "Shoes", "Boots", "", "https://cdn.laredoute.com/cdn-cgi/image/width=500,height=500,fit=pad,dpr=1/products/5/7/f/57f72574fc41014ee6b9d79ed387afa7.jpg", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        garments.add(new Garment("", "Earrings", "Accessory", "Earrings", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdCfDtc-lffVIzg8lCPkKPa202ZiizYrcT5A&s", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
+        data.add(new Outfit("My first outfit", "Casual", garments));
 
-        // 2. Set Adapter
-        OutfitAdapter adapter = new OutfitAdapter(getContext(), data);
+        // 2. Create click listener
+        OutfitAdapter.OnItemClickListener listener = (v, outfit) -> {
+            // TODO: Gestisci il click sull'outfit
+            // Ad esempio naviga ai dettagli dell'outfit
+            Toast.makeText(getContext(), "Clicked: " + outfit.getName(), Toast.LENGTH_SHORT).show();
+
+            // Oppure naviga con Navigation Component:
+            // Bundle bundle = new Bundle();
+            // bundle.putSerializable("outfit", outfit);
+            // Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_singleOutfitFragment, bundle);
+        };
+
+        // 3. Set Adapter con il nuovo costruttore
+        OutfitAdapter adapter = new OutfitAdapter(data, R.layout.item_outfit_grid, listener);  // ⬅️ CORRETTO
         recyclerView.setAdapter(adapter);
 
+        // Observe ViewModels
         this.homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
                 case LOADING:
@@ -139,7 +157,6 @@ public class HomeFragment extends Fragment {
         android.location.LocationManager locationManager = (android.location.LocationManager) requireContext().getSystemService(android.content.Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
     }
-
 
     private void checkPermissionAndGetLocation() {
         if (!isLocationEnabled()) {
@@ -208,6 +225,4 @@ public class HomeFragment extends Fragment {
             Log.e(TAG, "Security Exception", e);
         }
     }
-
-
 }

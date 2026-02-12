@@ -16,11 +16,14 @@ import android.widget.AutoCompleteTextView;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.viewmodel.CreateOutfitViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link CreateOutfitFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 public class CreateOutfitFragment extends Fragment {
 
     private CreateOutfitViewModel viewModel;

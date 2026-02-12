@@ -1,43 +1,36 @@
 package it.unimib.yourwardrobe.domain.model;
 
-public class Outfit {
-    public String sweaterUrl;
-    public String jacketUrl;
-    public String pantsUrl;
-    public String glassesUrl;
-    public String bootsUrl;
-    public String earringsUrl;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Outfit(String sweaterUrl, String jacketUrl, String pantsUrl, String glassesUrl, String bootsUrl, String earringsUrl) {
-        this.sweaterUrl = sweaterUrl;
-        this.jacketUrl = jacketUrl;
-        this.pantsUrl = pantsUrl;
-        this.glassesUrl = glassesUrl;
-        this.bootsUrl = bootsUrl;
-        this.earringsUrl = earringsUrl;
+public class Outfit implements Serializable {
+
+    private String id;
+    private String name;
+    private String style;
+    private List<Garment> garments;
+
+    // Richiesto da Firestore per la deserializzazione
+    public Outfit() {
+        this.garments = new ArrayList<>();
     }
 
-    public String getSweaterUrl() {
-        return sweaterUrl;
+    public Outfit(String name, String style, List<Garment> garments) {
+        this.name = name;
+        this.style = style;
+        this.garments = garments != null ? garments : new ArrayList<>();
     }
 
-    public String getJacketUrl() {
-        return jacketUrl;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getPantsUrl() {
-        return pantsUrl;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getGlassesUrl() {
-        return glassesUrl;
-    }
+    public String getStyle() { return style; }
+    public void setStyle(String style) { this.style = style; }
 
-    public String getBootsUrl() {
-        return bootsUrl;
-    }
-
-    public String getEarringsUrl() {
-        return earringsUrl;
-    }
+    public List<Garment> getGarments() { return garments; }
+    public void setGarments(List<Garment> garments) { this.garments = garments; }
 }

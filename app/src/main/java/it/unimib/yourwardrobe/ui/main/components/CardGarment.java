@@ -49,4 +49,7 @@ public class CardGarment extends LinearLayout {
             materialCardView.setOnClickListener(listener);
         }
     }
+    public ImageView getImageView() {
+        return imageView;
+    }
 }

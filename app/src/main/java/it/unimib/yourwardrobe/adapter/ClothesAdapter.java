@@ -5,20 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
-import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
+import it.unimib.yourwardrobe.ui.main.components.CardGarment;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import android.graphics.drawable.Drawable;
+
 import android.widget.ImageView;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
@@ -61,24 +56,24 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     }
     public static class ClothesViewHolder extends RecyclerView.ViewHolder {
 
-        private final CardWardrobe cardWardrobe;
+        private final CardGarment cardGarment;
         private final ImageView targetImageView;
 
         public ClothesViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardWardrobe = itemView.findViewById(R.id.clothesCard);
-            targetImageView = cardWardrobe.findViewById(R.id.card_wardrobe_image);
+            cardGarment = itemView.findViewById(R.id.clothesCard);
+            targetImageView = cardGarment.findViewById(R.id.card_garment_image);
         }
 
         public void bind(Garment garment, OnItemClickListener listener) {
-            if (cardWardrobe != null && garment != null) {// Caricamento immagine tramite Glide nell'ImageView del componente custom
+            if (cardGarment != null && garment != null) {// Caricamento immagine tramite Glide nell'ImageView del componente custom
                 Glide.with(itemView.getContext())
                         .load(garment.getImageUrl())
                         .placeholder(R.drawable.ic_launcher_background)
                         .centerCrop()
                         .into(targetImageView);
 
-                cardWardrobe.setOnCardClickListener(v -> {
+                cardGarment.setOnCardClickListener(v -> {
                     if (listener != null) {
                         listener.onItemClick(v, garment);
                     }

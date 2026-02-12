@@ -27,6 +27,9 @@ import it.unimib.yourwardrobe.R;
 public class ClothesViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
+    private final String categoryTop;
+    private final String categoryBottom;
+    private final String categoryAccessories;
 
     public enum DisplayMode {
         BY_CATEGORY,
@@ -57,6 +60,9 @@ public class ClothesViewModel extends AndroidViewModel {
     public ClothesViewModel(Application application, GarmentRepository garmentRepository) {
         super(application);
         this.garmentRepository = garmentRepository;
+        this.categoryTop = application.getString(R.string.top_garment);
+        this.categoryBottom = application.getString(R.string.bottom_garment);
+        this.categoryAccessories = application.getString(R.string.accessory);
         loadFilterOptions();
         fetchGarments(); // Avvia il recupero dati alla creazione
         activeFilters.addSource(activeColorFilters, colors -> updateCombinedFilters());
@@ -121,11 +127,11 @@ public class ClothesViewModel extends AndroidViewModel {
         for (Garment g : fullList) {
             if (g.getCategory() == null) continue;
 
-            if ("Parte Superiore".equalsIgnoreCase(g.getCategory())) {
+            if (categoryTop.equalsIgnoreCase(g.getCategory())) {
                 tops.add(g);
-            } else if ("Parte Inferiore".equalsIgnoreCase(g.getCategory())) {
+            } else if (categoryBottom.equalsIgnoreCase(g.getCategory())) {
                 bottoms.add(g);
-            } else if ("Accessori".equalsIgnoreCase(g.getCategory())) {
+            } else if (categoryAccessories.equalsIgnoreCase(g.getCategory())) {
                 accs.add(g);
             }
         }

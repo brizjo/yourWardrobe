@@ -10,7 +10,7 @@
     android:foreground="?attr/selectableItemBackground"
     app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
 
-    <it.unimib.yourwardrobe.ui.main.components.CardWardrobe
+    <it.unimib.yourwardrobe.ui.main.components.CardGarment
         android:id="@+id/clothesCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

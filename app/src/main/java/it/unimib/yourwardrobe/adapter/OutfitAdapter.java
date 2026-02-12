@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.main.components.CardWardrobe;
+import it.unimib.yourwardrobe.ui.main.components.CardGarment;
 
 
 //todo: questa è una classe temporanea di placeholder
@@ -47,19 +47,19 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitView
     }
 
     public static class OutfitViewHolder extends RecyclerView.ViewHolder {
-        private final CardWardrobe cardWardrobe;
+        private final CardGarment cardGarment;
 
         public OutfitViewHolder(@NonNull View itemView) {
             super(itemView);
             // Cerca l'ID del componente nel tuo item_outfit_grid.xml
             // Se nel layout si chiama diversamente, correggi R.id.clothesCard
-            cardWardrobe = itemView.findViewById(R.id.clothesCard);
+            cardGarment = itemView.findViewById(R.id.clothesCard);
         }
 
         public void bind(Integer resId, OnItemClickListener listener) {
-            if (cardWardrobe != null) {
-                cardWardrobe.setCardImage(ContextCompat.getDrawable(itemView.getContext(), resId));
-                cardWardrobe.setOnCardClickListener(v -> {
+            if (cardGarment != null) {
+                cardGarment.setCardImage(ContextCompat.getDrawable(itemView.getContext(), resId));
+                cardGarment.setOnCardClickListener(v -> {
                     if (listener != null) listener.onItemClick(v, resId);
                 });
             }

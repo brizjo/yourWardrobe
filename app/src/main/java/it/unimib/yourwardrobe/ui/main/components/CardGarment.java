@@ -13,30 +13,28 @@ import com.google.android.material.card.MaterialCardView;
 
 import it.unimib.yourwardrobe.R;
 
-public class CardWardrobe  extends LinearLayout {
+public class CardGarment extends LinearLayout {
     private MaterialCardView materialCardView;
     private ImageView imageView;
 
-    public CardWardrobe(Context context){
+    public CardGarment(Context context){
         super(context, null);
     }
 
-    public CardWardrobe(Context context, @Nullable AttributeSet attrs) {
+    public CardGarment(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CardWardrobe(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CardGarment(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     private void init(Context context) {
-        // 1. Inflate the layout (button_component.xml) and attach it to this class
         LayoutInflater.from(context).inflate(R.layout.card_garment, this, true);
 
-        // 2. Find the button ID defined in your XML
         materialCardView = findViewById(R.id.card);
-        imageView = findViewById(R.id.card_wardrobe_image);
+        imageView = findViewById(R.id.card_garment_image);
     }
 
     public void setCardImage(Drawable drawable) {

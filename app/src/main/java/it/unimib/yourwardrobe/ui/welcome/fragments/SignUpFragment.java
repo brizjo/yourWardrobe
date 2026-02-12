@@ -1,6 +1,5 @@
 package it.unimib.yourwardrobe.ui.welcome.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,18 +10,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-//import com.bumptech.glide.load.engine.Resource;
 import com.google.android.material.textfield.TextInputEditText;
-//import com.google.firebase.firestore.auth.User;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.main.MainActivity;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
-import it.unimib.yourwardrobe.utils.Resource;
-import it.unimib.yourwardrobe.utils.ToastHelper;
-import it.unimib.yourwardrobe.domain.model.User;
-
 
 public class SignUpFragment extends Fragment {
 
@@ -39,8 +31,7 @@ public class SignUpFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
     }
 
@@ -68,26 +59,5 @@ public class SignUpFragment extends Fragment {
 
             authViewModel.signUp(username, email, password, confirmPassword);
         });
-
-        authViewModel.
-                authResult
-                .observe(getViewLifecycleOwner(), event -> {
-                    Resource<User> resource = event.getContentIfNotHandled();
-                    switch (resource.status) {
-                        case LOADING:
-                            break;
-                        case SUCCESS:
-                            ToastHelper.show(getContext(), "Registrazione completata!", false);
-                            // Avvia MainActivity e pulisce lo stack di navigazione
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            requireActivity().finish();
-                            break;
-                        case ERROR:
-                            ToastHelper.show(getContext(), resource.message, true);
-                            break;
-                    }
-                });
     }
 }

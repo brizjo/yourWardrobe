@@ -1,6 +1,5 @@
 package it.unimib.yourwardrobe.ui.welcome.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +15,8 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.main.MainActivity;
+import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
-import it.unimib.yourwardrobe.ui.welcome.viewmodel.AuthViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class SignInFragment extends Fragment {
@@ -27,6 +24,9 @@ public class SignInFragment extends Fragment {
     private AuthViewModel authViewModel;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
+    private LoginButton loginButton;
+    private LoginButton signUpButton;
+    private LoginButton googleButton;
     private long lastClickTime = 0;
 
     @Override
@@ -43,13 +43,15 @@ public class SignInFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         emailEditText = view.findViewById(R.id.textInputEmail);
         passwordEditText = view.findViewById(R.id.textInputPassword);
-        LoginButton loginButton = view.findViewById(R.id.login_button);
+        loginButton = view.findViewById(R.id.login_button);
+        googleButton = view.findViewById(R.id.login_button_google);
+
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+
         loginButton.setButtonText(getString(R.string.login));
         loginButton.setOnButtonClickListener(v -> {
-            // prevenzione click ripetuti
             if (System.currentTimeMillis() - lastClickTime < 1000) {
                 return;
             }
@@ -60,45 +62,19 @@ public class SignInFragment extends Fragment {
             authViewModel.signInWithEmail(email, password);
         });
 
-        authViewModel
-                .authResult
-                .observe(getViewLifecycleOwner(), result -> {
-                    switch (result.getContentIfNotHandled().status) {
-                        case LOADING:
-                            ToastHelper.show(getContext(), "Effettuando il login...", true);
-                            break;
-                        case SUCCESS:
-                            navigateToMainActivity();
-                            ToastHelper.show(getContext(), "Login effettuato!", false);
-                            break;
-                        case ERROR:
-                            ToastHelper.show(getContext(), result.getContentIfNotHandled().message, false);
-                            break;
-                    }
-                });
-
-        // Configurazione bottone Google
-        LoginButton buttonGoogle = view.findViewById(R.id.login_button_google);
-        buttonGoogle.setButtonText(getString(R.string.login_with_google));
-        buttonGoogle.setButtonIcon(R.drawable.ic_google);
-
-        buttonGoogle.setOnButtonClickListener(v -> {
+        googleButton = view.findViewById(R.id.login_button_google);
+        googleButton.setButtonText(getString(R.string.login_with_google));
+        googleButton.setButtonIcon(R.drawable.ic_google);
+        googleButton.setOnButtonClickListener(v -> {
             authViewModel.signInWithGoogle();
         });
 
-        LoginButton signUpButton = view.findViewById(R.id.sign_up_button);
+        signUpButton = view.findViewById(R.id.sign_up_button);
         signUpButton.setButtonText(getString(R.string.sign_up));
         signUpButton.setOnButtonClickListener(v -> {
             navigateToSignUpFragment();
         });
 
-    }
-
-    private void navigateToMainActivity() {
-        var intent = new Intent(requireActivity(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        requireActivity().finish();
     }
 
     private void navigateToSignUpFragment() {

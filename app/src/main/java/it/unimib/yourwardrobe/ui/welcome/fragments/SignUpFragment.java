@@ -9,12 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
-import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 
 public class SignUpFragment extends Fragment {
 
@@ -43,10 +44,10 @@ public class SignUpFragment extends Fragment {
         usernameEditText = view.findViewById(R.id.username_signup);
         passwordEditText = view.findViewById(R.id.signUpPassword);
         confirmPasswordEditText = view.findViewById(R.id.signUpConfirmPassword);
-        LoginButton signUpButton = view.findViewById(R.id.confirm_sign_up_button);
-        signUpButton.setButtonText(getString(R.string.sign_up));
-        signUpButton.setOnButtonClickListener(v -> {
-            // prevenzione click ripetuti
+        MaterialButton signUpButton = view.findViewById(R.id.btn_sign_up);
+        MaterialButton signInButton = view.findViewById(R.id.btn_go_sign_in);
+
+        signUpButton.setOnClickListener(v -> {
             if (System.currentTimeMillis() - lastClickTime < 1000) {
                 return;
             }
@@ -59,5 +60,13 @@ public class SignUpFragment extends Fragment {
 
             authViewModel.signUp(username, email, password, confirmPassword);
         });
+
+        signInButton.setOnClickListener(v -> {
+            navigateToSignInFragment();
+        });
+    }
+
+    private void navigateToSignInFragment() {
+        Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_loginFragment);
     }
 }

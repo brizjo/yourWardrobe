@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.welcome.fragments.SignUpFragment">
 
     <TextView
@@ -15,103 +15,133 @@
         android:textAlignment="center"
         android:textAppearance="@style/AppLogo" />
 
-    <TextView
+    <ImageView
+        android:id="@+id/imageLogin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_up_frase"
-        android:layout_marginStart="@dimen/md"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+        android:layout_height="240dp"
+        android:contentDescription="@string/dressinlogin"
+        android:scaleType="centerInside"
+        android:src="@drawable/dressing_login" />
 
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/lg"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginTop="@dimen/lg"
-        android:layout_marginEnd="@dimen/md"
-        android:background="#05000000"
-        android:hint="@string/email"
-        app:startIconDrawable="@drawable/ic_email">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signUpEmail"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginHorizontal="@dimen/lg"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/lg">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="?attr/textInputOutlinedStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/md"
-            android:layout_marginTop="@dimen/lg"
-            android:layout_marginEnd="@dimen/md"
-            android:background="#05000000"
-            android:hint="@string/username_signup"
-            app:startIconDrawable="@drawable/ic_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username_signup"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#00000000"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/welcome_message"
+                android:textAppearance="@style/MyHeadlineLarge" />
 
-        <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginTop="@dimen/lg"
-        android:layout_marginEnd="@dimen/md"
-        android:background="#05000000"
-        android:hint="@string/password"
-        app:startIconDrawable="@drawable/ic_password">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up_phrase"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signUpPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lg"
+                android:hint="@string/email"
+                app:startIconDrawable="@drawable/ic_user_small_outline">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="?attr/textInputOutlinedStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginTop="@dimen/lg"
-        android:layout_marginEnd="@dimen/md"
-        android:background="#05000000"
-        android:hint="@string/conferma_password"
-        app:startIconDrawable="@drawable/ic_password">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signUpEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signUpConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lg"
+                android:hint="@string/username_signup"
+                app:startIconDrawable="@drawable/ic_user_small_outline">
 
-    <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
-        android:id="@+id/confirm_sign_up_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginTop="@dimen/md"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/username_signup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lg"
+                android:hint="@string/password"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/ic_lock_small_outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signUpPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/lg"
+                android:hint="@string/confirm_password"
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/ic_lock_small_outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/signUpConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/xl"
+                android:text="@string/sign_up" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/have_an_account" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_go_sign_in"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_in" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
 
 </LinearLayout>

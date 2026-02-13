@@ -2,6 +2,7 @@ package it.unimib.yourwardrobe.ui.welcome;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,11 +11,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
 import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class WelcomeActivity extends AppCompatActivity {
@@ -46,7 +48,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                     break;
                 case ERROR:
-                    ToastHelper.show(this, result.message, false);
+                    View ctxView = findViewById(android.R.id.content);
+                    Snackbar.make(ctxView, "Invalid Credentials", Snackbar.LENGTH_LONG).show();
                     break;
                 case LOADING:
                     // TODO:

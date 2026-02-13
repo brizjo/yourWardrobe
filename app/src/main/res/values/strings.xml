@@ -2,14 +2,13 @@
     <string name="app_name">YourWardrobe</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="login">login</string>
-    <string name="sign_up">registrati</string>
-    <string name="login_with_google">login con google</string>
-    <string name="email">email</string>
-    <string name="password">password</string>
-    <string name="benvenuto">Benvenuto!</string>
+    <string name="sign_in">Accedi</string>
+    <string name="sign_up">Registrati</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="welcome_message">Benvenuto</string>
     <string name="registrato">Sei già registrato?</string>
-    <string name="password_dimenticata">password dimenticata?</string>
+    <string name="forgot_password">Password dimenticata?</string>
     <string name="dressinlogin">dressinLogin</string>
     <string name="o">o</string>
 
@@ -21,8 +20,8 @@
     <string name="personal_stylist">Personal Stylist</string>
     <string name="avatar">avatar</string>
     <string name="daily_outfit">Outfit del giorno</string>
-    <string name="conferma_password">conferma password</string>
-    <string name="sign_up_frase">entra subito nel tuo wardrobe personale</string>
+    <string name="confirm_password">Conferma password</string>
+    <string name="sign_up_phrase">Entra subito nel tuo wardrobe personale</string>
     <string name="vestiario">vestiario</string>
     <string name="outfit">outfit</string>
     <string name="magliette">Magliette</string>
@@ -38,7 +37,7 @@
     <string name="scarpe">Scarpe</string>
     <string name="ciao">"Ciao, "</string>
     <string name="ciao_guest">Ciao, ospite</string>
-    <string name="username_signup">username</string>
+    <string name="username_signup">Username</string>
     <string name="season">Stagione</string>
     <string name="winter">Inverno</string>
     <string name="spring">Primavera</string>
@@ -112,4 +111,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="item_icon">item icon</string>
     <string name="example_item">Example Item</string>
+    <string name="sign_in_with_google">Accedi con Google</string>
+    <string name="dont_have_an_account">Non hai un account?</string>
+    <string name="have_an_account">Hai già un account?</string>
 </resources>

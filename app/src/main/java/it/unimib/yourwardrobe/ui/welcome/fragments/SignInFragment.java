@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
-import it.unimib.yourwardrobe.ui.welcome.components.LoginButton;
 
 @AndroidEntryPoint
 public class SignInFragment extends Fragment {
@@ -24,9 +24,10 @@ public class SignInFragment extends Fragment {
     private AuthViewModel authViewModel;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
-    private LoginButton loginButton;
-    private LoginButton signUpButton;
-    private LoginButton googleButton;
+    private MaterialButton signUpBtn;
+    private MaterialButton signInWithGoogleBtn;
+    private MaterialButton signInBtn;
+
     private long lastClickTime = 0;
 
     @Override
@@ -45,13 +46,12 @@ public class SignInFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         emailEditText = view.findViewById(R.id.textInputEmail);
         passwordEditText = view.findViewById(R.id.textInputPassword);
-        loginButton = view.findViewById(R.id.login_button);
-        googleButton = view.findViewById(R.id.login_button_google);
+        signInBtn = view.findViewById(R.id.btn_sign_in);
+        signInWithGoogleBtn = view.findViewById(R.id.btn_sign_in_google);
 
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
 
-        loginButton.setButtonText(getString(R.string.login));
-        loginButton.setOnButtonClickListener(v -> {
+        signInBtn.setOnClickListener(v -> {
             if (System.currentTimeMillis() - lastClickTime < 1000) {
                 return;
             }
@@ -62,16 +62,13 @@ public class SignInFragment extends Fragment {
             authViewModel.signInWithEmail(email, password);
         });
 
-        googleButton = view.findViewById(R.id.login_button_google);
-        googleButton.setButtonText(getString(R.string.login_with_google));
-        googleButton.setButtonIcon(R.drawable.ic_google);
-        googleButton.setOnButtonClickListener(v -> {
+        signInWithGoogleBtn = view.findViewById(R.id.btn_sign_in_google);
+        signInWithGoogleBtn.setOnClickListener(v -> {
             authViewModel.signInWithGoogle();
         });
 
-        signUpButton = view.findViewById(R.id.sign_up_button);
-        signUpButton.setButtonText(getString(R.string.sign_up));
-        signUpButton.setOnButtonClickListener(v -> {
+        signUpBtn = view.findViewById(R.id.btn_go_sign_up);
+        signUpBtn.setOnClickListener(v -> {
             navigateToSignUpFragment();
         });
 

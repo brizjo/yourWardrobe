@@ -37,11 +37,8 @@ public class HomeViewModel extends ViewModel {
     public void getCurrentUser() {
         _currentUser.setValue(Result.loading(null));
         var user = this.authRepository.getCurrentUser();
-
-        if (user == null) {
-            _currentUser.postValue(Result.error("User not logged in", null));
-        } else {
-            _currentUser.postValue(Result.success(user));
+        if (user != null) {
+            _currentUser.setValue(Result.success(user));
         }
     }
 

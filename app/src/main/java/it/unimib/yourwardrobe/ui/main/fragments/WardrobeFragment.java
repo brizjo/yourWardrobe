@@ -41,7 +41,7 @@ public class WardrobeFragment extends Fragment {
         CardMenu clothesCard = view.findViewById(R.id.clothesCard);
         clothesCard.setCardStroke(ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer_mediumContrast), 10);
         clothesCard.setCardText(getString(R.string.vestiario));
-        clothesCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        clothesCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body, ContextCompat.getColor(requireContext(), R.color.md_theme_onBackground_mediumContrast));
         Drawable drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_hanger);
         drawable.setTint(ContextCompat.getColor(requireContext(), R.color.md_theme_primary));
         clothesCard.setCardImage(drawable);
@@ -54,7 +54,7 @@ public class WardrobeFragment extends Fragment {
         CardMenu outfitCard = view.findViewById(R.id.outfitCard);
         outfitCard.setCardStroke(ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer_mediumContrast), 10);
         outfitCard.setCardText(getString(R.string.outfit));
-        outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body);
+        outfitCard.setCardTextStyle(R.style.TextAppearance_YourWardrobe_Body, ContextCompat.getColor(requireContext(), R.color.md_theme_onBackground_mediumContrast));
         drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_outfit);
         drawable.setTint(ContextCompat.getColor(requireContext(), R.color.md_theme_primary));
         outfitCard.setCardImage(drawable);

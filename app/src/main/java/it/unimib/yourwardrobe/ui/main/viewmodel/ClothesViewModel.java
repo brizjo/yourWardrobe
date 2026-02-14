@@ -38,7 +38,6 @@ public class ClothesViewModel extends AndroidViewModel {
         GRID_BY_DATE
     }
 
-    // LiveData per la lista completa e lo stato
     private final MutableLiveData<List<Garment>> allGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> topGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> bottomGarments = new MutableLiveData<>();
@@ -54,7 +53,8 @@ public class ClothesViewModel extends AndroidViewModel {
 
     private final MediatorLiveData<Map<String, List<String>>> activeFilters = new MediatorLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isWardrobeEmpty = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
     private final MutableLiveData<DisplayMode> displayMode = new MutableLiveData<>(DisplayMode.BY_CATEGORY);
     private final MutableLiveData<List<Garment>> gridGarments = new MutableLiveData<>();
 
@@ -103,8 +103,18 @@ public class ClothesViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(List<Garment> data) {
                 allGarments.postValue(data);
+                if (data == null || data.isEmpty()) {
+                    isWardrobeEmpty.postValue(true);
+                    topGarments.postValue(new ArrayList<>());
+                    bottomGarments.postValue(new ArrayList<>());
+                    footwearGarments.postValue(new ArrayList<>());
+                    accessories.postValue(new ArrayList<>());
+                    gridGarments.postValue(new ArrayList<>());
+                } else {
+                    isWardrobeEmpty.postValue(false);
+                    applyAllFilters();
+                }
                 filterAndPostGarments(data);
-                updateDisplayedGarments(displayMode.getValue());
                 isLoading.postValue(false);
             }
 
@@ -112,6 +122,7 @@ public class ClothesViewModel extends AndroidViewModel {
             public void onFailure(String error, Throwable t) {
                 errorMessage.postValue(error);
                 isLoading.postValue(false);
+                isWardrobeEmpty.postValue(true);
             }
         });
     }
@@ -145,7 +156,6 @@ public class ClothesViewModel extends AndroidViewModel {
 
         }
 
-        // Aggiorna i LiveData specifici
         topGarments.postValue(tops);
         bottomGarments.postValue(bottoms);
         footwearGarments.postValue(shoes);
@@ -226,6 +236,11 @@ public class ClothesViewModel extends AndroidViewModel {
         // Quando la modalità viene cambiata, riapplica i filtri esistenti
         applyAllFilters();
     }
+
+    public LiveData<Boolean> getIsWardrobeEmpty() {
+        return isWardrobeEmpty;
+    }
+
     public LiveData<DisplayMode> getDisplayMode() {
         return displayMode;
     }

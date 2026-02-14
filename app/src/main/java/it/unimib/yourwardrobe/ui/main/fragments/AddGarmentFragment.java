@@ -411,19 +411,31 @@ public class AddGarmentFragment extends Fragment {
         dialogTitle.setText(title);
 
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
-        int colorDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer);
-        ColorStateList bgColorStateList = new ColorStateList(
-                new int[][]{ new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked} },
-                new int[]{ colorSelected, colorDefault }
-        );
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
+        };
+        int[] colors = new int[]{
+                colorSelected,
+                colorDefault
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
 
-        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        int textColorDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
-        ColorStateList textColorStateList = new ColorStateList(
-                new int[][]{ new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked} },
-                new int[]{ textColorSelected, textColorDefault }
-        );
+        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
 
+        int[][] textStates = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        int[] textColors = new int[]{
+                textColorSelected,
+                textColorDefault
+        };
+        ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
+
+        // Popola il dialog
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);

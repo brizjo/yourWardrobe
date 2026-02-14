@@ -3,6 +3,7 @@ package it.unimib.yourwardrobe.ui.main.components;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,10 +51,14 @@ public class CardMenu extends LinearLayout {
         }
     }
 
-    public void setCardTextStyle(int font) {
+    public void setCardTextStyle(int font, int color) {
         if (materialCardView != null) {
             TextView textView = materialCardView.findViewById(R.id.text_view);
             textView.setTextAppearance(font);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 34);
+            textView.setAllCaps(true);
+            textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+            textView.setTextColor(color);
         }
     }
     public void setCardStroke(int color, int width) {

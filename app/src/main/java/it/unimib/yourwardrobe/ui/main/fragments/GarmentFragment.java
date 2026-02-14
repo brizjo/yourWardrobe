@@ -54,6 +54,7 @@ public class GarmentFragment extends Fragment {
     private ChipGroup styleChipGroup;
     private ChipGroup fabricChipGroup;
     private ChipGroup seasonChipGroup;
+    private ChipGroup subCategoryChipGroup;
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
@@ -88,6 +89,7 @@ public class GarmentFragment extends Fragment {
         styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
         fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
         seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
+        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
         Button cancelButton    = view.findViewById(R.id.cancel_button);
         Button updateButton    = view.findViewById(R.id.update_button);
 
@@ -200,26 +202,34 @@ public class GarmentFragment extends Fragment {
         styleChipGroup.removeAllViews();
         fabricChipGroup.removeAllViews();
         seasonChipGroup.removeAllViews();
+        subCategoryChipGroup.removeAllViews();
 
         if (isInEditMode) {
+            // Colori (multipla)
             colorChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Colori",
                             viewModel.getAllColors(), garment.getColor(),
                             newColors -> viewModel.addColors(newColors))));
 
+            // Stili (multipla)
             styleChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Stili",
                             viewModel.getAllStyles(), garment.getStyle(),
                             newStyles -> viewModel.addStyles(newStyles))));
 
+            // Tessuti (multipla)
             fabricChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Tessuti",
                             viewModel.getAllFabrics(), garment.getFabric(),
                             newFabrics -> viewModel.addFabrics(newFabrics))));
 
-            // Stagione: chip singola cliccabile per aprire il dialog di selezione
+            // Stagione (singola): chip cliccabile per aprire il dialog di selezione
             Chip seasonChip = new Chip(requireContext());
             seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+ Stagione");
+            seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            seasonChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
             seasonChip.setOnClickListener(v -> showSeasonSelectionDialog(garment));
             if (garment.getSeason() != null) {
                 seasonChip.setCloseIconVisible(true);
@@ -227,13 +237,33 @@ public class GarmentFragment extends Fragment {
             }
             seasonChipGroup.addView(seasonChip);
 
+            // Sottocategoria (singola): chip cliccabile per aprire il dialog di selezione
+            Chip subCategoryChip = new Chip(requireContext());
+            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+ Sottocategoria");
+            subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            subCategoryChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            subCategoryChip.setOnClickListener(v -> showSubCategorySelectionDialog(garment));
+            if (garment.getSubCategory() != null) {
+                subCategoryChip.setCloseIconVisible(true);
+                subCategoryChip.setOnCloseIconClickListener(v -> viewModel.setSubCategory(null));
+            }
+            subCategoryChipGroup.addView(subCategoryChip);
+
         } else {
+            // Modalità visualizzazione (non edit)
             if (garment.getSeason() != null) {
                 seasonChipGroup.addView(
                         createChip(requireContext(), garment.getSeason(), false, null));
             }
+            if (garment.getSubCategory() != null) {
+                subCategoryChipGroup.addView(
+                        createChip(requireContext(), garment.getSubCategory(), false, null));
+            }
         }
 
+        // Colori (sempre visibili)
         if (garment.getColor() != null) {
             for (String color : garment.getColor()) {
                 colorChipGroup.addView(createChip(requireContext(), color, isInEditMode,
@@ -241,6 +271,7 @@ public class GarmentFragment extends Fragment {
             }
         }
 
+        // Stili (sempre visibili)
         if (garment.getStyle() != null) {
             for (String style : garment.getStyle()) {
                 styleChipGroup.addView(createChip(requireContext(), style, isInEditMode,
@@ -248,6 +279,7 @@ public class GarmentFragment extends Fragment {
             }
         }
 
+        // Tessuti (sempre visibili)
         if (garment.getFabric() != null) {
             for (String fabric : garment.getFabric()) {
                 fabricChipGroup.addView(createChip(requireContext(), fabric, isInEditMode,
@@ -280,6 +312,10 @@ public class GarmentFragment extends Fragment {
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
         chip.setText("+");
+        chip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        chip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnClickListener(v -> onClickAction.run());
         return chip;
     }
@@ -300,6 +336,28 @@ public class GarmentFragment extends Fragment {
                 .setTitle("Seleziona Stagione")
                 .setSingleChoiceItems(seasonsArray, currentIndex, (dialog, which) -> {
                     viewModel.setSelectedSeason(seasonsArray[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // -------------------------------------------------------------------------
+    // Dialog sottocategoria (selezione singola)
+    // -------------------------------------------------------------------------
+
+    private void showSubCategorySelectionDialog(Garment garment) {
+        List<String> allSubCategories = viewModel.getAllSubCategories();
+        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
+
+        int currentIndex = garment.getSubCategory() != null
+                ? allSubCategories.indexOf(garment.getSubCategory())
+                : -1;
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleziona Sottocategoria")
+                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
+                    viewModel.setSubCategory(subCategoriesArray[which]);
                     dialog.dismiss();
                 })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())

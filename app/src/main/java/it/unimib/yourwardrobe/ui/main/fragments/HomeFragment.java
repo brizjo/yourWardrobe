@@ -21,7 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,35 +32,36 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.OutfitAdapter;  // ⬅️ CAMBIATO IMPORT
-import it.unimib.yourwardrobe.domain.model.Garment;
-import it.unimib.yourwardrobe.domain.model.Outfit;
+import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel homeViewModel;
     private FusedLocationProviderClient fusedLocationClient;
-    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if (isGranted) {
-            getCurrentLocation();
-        } else {
-            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-    });
+    private ClothesAdapter clothesAdapter;
+    private RecyclerView recyclerView;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    getCurrentLocation();
+                } else {
+                    Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-
-        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
     }
 
     @Override
@@ -75,39 +76,21 @@ public class HomeFragment extends Fragment {
         TextView tvUsername = view.findViewById(R.id.tv_username);
         CardWeather cardWeather = view.findViewById(R.id.card_weather);
 
-        // Setup RecyclerView
-        RecyclerView recyclerView = view.findViewById(R.id.rv_outfit);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Setup RecyclerView per l'outfit del giorno - GRID 2 COLONNE
+        recyclerView = view.findViewById(R.id.rv_outfit);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setNestedScrollingEnabled(false);
 
-        // 1. Create Data (esempio/demo)
-        List<Outfit> data = new ArrayList<>();
-        List<Garment> garments = new ArrayList<>();
-        garments.add(new Garment("", "Sweater", "Top", "Sweater", "", "https://img.shopstyle-cdn.com/sim/6e/eb/6eeb25b938ff328eeda273f650b4dec3_best/drumohr-round-neck-long-sleeves-sweather.jpg", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        garments.add(new Garment("", "Jacket", "Top", "Jacket", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcT4YCub5KVdWqRCbVEKqWdXQI__zFsEe4Zg&s", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        garments.add(new Garment("", "Pants", "Bottom", "Pants", "", "https://truewerk.com/cdn/shop/files/t1_werkpants_mens_olive_flat_lay_4825e693-f588-4813-bff0-1d4c46ce82ce.jpg?v=1759203265&width=1200", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        garments.add(new Garment("", "Glasses", "Accessory", "Glasses", "", "https://www.blockbluelight.co.uk/cdn/shop/products/blockbluelight-blue-light-filter-computer-glasses-clear-lens-screentime-billie-computer-glasses-black-29752330322052.jpg?v=1651274298", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        garments.add(new Garment("", "Boots", "Shoes", "Boots", "", "https://cdn.laredoute.com/cdn-cgi/image/width=500,height=500,fit=pad,dpr=1/products/5/7/f/57f72574fc41014ee6b9d79ed387afa7.jpg", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        garments.add(new Garment("", "Earrings", "Accessory", "Earrings", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdCfDtc-lffVIzg8lCPkKPa202ZiizYrcT5A&s", new ArrayList<>(), new ArrayList<>(), new ArrayList<>()));
-        data.add(new Outfit("My first outfit", "Casual", garments));
+        // Usa il nuovo layout item_outfit_home
+        clothesAdapter = new ClothesAdapter(new ArrayList<>(),
+                R.layout.item_outfit_home,
+                (v, garment) -> {
+                    Toast.makeText(getContext(), "Clicked: " + garment.getName(), Toast.LENGTH_SHORT).show();
+                });
+        recyclerView.setAdapter(clothesAdapter);
 
-        // 2. Create click listener
-        OutfitAdapter.OnItemClickListener listener = (v, outfit) -> {
-            // TODO: Gestisci il click sull'outfit
-            // Ad esempio naviga ai dettagli dell'outfit
-            Toast.makeText(getContext(), "Clicked: " + outfit.getName(), Toast.LENGTH_SHORT).show();
-
-            // Oppure naviga con Navigation Component:
-            // Bundle bundle = new Bundle();
-            // bundle.putSerializable("outfit", outfit);
-            // Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_singleOutfitFragment, bundle);
-        };
-
-        // 3. Set Adapter con il nuovo costruttore
-        OutfitAdapter adapter = new OutfitAdapter(data, R.layout.item_outfit_grid, listener);  // ⬅️ CORRETTO
-        recyclerView.setAdapter(adapter);
-
-        // Observe ViewModels
-        this.homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
+        // Observe User
+        homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
                 case LOADING:
                     break;
@@ -120,10 +103,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        this.homeViewModel.currentWeatherResult.observe(getViewLifecycleOwner(), result -> {
+        // Observe Weather
+        homeViewModel.currentWeatherResult.observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
                 case LOADING:
                     cardWeather.setVisibility(GONE);
+                    pbWeather.setVisibility(VISIBLE);
                     break;
                 case SUCCESS:
                     pbWeather.setVisibility(GONE);
@@ -134,8 +119,29 @@ public class HomeFragment extends Fragment {
                     cardWeather.setConditionBackground(result.data.getBackgroundResId());
                     break;
                 case ERROR:
+                    pbWeather.setVisibility(GONE);
                     ToastHelper.show(getContext(), result.message, false);
                     break;
+            }
+        });
+
+        // Observe Outfit del giorno
+        homeViewModel.outfitOfTheDay.observe(getViewLifecycleOwner(), garments -> {
+            if (garments != null && !garments.isEmpty()) {
+                Log.d(TAG, "Outfit del giorno ricevuto con " + garments.size() + " capi");
+                recyclerView.setVisibility(View.VISIBLE);
+                clothesAdapter.updateGarments(garments);
+            } else {
+                Log.d(TAG, "Nessun outfit disponibile");
+                recyclerView.setVisibility(View.GONE);
+                clothesAdapter.updateGarments(new ArrayList<>());
+            }
+        });
+
+        // Observe loading state
+        homeViewModel.isGeneratingOutfit.observe(getViewLifecycleOwner(), isGenerating -> {
+            if (Boolean.TRUE.equals(isGenerating)) {
+                Log.d(TAG, "Generazione outfit in corso...");
             }
         });
     }
@@ -144,7 +150,7 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         checkPermissionAndGetLocation();
-        this.homeViewModel.getCurrentUser();
+        homeViewModel.getCurrentUser();
     }
 
     @Override
@@ -154,8 +160,10 @@ public class HomeFragment extends Fragment {
     }
 
     private boolean isLocationEnabled() {
-        android.location.LocationManager locationManager = (android.location.LocationManager) requireContext().getSystemService(android.content.Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
+        android.location.LocationManager locationManager = (android.location.LocationManager)
+                requireContext().getSystemService(android.content.Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
     }
 
     private void checkPermissionAndGetLocation() {
@@ -164,28 +172,28 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        boolean hasCoarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (hasFineLocationPermission && hasCoarseLocationPermission) {
             getCurrentLocation();
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
     }
 
     private void getCurrentLocation() {
         try {
-            // 1. Try a high-accuracy single shot first
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).addOnSuccessListener(location -> {
-                if (location != null) {
-                    homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
-                } else {
-                    // 2. If single shot fails, fallback to last location
-                    fetchLastLocationFallback();
-                }
-            });
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                        } else {
+                            fetchLastLocationFallback();
+                        }
+                    });
         } catch (SecurityException e) {
             Log.e(TAG, "Security Exception", e);
         }
@@ -197,8 +205,6 @@ public class HomeFragment extends Fragment {
                 if (location != null) {
                     homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
                 } else {
-                    // 3. ULTIMATE FALLBACK: If both are null, the GPS is likely "cold".
-                    // You should start a brief Location Callback here to force the hardware to wake up.
                     requestNewLocationData();
                 }
             });
@@ -209,7 +215,10 @@ public class HomeFragment extends Fragment {
 
     private void requestNewLocationData() {
         try {
-            com.google.android.gms.location.LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).setMaxUpdates(1).build();
+            LocationRequest locationRequest = new LocationRequest.Builder(
+                    Priority.PRIORITY_HIGH_ACCURACY, 1000)
+                    .setMaxUpdates(1)
+                    .build();
 
             fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
                 @Override
@@ -220,7 +229,6 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }, android.os.Looper.getMainLooper());
-
         } catch (SecurityException e) {
             Log.e(TAG, "Security Exception", e);
         }

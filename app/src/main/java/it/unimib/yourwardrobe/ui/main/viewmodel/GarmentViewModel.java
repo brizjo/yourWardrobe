@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
@@ -71,24 +72,60 @@ public class GarmentViewModel extends AndroidViewModel {
 
     public void updateGarment() {
         Garment currentGarment = garment.getValue();
-        if (currentGarment != null && currentGarment.equals(originalGarment)) {
-            Log.i("GarmentViewModel", "Nessuna modifica rilevata. Aggiornamento saltato.");
+
+        Log.d("GarmentViewModel", "========== UPDATE GARMENT ==========");
+        Log.d("GarmentViewModel", "Current: " + (currentGarment != null ? currentGarment.getName() : "null"));
+        Log.d("GarmentViewModel", "Original: " + (originalGarment != null ? originalGarment.getName() : "null"));
+
+        if (currentGarment != null && !hasChanges(currentGarment, originalGarment)) {
+            Log.i("GarmentViewModel", "⚠️ Nessuna modifica rilevata. Aggiornamento saltato.");
             exitEditMode();
             garmentUpdatedSuccessfully.postValue(true);
             return;
         }
+
+        Log.d("GarmentViewModel", "✅ Modifiche rilevate, procedo con update");
+
         garmentRepository.updateGarment(currentGarment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
+                Log.d("GarmentViewModel", "✅✅✅ UPDATE RIUSCITO!");
                 garmentUpdatedSuccessfully.postValue(true);
+                // Aggiorna l'originalGarment con i nuovi valori
+                originalGarment = new Garment(currentGarment);
                 exitEditMode();
             }
             @Override
             public void onFailure(String error, Throwable t) {
-                Log.e("GarmentViewModel", "Update fallito: " + error, t);
+                Log.e("GarmentViewModel", "❌❌❌ ERRORE UPDATE: " + error, t);
                 garmentUpdatedSuccessfully.postValue(false);
             }
         });
+    }
+
+    /**
+     * Verifica se ci sono modifiche tra il garment corrente e quello originale
+     */
+    private boolean hasChanges(Garment current, Garment original) {
+        if (original == null) return true;
+        if (current == null) return false;
+
+        boolean nameChanged = !Objects.equals(current.getName(), original.getName());
+        boolean seasonChanged = !Objects.equals(current.getSeason(), original.getSeason());
+        boolean subCategoryChanged = !Objects.equals(current.getSubCategory(), original.getSubCategory());
+        boolean colorsChanged = !Objects.equals(current.getColor(), original.getColor());
+        boolean stylesChanged = !Objects.equals(current.getStyle(), original.getStyle());
+        boolean fabricsChanged = !Objects.equals(current.getFabric(), original.getFabric());
+
+        Log.d("GarmentViewModel", "Name changed: " + nameChanged);
+        Log.d("GarmentViewModel", "Season changed: " + seasonChanged);
+        Log.d("GarmentViewModel", "SubCategory changed: " + subCategoryChanged);
+        Log.d("GarmentViewModel", "Colors changed: " + colorsChanged);
+        Log.d("GarmentViewModel", "Styles changed: " + stylesChanged);
+        Log.d("GarmentViewModel", "Fabrics changed: " + fabricsChanged);
+
+        return nameChanged || seasonChanged || subCategoryChanged ||
+                colorsChanged || stylesChanged || fabricsChanged;
     }
 
     public void cancelChanges() {
@@ -101,8 +138,9 @@ public class GarmentViewModel extends AndroidViewModel {
     public void setGarmentName(String name) {
         Garment currentGarment = garment.getValue();
         if (currentGarment != null && !name.equals(currentGarment.getName())) {
-            currentGarment.setName(name);
-            garment.setValue(currentGarment);
+            Garment newGarment = new Garment(currentGarment);
+            newGarment.setName(name);
+            garment.setValue(newGarment);
         }
     }
 
@@ -135,6 +173,10 @@ public class GarmentViewModel extends AndroidViewModel {
         );
     }
 
+    public List<String> getAllSubCategories() {
+        return Arrays.asList(getApplication().getResources().getStringArray(R.array.subcategories));
+    }
+
     // -------------------------------------------------------------------------
     // Season
     // -------------------------------------------------------------------------
@@ -153,6 +195,19 @@ public class GarmentViewModel extends AndroidViewModel {
         if (currentGarment != null) {
             Garment newGarment = new Garment(currentGarment);
             newGarment.setSeason(null);
+            garment.setValue(newGarment);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // SubCategory
+    // -------------------------------------------------------------------------
+
+    public void setSubCategory(String subCategory) {
+        Garment currentGarment = garment.getValue();
+        if (currentGarment != null) {
+            Garment newGarment = new Garment(currentGarment);
+            newGarment.setSubCategory(subCategory);
             garment.setValue(newGarment);
         }
     }

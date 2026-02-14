@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/md"
-    tools:context=".ui.main.fragments.HomeFragment">
+    tools:context=".ui.main.viewmodel.HomeFragment">
 
+    <!-- Welcome Section -->
     <LinearLayout
         android:id="@+id/layout_welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/md"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,22 +30,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/playfairdisplay_medium"
-            android:textSize="@dimen/text_2xl" />
+            android:textSize="@dimen/text_2xl"
+            tools:text="Mario" />
 
     </LinearLayout>
 
+    <!-- Weather Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/layout_outfit"
-        app:layout_constraintTop_toBottomOf="@id/layout_welcome">
-
+        android:layout_marginTop="@dimen/lg"
+        app:layout_constraintTop_toBottomOf="@id/layout_welcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ProgressBar
             android:id="@+id/pb_weather"
             style="?android:attr/progressBarStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,38 +63,105 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <!-- Outfit Section Header -->
     <LinearLayout
-        android:id="@+id/layout_outfit"
+        android:id="@+id/layout_outfit_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xl"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_weather">
+
+        <TextView
+            android:id="@+id/tv_outfit_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/playfairdisplay_medium"
+            android:text="@string/daily_outfit"
+            android:textSize="@dimen/text_xl" />
+
+        <!-- BOTTONE RIGENERAZIONE -->
+        <ImageButton
+            android:id="@+id/btn_regenerate_outfit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/sm"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="Rigenera outfit" />
+
+        <ProgressBar
+            android:id="@+id/pb_outfit"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sm"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- Outfit RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_outfit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/md"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_outfit_header"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_outfit_home" />
+
+    <!-- Empty State (quando non ci sono capi) -->
+    <LinearLayout
+        android:id="@+id/layout_empty_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/xl"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_outfit_header"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_weather">
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_launcher_background"
+            android:alpha="0.3"
+            android:contentDescription="@string/app_name" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/sm"
-            android:fontFamily="@font/playfairdisplay_medium"
-            android:text="@string/daily_outfit"
-            android:textSize="@dimen/text_xl" />
+            android:layout_marginTop="@dimen/md"
+            android:text="Nessun capo disponibile"
+            android:textSize="@dimen/text_md"
+            android:alpha="0.6" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xs"
+            android:text="Aggiungi capi al guardaroba per generare outfit"
+            android:textSize="@dimen/text_sm"
+            android:alpha="0.5"
+            android:gravity="center" />
+
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_outfit"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/md"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_outfit" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

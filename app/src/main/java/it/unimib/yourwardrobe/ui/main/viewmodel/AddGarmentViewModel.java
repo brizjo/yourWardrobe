@@ -36,6 +36,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allSeasons = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> allSubCategories = new MutableLiveData<>();
 
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> garmentImage = new MutableLiveData<>();
@@ -44,6 +45,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<List<String>> selectedStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
     private final MutableLiveData<String> selectedSeason = new MutableLiveData<>();
+    private final MutableLiveData<String> selectedSubCategory = new MutableLiveData<>(); // CAMBIATO: String invece di List
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
     @Inject
@@ -64,6 +66,7 @@ public class AddGarmentViewModel extends ViewModel {
         isButtonEnabled.addSource(selectedStyles, value -> validateForm());
         isButtonEnabled.addSource(selectedFabrics, value -> validateForm());
         isButtonEnabled.addSource(selectedSeason, value -> validateForm());
+        isButtonEnabled.addSource(selectedSubCategory, value -> validateForm());
     }
 
     private void loadInitialData() {
@@ -71,6 +74,7 @@ public class AddGarmentViewModel extends ViewModel {
         allCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.categories)));
         allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
         allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
+        allSubCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.subcategories)));
         allSeasons.setValue(Arrays.asList(
                 "Tutte le stagioni",
                 "Primavera",
@@ -91,8 +95,9 @@ public class AddGarmentViewModel extends ViewModel {
         boolean hasStyles = selectedStyles.getValue() != null && !selectedStyles.getValue().isEmpty();
         boolean hasFabrics = selectedFabrics.getValue() != null && !selectedFabrics.getValue().isEmpty();
         boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
+        boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty(); // CAMBIATO
 
-        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasFabrics && hasSeason);
+        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasFabrics && hasSeason && hasSubCategory);
     }
 
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
@@ -127,9 +132,11 @@ public class AddGarmentViewModel extends ViewModel {
         List<String> styles = selectedStyles.getValue();
         List<String> fabrics = selectedFabrics.getValue();
         String season = selectedSeason.getValue();
+        String subCategory = selectedSubCategory.getValue(); // CAMBIATO
 
         if (image == null || name == null || name.isEmpty() || category == null
-                || colors == null || colors.isEmpty() || season == null) {
+                || colors == null || colors.isEmpty() || season == null
+                || subCategory == null || subCategory.isEmpty()) { // CAMBIATO
             errorMessage.postValue("Dati mancanti per creare il capo.");
             return;
         }
@@ -141,6 +148,7 @@ public class AddGarmentViewModel extends ViewModel {
         garment.setStyle(styles);
         garment.setFabric(fabrics);
         garment.setSeason(season);
+        garment.setSubCategory(subCategory); // CAMBIATO
 
         isLoading.postValue(true);
         garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
@@ -161,6 +169,7 @@ public class AddGarmentViewModel extends ViewModel {
     public void setGarmentName(String name) { garmentName.setValue(name); }
     public void setSelectedCategory(String category) { selectedCategory.setValue(category); }
     public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
+    public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
     public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
     public LiveData<List<String>> getAllColors() { return allColors; }
@@ -168,10 +177,13 @@ public class AddGarmentViewModel extends ViewModel {
     public LiveData<List<String>> getAllStyles() { return allStyles; }
     public LiveData<List<String>> getAllFabrics() { return allFabrics; }
     public LiveData<List<String>> getAllSeasons() { return allSeasons; }
+    public LiveData<List<String>> getAllSubCategories() { return allSubCategories; }
     public LiveData<List<String>> getSelectedColors() { return selectedColors; }
     public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
     public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
     public LiveData<String> getSelectedSeason() { return selectedSeason; }
+    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; } // CAMBIATO
+
     public LiveData<String> getErrorMessage() { return errorMessage; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
 

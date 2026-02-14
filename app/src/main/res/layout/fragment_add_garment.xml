@@ -131,11 +131,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="@string/tessuto"
+                android:text="Stagione"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_fabric"
+                android:id="@+id/chip_group_season"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginEnd="@dimen/md">
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Sottocategoria - SPOSTATA QUI TRA STAGIONE E TESSUTO -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginTop="@dimen/md"
+                android:text="Sottocategoria"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_subcategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
@@ -147,11 +164,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="Stagione"
+                android:text="@string/tessuto"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_season"
+                android:id="@+id/chip_group_fabric"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"

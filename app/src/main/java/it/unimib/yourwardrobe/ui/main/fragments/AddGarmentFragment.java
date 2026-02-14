@@ -440,8 +440,8 @@ public class AddGarmentFragment extends Fragment {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
             chip.setCheckable(true);
-            chip.setChipBackgroundColor(bgColorStateList);
-            chip.setTextColor(textColorStateList);
+            chip.setChipBackgroundColor(colorStateList);
+            chip.setTextColor(chipTextColorStateList);
             if (currentSelection.contains(option)) chip.setChecked(true);
             dialogChipGroup.addView(chip);
         }

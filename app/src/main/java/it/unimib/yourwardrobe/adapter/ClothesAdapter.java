@@ -37,11 +37,11 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
     }
 
-    public void updateGarments(List<Garment> newGarments) {
+    /*public void updateGarments(List<Garment> newGarments) {
         this.clothesList.clear();
         this.clothesList.addAll(newGarments);
         notifyDataSetChanged(); // Notifica al RecyclerView di ridisegnare tutto
-    }
+    }*/
 
     @NonNull
     @Override

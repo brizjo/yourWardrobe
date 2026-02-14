@@ -32,20 +32,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/lg">
+            android:layout_marginHorizontal="@dimen/lg"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:text="@string/benvenuto"
+                android:text="@string/welcome_message"
                 android:textAppearance="@style/MyHeadlineLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
                 android:text="@string/registrato"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
@@ -53,18 +51,15 @@
                 style="?attr/textInputOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/lg"
-                android:layout_marginEnd="@dimen/md"
                 android:background="#05000000"
                 android:hint="@string/email"
-                app:startIconDrawable="@drawable/ic_email">
+                app:startIconDrawable="@drawable/ic_user_small_outline">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#00000000"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,48 +67,40 @@
                 style="?attr/textInputOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/lg"
-                android:layout_marginEnd="@dimen/md"
                 android:background="#05000000"
                 android:hint="@string/password"
-                app:startIconDrawable="@drawable/ic_password">
+                app:endIconMode="password_toggle"
+                app:startIconDrawable="@drawable/ic_lock_small_outline">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#00000000"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent"
+            <com.google.android.material.button.MaterialButton
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:gravity="center|start"
-                android:text="@string/password_dimenticata"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                android:text="@string/forgot_password" />
 
-            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
-                android:id="@+id/login_button"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="50dp"
                 android:layout_marginTop="@dimen/xl"
-                android:layout_marginEnd="50dp" />
+                android:text="@string/sign_in" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="100dp"
-                android:layout_marginTop="@dimen/sm"
-                android:layout_marginEnd="100dp">
+                android:layout_marginTop="@dimen/sm">
 
                 <View
-                    android:layout_width="100dp"
+                    android:layout_width="250dp"
                     android:layout_height="1dp"
                     android:layout_centerInParent="true"
                     android:layout_marginEnd="@dimen/sm"
@@ -128,7 +115,7 @@
                     android:text="@string/o" />
 
                 <View
-                    android:layout_width="100dp"
+                    android:layout_width="250dp"
                     android:layout_height="1dp"
                     android:layout_centerInParent="true"
                     android:layout_marginStart="@dimen/sm"
@@ -136,23 +123,39 @@
                     android:background="#555" />
             </RelativeLayout>
 
-            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
-                android:id="@+id/login_button_google"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="@dimen/md"
-                android:layout_marginEnd="50dp" />
 
-            <it.unimib.yourwardrobe.ui.welcome.components.LoginButton
-                android:id="@+id/sign_up_button"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sign_in_google"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/sign_in_with_google"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@android:color/black"
+                app:icon="@drawable/ic_google"
+                app:iconTint="@null" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="@dimen/md"
-                android:layout_marginEnd="50dp" />
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/dont_have_an_account" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_go_sign_up"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_up" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

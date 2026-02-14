@@ -261,6 +261,8 @@ public class GarmentFragment extends Fragment {
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
         chip.setText("+");
+        chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnClickListener(v -> onClickAction.run());
         return chip;
     }
@@ -352,9 +354,36 @@ public class GarmentFragment extends Fragment {
 
         dialogTitle.setText(title);
 
+        int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
+        };
+        int[] colors = new int[]{
+                colorSelected,
+                colorDefault
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
+
+        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
+
+        int[][] textStates = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        int[] textColors = new int[]{
+                textColorSelected,
+                textColorDefault
+        };
+        ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
+
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
+            chip.setChipBackgroundColor(colorStateList);
+            chip.setTextColor(chipTextColorStateList);
             chip.setCheckable(true);
             // Se l'opzione è già presente, la disabilita per non poterla ri-aggiungere
             if (currentSelection != null && currentSelection.contains(option)) {

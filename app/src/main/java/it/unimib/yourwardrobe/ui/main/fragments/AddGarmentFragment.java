@@ -342,7 +342,7 @@ public class AddGarmentFragment extends Fragment {
 
         dialogTitle.setText(title);
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
-        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_primaryContainer);
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
                 new int[]{-android.R.attr.state_checked}  // Stato: non selezionato

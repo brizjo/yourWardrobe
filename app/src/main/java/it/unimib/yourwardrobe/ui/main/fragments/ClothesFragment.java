@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,9 +49,16 @@ public class ClothesFragment extends Fragment {
     private ClothesViewModel clothesViewModel;
     private ClothesAdapter.OnItemClickListener listener;
     private ChipGroup activeFiltersChipGroup;
+    private Button addFirstGarmentButton;
+    private ImageView orderButton;
+    private ImageView filterButton;
     private HorizontalScrollView activeFiltersScrollView;
     private NestedScrollView categoriesScrollView;
     private RecyclerView gridRecyclerView;
+    private RecyclerView recyclerViewTop;
+    private RecyclerView recyclerViewBottom;
+    private RecyclerView recyclerViewFootWear;
+    private RecyclerView recyclerViewAccessories;
     private View emptyWardrobeView;
     private View topButtonsContainer;
     private View mainContainer;
@@ -90,13 +99,14 @@ public class ClothesFragment extends Fragment {
             bundle.putSerializable("garment", item);
             Navigation.findNavController(requireView()).navigate(R.id.action_clothesFragment_to_garmentFragment, bundle);
         };
-        categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
-        gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
-        emptyWardrobeView = view.findViewById(R.id.empty_wardrobe_view);
-        topButtonsContainer = view.findViewById(R.id.top_buttons_container);
-        mainContainer = view.findViewById(R.id.main_container);
-        loadingProgressBar = view.findViewById(R.id.loading_progressbar);
-        Button addFirstGarmentButton = view.findViewById(R.id.add_first_garment_button);
+        initViews(view);
+
+        initAdapter();
+
+        setAdaptersLayoutManager();
+
+        setAdapters();
+
         addFirstGarmentButton.setOnClickListener(v -> {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
                     .findFragmentById(R.id.nav_host_fragment);
@@ -106,30 +116,6 @@ public class ClothesFragment extends Fragment {
             }
         });
 
-        RecyclerView recyclerViewTop = view.findViewById(R.id.parte_superiore_recycler_view);
-        RecyclerView recyclerViewBottom = view.findViewById(R.id.parte_inferiore_recycler_view);
-        RecyclerView recyclerViewFootWear = view.findViewById(R.id.calzature_recycler_view);
-        RecyclerView recyclerViewAccessories = view.findViewById(R.id.accessori_recycler_view);
-
-        recyclerViewTop.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-        recyclerViewBottom.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-        recyclerViewFootWear.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-        recyclerViewAccessories.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
-
-        topAdapter = new ClothesAdapter(new ArrayList<>(), listener);
-        bottomAdapter = new ClothesAdapter(new ArrayList<>(), listener);
-        footwearAdapter = new ClothesAdapter(new ArrayList<>(), listener);
-        accessoriesAdapter = new ClothesAdapter(new ArrayList<>(), listener);
-        gridAdapter = new ClothesAdapter(new ArrayList<>(), R.layout.item_clothes_grid, listener);
-
-        recyclerViewTop.setAdapter(topAdapter);
-        recyclerViewBottom.setAdapter(bottomAdapter);
-        recyclerViewFootWear.setAdapter(footwearAdapter);
-        recyclerViewAccessories.setAdapter(accessoriesAdapter);
-        gridRecyclerView.setAdapter(gridAdapter);
-        //recyclerViewTop.setNestedScrollingEnabled(false);
-
-        ImageView orderButton = view.findViewById(R.id.order_button);
         orderButton.setOnClickListener(v -> showOrderDialog());
         Button addButton = view.findViewById(R.id.add_button);
         addButton.setOnClickListener(v -> {
@@ -143,16 +129,59 @@ public class ClothesFragment extends Fragment {
                 Log.e("ClothesFragment", "NavHostFragment non trovato. Impossibile navigare.");
             }
         });
-        ImageView filterButton = view.findViewById(R.id.filter_button);
+
         filterButton.setOnClickListener(v -> {
             showFilterCategoryMenu();
         });
 
-        activeFiltersChipGroup = view.findViewById(R.id.active_filters_chipgroup);
-        activeFiltersScrollView = view.findViewById(R.id.active_filters_scrollview);
-
         clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
 
+        observeViewModel();
+
+    }
+
+    private void initViews(View view){
+        categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
+        gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
+        emptyWardrobeView = view.findViewById(R.id.empty_wardrobe_view);
+        topButtonsContainer = view.findViewById(R.id.top_buttons_container);
+        mainContainer = view.findViewById(R.id.main_container);
+        loadingProgressBar = view.findViewById(R.id.loading_progressbar);
+        addFirstGarmentButton = view.findViewById(R.id.add_first_garment_button);
+        orderButton = view.findViewById(R.id.order_button);
+        filterButton = view.findViewById(R.id.filter_button);
+        activeFiltersChipGroup = view.findViewById(R.id.active_filters_chipgroup);
+        activeFiltersScrollView = view.findViewById(R.id.active_filters_scrollview);
+        recyclerViewTop = view.findViewById(R.id.parte_superiore_recycler_view);
+        recyclerViewBottom = view.findViewById(R.id.parte_inferiore_recycler_view);
+        recyclerViewFootWear = view.findViewById(R.id.calzature_recycler_view);
+        recyclerViewAccessories = view.findViewById(R.id.accessori_recycler_view);
+    }
+
+    private void initAdapter(){
+        topAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        bottomAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        footwearAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        accessoriesAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        gridAdapter = new ClothesAdapter(new ArrayList<>(), R.layout.item_clothes_grid, listener);
+    }
+
+    private void setAdaptersLayoutManager() {
+        recyclerViewTop.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewBottom.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewFootWear.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+        recyclerViewAccessories.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
+    }
+
+    private void setAdapters(){
+        recyclerViewTop.setAdapter(topAdapter);
+        recyclerViewBottom.setAdapter(bottomAdapter);
+        recyclerViewFootWear.setAdapter(footwearAdapter);
+        recyclerViewAccessories.setAdapter(accessoriesAdapter);
+        gridRecyclerView.setAdapter(gridAdapter);
+    }
+
+    private void observeViewModel(){
         clothesViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
                 if (isLoading) {
@@ -259,7 +288,6 @@ public class ClothesFragment extends Fragment {
             if (error != null) {
                 ToastHelper.show(getContext(), error, false);
             }
-
         });
     }
 
@@ -358,11 +386,38 @@ public class ClothesFragment extends Fragment {
 
         dialogTitle.setText("Seleziona " + title);
 
+        int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
+                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
+        };
+        int[] colors = new int[]{
+                colorSelected,
+                colorDefault
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
+
+        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
+
+        int[][] textStates = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        int[] textColors = new int[]{
+                textColorSelected,
+                textColorDefault
+        };
+        ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
+
         // Popola il ChipGroup con tutte le opzioni
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
             chip.setCheckable(true);
+            chip.setChipBackgroundColor(colorStateList);
+            chip.setTextColor(chipTextColorStateList);
             dialogChipGroup.addView(chip);
         }
 
@@ -394,6 +449,8 @@ public class ClothesFragment extends Fragment {
         Chip chip = new Chip(requireContext());
         chip.setText(text);
         chip.setCloseIconVisible(true);
+        chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnCloseIconClickListener(v -> {
             // Notifica il ViewModel della rimozione del filtro
             switch (type) {

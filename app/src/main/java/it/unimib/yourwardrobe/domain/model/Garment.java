@@ -52,7 +52,11 @@ public class Garment  implements Serializable {
         this.style = style;
     }
 
-
+    public Garment (String id, String imgUrl, String category){
+        this.id = id;
+        this.imageUrl = imgUrl;
+        this.category = category;
+    }
     public Date getCreatedAt() {
         return createdAt;
     }

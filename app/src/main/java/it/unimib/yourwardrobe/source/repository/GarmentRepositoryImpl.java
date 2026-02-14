@@ -70,9 +70,15 @@ public class GarmentRepositoryImpl implements GarmentRepository {
     }
 
     @Override
+    public void getGarmentsByCategory(String category, Callback<List<Garment>> callback) {
+        dataSource.getGarmentsByCategory(category, callback);
+    }
+
+    @Override
     public void getGarments(Callback<List<Garment>> callback) {
             dataSource.getGarments(callback);
     }
+
 
 
 }

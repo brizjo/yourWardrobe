@@ -21,8 +21,9 @@ import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 @HiltViewModel
 public class CreateOutfitViewModel extends ViewModel {
 
-    public static final int MAX_TOPS = 3;
-    public static final int MAX_BOTTOMS = 1;
+    public static final int MAX_TOPS = 2;
+
+
     public static final int MAX_ACCESSORIES = 4;
 
     private final GarmentRepository garmentRepository;
@@ -35,11 +36,15 @@ public class CreateOutfitViewModel extends ViewModel {
     // --- Garments dal guardaroba divisi per categoria ---
     private final MutableLiveData<List<Garment>> topGarments = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Garment>> bottomGarments = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<List<Garment>>  shoesGarments = new MutableLiveData<>(new ArrayList<>());
+
     private final MutableLiveData<List<Garment>> accessoryGarments = new MutableLiveData<>(new ArrayList<>());
 
     // --- Selezioni dell'utente ---
     private final MutableLiveData<List<Garment>> selectedTops = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Garment>> selectedBottoms = new MutableLiveData<>(new ArrayList<>());
+
+    private final MutableLiveData<List<Garment>> selectedShoes = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Garment>> selectedAccessories = new MutableLiveData<>(new ArrayList<>());
 
     // --- Nome outfit ---
@@ -65,46 +70,51 @@ public class CreateOutfitViewModel extends ViewModel {
     }
 
     public void fetchGarments() {
-        garmentRepository.getGarments(new Callback<List<Garment>>() {
+        isLoading.setValue(true);
+
+        // Carichiamo la Parte Superiore
+        garmentRepository.getGarmentsByCategory("Parte superiore", new Callback<List<Garment>>() {
             @Override
-            public void onSuccess(List<Garment> garments) {
-                List<Garment> tops = new ArrayList<>();
-                List<Garment> bottoms = new ArrayList<>();
-                List<Garment> accessories = new ArrayList<>();
-
-                for (Garment g : garments) {
-                    String cat = g.getCategory();
-                    if (cat == null) continue;
-                    switch (cat.toLowerCase()) {
-                        case "top":
-                        case "maglietta":
-                        case "camicia":
-                        case "maglione":
-                            tops.add(g);
-                            break;
-                        case "bottom":
-                        case "pantaloni":
-                        case "gonna":
-                        case "jeans":
-                            bottoms.add(g);
-                            break;
-                        case "accessorio":
-                        case "accessori":
-                        case "scarpe":
-                        case "borsa":
-                        case "cappello":
-                            accessories.add(g);
-                            break;
-                    }
-                }
-                topGarments.postValue(tops);
-                bottomGarments.postValue(bottoms);
-                accessoryGarments.postValue(accessories);
+            public void onSuccess(List<Garment> result) {android.util.Log.d("OUTFIT_DEBUG", "Parte superiore ricevuta: " + result.size() + " capi");
+                android.util.Log.d("OUTFIT_DEBUG", "Sopra: " + result.size());
+                topGarments.postValue(result);
             }
+            // ...
 
+            @Override
+            public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
+        });
+
+        // Carichiamo la Parte Inferiore
+        garmentRepository.getGarmentsByCategory("Parte inferiore", new Callback<List<Garment>>() {
+            @Override
+            public void onSuccess(List<Garment> result) {
+                bottomGarments.postValue(result);
+            }
+            @Override
+            public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
+        });
+
+        garmentRepository.getGarmentsByCategory("Calzature", new Callback<List<Garment>>() {
+            @Override
+            public void onSuccess(List<Garment> result) {
+                shoesGarments.postValue(result);
+            }
+            @Override
+            public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
+        });
+
+        // Carichiamo gli Accessori
+        garmentRepository.getGarmentsByCategory("Accessori", new Callback<List<Garment>>() {
+            @Override
+            public void onSuccess(List<Garment> result) {
+                accessoryGarments.postValue(result);
+                isLoading.postValue(false);
+            }
             @Override
             public void onFailure(String error, Throwable t) {
                 errorMessage.postValue(error);
+                isLoading.postValue(false);
             }
         });
     }
@@ -135,6 +145,19 @@ public class CreateOutfitViewModel extends ViewModel {
         updateSaveButtonState();
     }
 
+    public void toggleShoesSelection(Garment garment) {
+        List<Garment> current = new ArrayList<>(selectedShoes.getValue());
+        if (current.contains(garment)) {
+            current.remove(garment);
+        } else if (current.isEmpty()) {
+            current.add(garment);
+        } else {
+            errorMessage.setValue("Puoi selezionare al massimo " + MAX_ACCESSORIES + " accessori.");
+            return;
+        }
+        selectedShoes.setValue(current);
+        updateSaveButtonState();
+    }
     public void toggleAccessorySelection(Garment garment) {
         List<Garment> current = new ArrayList<>(selectedAccessories.getValue());
         if (current.contains(garment)) {
@@ -149,6 +172,13 @@ public class CreateOutfitViewModel extends ViewModel {
         updateSaveButtonState();
     }
 
+    public void removeTop() { selectedTops.setValue(null); updateSaveButtonState(); }
+    public void removeBottom() { selectedBottoms.setValue(null); updateSaveButtonState(); }
+
+    public void removeShoes() { selectedShoes.setValue(null); updateSaveButtonState(); }
+
+    public void removeAccessory() { selectedAccessories.setValue(null); updateSaveButtonState(); }
+
     public void setOutfitName(String name) {
         outfitName.setValue(name);
         updateSaveButtonState();
@@ -159,10 +189,13 @@ public class CreateOutfitViewModel extends ViewModel {
     }
 
     private void updateSaveButtonState() {
-        boolean hasItems = !selectedTops.getValue().isEmpty()
-                || !selectedBottoms.getValue().isEmpty();
-        boolean hasName = outfitName.getValue() != null
-                && !outfitName.getValue().trim().isEmpty();
+        List<Garment> tops = selectedTops.getValue();
+        List<Garment> bottoms = selectedBottoms.getValue();
+        // Aggiungi scarpe se vuoi siano obbligatorie
+
+        boolean hasItems = (tops != null && !tops.isEmpty()) && (bottoms != null && !bottoms.isEmpty());
+        boolean hasName = outfitName.getValue() != null && !outfitName.getValue().trim().isEmpty();
+
         isSaveEnabled.setValue(hasItems && hasName);
     }
 
@@ -172,9 +205,11 @@ public class CreateOutfitViewModel extends ViewModel {
         isLoading.setValue(true);
 
         List<Garment> allGarments = new ArrayList<>();
-        allGarments.addAll(selectedTops.getValue());
-        allGarments.addAll(selectedBottoms.getValue());
-        allGarments.addAll(selectedAccessories.getValue());
+        if (selectedTops.getValue() != null) allGarments.addAll(selectedTops.getValue());
+        if (selectedBottoms.getValue() != null) allGarments.addAll(selectedBottoms.getValue());
+        if (selectedShoes.getValue() != null) allGarments.addAll(selectedShoes.getValue()); // AGGIUNTO
+        if (selectedAccessories.getValue() != null) allGarments.addAll(selectedAccessories.getValue());
+
 
         Outfit outfit = new Outfit(outfitName.getValue(), selectedSeason.getValue(), allGarments);
 
@@ -197,12 +232,18 @@ public class CreateOutfitViewModel extends ViewModel {
     public LiveData<String> getSelectedSeason() { return selectedSeason; }
     public LiveData<List<Garment>> getTopGarments() { return topGarments; }
     public LiveData<List<Garment>> getBottomGarments() { return bottomGarments; }
+    public LiveData<List<Garment>> getShoesGarments() { return shoesGarments; }
+
     public LiveData<List<Garment>> getAccessoryGarments() { return accessoryGarments; }
     public LiveData<List<Garment>> getSelectedTops() { return selectedTops; }
     public LiveData<List<Garment>> getSelectedBottoms() { return selectedBottoms; }
+    public LiveData<List<Garment>> getSelectedShoes() { return selectedShoes; }
+
     public LiveData<List<Garment>> getSelectedAccessories() { return selectedAccessories; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
     public LiveData<Boolean> getOutfitSavedSuccessfully() { return outfitSavedSuccessfully; }
     public LiveData<String> getErrorMessage() { return errorMessage; }
     public LiveData<Boolean> getIsSaveEnabled() { return isSaveEnabled; }
+
+
 }

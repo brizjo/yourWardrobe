@@ -1,99 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.main.fragments.CreateOutfitFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/parte_superiore"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
+        android:orientation="vertical"
+        android:padding="@dimen/md">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/parte_inferiore"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/accessori"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/caratteristiche_principali"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="@string/season"
-        android:visibility="visible"
-        android:layout_marginTop="@dimen/lg"/>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/menu_seasons"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginTop="@dimen/xs"
-        android:layout_marginEnd="@dimen/md">
-
-        <AutoCompleteTextView
-            android:id="@+id/season_text_view"
+        <!-- Campo Nome Outfit -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"
-            android:text="@string/winter"
-            />
+            android:hint="@string/nome_outfit"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="@dimen/md">
 
-    </com.google.android.material.textfield.TextInputLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/outfit_name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-</LinearLayout>
+        <!-- Sezione Parte Superiore -->
+        <TextView
+            style="@style/TextAppearance.YourWardrobe.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/parte_superiore"
+            android:textColor="@color/md_theme_primary" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sm"
+            android:layout_marginBottom="@dimen/md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_top"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_plus"
+
+                app:iconSize="48dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_top_slot"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+        </FrameLayout>
+
+        <!-- Sezione Parte Inferiore -->
+        <TextView
+            style="@style/TextAppearance.YourWardrobe.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/parte_inferiore"
+            android:textColor="@color/md_theme_primary" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sm"
+            android:layout_marginBottom="@dimen/md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_bottom"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:icon="@drawable/ic_plus"
+                app:iconSize="48dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_bottom_slot"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+        </FrameLayout>
+
+        <!-- Scarpe (NUOVA SEZIONE) -->
+        <TextView
+            style="@style/TextAppearance.YourWardrobe.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scarpe"
+            android:textColor="@color/md_theme_onSurfaceVariant" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sm"
+            android:layout_marginBottom="@dimen/md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_shoes"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_plus"
+                app:iconSize="48dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_shoes_slot"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+        </FrameLayout>
+
+        <!-- Sezione Accessori -->
+        <TextView
+            style="@style/TextAppearance.YourWardrobe.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accessori"
+            android:textColor="@color/md_theme_primary" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sm"
+            android:layout_marginBottom="@dimen/md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_accessory"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:icon="@drawable/ic_plus"
+                app:iconSize="48dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/img_accessory_slot"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+        </FrameLayout>
+
+        <!-- Dropdown Stagione -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/season"
+            android:layout_marginBottom="@dimen/lg">
+
+            <AutoCompleteTextView
+                android:id="@+id/season_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Bottone Salva -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_outfit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Salva"
+            android:enabled="false" />
+
+    </LinearLayout>
+</ScrollView>

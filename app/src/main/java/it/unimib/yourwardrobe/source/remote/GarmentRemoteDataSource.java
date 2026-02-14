@@ -217,4 +217,27 @@ public class GarmentRemoteDataSource {
                 });
 
     }
+
+    public void getGarmentsByCategory(String category, Callback<List<Garment>> callback) {
+        User currentuser = auth.getCurrentUser();
+        String uid = currentuser.getUid();
+        if (uid == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException());
+            return;
+        }
+
+        firestore.collection("user").document(uid).collection("garments")
+                .whereEqualTo("category", category) // Firestore può filtrare direttamente!
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        callback.onFailure(error.getMessage(), error);
+                        return;
+                    }
+
+                    if (value != null) {
+                        List<Garment> garments = value.toObjects(Garment.class);
+                        callback.onSuccess(garments);
+                    }
+                });
+    }
 }

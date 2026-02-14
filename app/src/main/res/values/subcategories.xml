@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="subcategories">
+    <!-- Parte superiore -->
+    <item>T-shirt</item>
+    <item>Camicia</item>
+    <item>Polo</item>
+    <item>Maglione</item>
+    <item>Cardigan</item>
+    <item>Felpa</item>
+    <item>Hoodie</item>
+    <item>Canotta</item>
+    <item>Top</item>
+    <item>Blusa</item>
+    <item>Blazer</item>
+    <item>Giacca</item>
+    <item>Giubbotto</item>
+    <item>Cappotto</item>
+    <item>Parka</item>
+    <item>Trench</item>
+    <item>Bomber</item>
+    <item>Piumino</item>
+
+    <!-- Parte inferiore -->
+    <item>Jeans</item>
+    <item>Pantaloni</item>
+    <item>Chino</item>
+    <item>Cargo</item>
+    <item>Leggings</item>
+    <item>Shorts</item>
+    <item>Bermuda</item>
+    <item>Gonna</item>
+    <item>Gonna lunga</item>
+    <item>Gonna corta</item>
+    <item>Gonna a tubino</item>
+
+    <!-- Vestiti -->
+    <item>Vestito lungo</item>
+    <item>Vestito corto</item>
+    <item>Vestito midi</item>
+    <item>Abito da sera</item>
+    <item>Abito casual</item>
+    <item>Jumpsuit</item>
+    <item>Tuta</item>
+
+    <!-- Intimo e pigiami -->
+    <item>Reggiseno</item>
+    <item>Slip</item>
+    <item>Boxer</item>
+    <item>Calzini</item>
+    <item>Collant</item>
+    <item>Pigiama</item>
+    <item>Vestaglia</item>
+
+    <!-- Accessori abbigliamento -->
+    <item>Sciarpa</item>
+    <item>Cappello</item>
+    <item>Berretto</item>
+    <item>Guanti</item>
+    <item>Cintura</item>
+    <item>Cravatta</item>
+    <item>Papillon</item>
+
+    <!-- Calzature -->
+    <item>Sneakers</item>
+    <item>Scarpe eleganti</item>
+    <item>Stivali</item>
+    <item>Stivaletti</item>
+    <item>Sandali</item>
+    <item>Ciabatte</item>
+    <item>Mocassini</item>
+    <item>Décolleté</item>
+    <item>Ballerine</item>
+    <item>Scarpe da ginnastica</item>
+
+    <!-- Sport e tempo libero -->
+    <item>Costume da bagno</item>
+    <item>Bikini</item>
+    <item>Tuta sportiva</item>
+    <item>Leggings sportivi</item>
+    <item>Top sportivo</item>
+</string-array>
+</resources>

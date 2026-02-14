@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.google.gms.google.services) apply false
+    alias(libs.plugins.androidx.navigation.safeargs) apply false
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }

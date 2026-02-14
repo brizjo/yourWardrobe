@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -100,18 +101,30 @@ public class MainActivity extends AppCompatActivity {
             BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
             NavigationUI.setupWithNavController(bottomNav, navController);
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-                if (destination.getId() == R.id.addGarmentFragment) {
+                if (destination.getId() == R.id.addGarmentFragment ||
+                        destination.getId() == R.id.garmentFragment ||
+                        destination.getId() == R.id.createOutfitFragment ||
+                        destination.getId() == R.id.singleOutfitFragment) {
                     bottomNav.setVisibility(android.view.View.GONE);
                 } else {
                     bottomNav.setVisibility(android.view.View.VISIBLE);
                 }
             });
+            bottomNav.setOnItemReselectedListener(item -> {
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setPopUpTo(item.getItemId(), true)
+                        .setLaunchSingleTop(true)
+                        .build();
+                navController.navigate(item.getItemId(), null, navOptions);
+            });
             MaterialToolbar toolbar = findViewById(R.id.top_bar);
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
             Set<Integer> topLevelDestinations = new HashSet<>();
             topLevelDestinations.add(R.id.homeFragment);
-            topLevelDestinations.add(R.id.wardrobeFragment);
+            topLevelDestinations.add(R.id.wardrobe_nav_graph);
             topLevelDestinations.add(R.id.personalStylistFragment);
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

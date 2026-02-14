@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/wardrobe_nav_graph"
+    app:startDestination="@id/wardrobeFragment">
+
+    <!-- Schermata di partenza del tab Wardrobe -->
+    <fragment
+        android:id="@+id/wardrobeFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.WardrobeFragment"
+        android:label="fragment_wardrobe"
+        tools:layout="@layout/fragment_wardrobe" >
+        <action
+            android:id="@+id/action_wardrobeFragment_to_clothesFragment"
+            app:destination="@id/clothesFragment" />
+        <action
+            android:id="@+id/action_wardrobeFragment_to_outfitFragment"
+            app:destination="@id/outfitFragment" />
+    </fragment>
+
+    <!-- Schermata Vestiario -->
+    <fragment
+        android:id="@+id/clothesFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
+        android:label="fragment_clothes"
+        tools:layout="@layout/fragment_clothes" >
+        <action
+            android:id="@+id/action_clothesFragment_to_wardrobeFragment"
+            app:destination="@id/wardrobeFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_garmentFragment"
+            app:destination="@id/garmentFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_addGarmentFragment"
+            app:destination="@id/addGarmentFragment" />
+    </fragment>
+
+    <!-- Schermata Outfit -->
+    <fragment
+        android:id="@+id/outfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.OutfitMenuFragment"
+        android:label="fragment_outfit_menu"
+        tools:layout="@layout/fragment_outfit_menu">
+        <action
+            android:id="@+id/action_outfitFragment_to_wardrobeFragment"
+            app:destination="@id/wardrobeFragment" />
+        <action
+            android:id="@+id/action_outfitFragment_to_singleOutfitFragment"
+            app:destination="@id/singleOutfitFragment" />
+        <action
+            android:id="@+id/action_outfitFragment_to_createOutfitFragment"
+            app:destination="@id/createOutfitFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addGarmentFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.AddGarmentFragment"
+        android:label="AddGarmentFragment"
+        tools:layout="@layout/fragment_add_garment" >
+    <action
+        android:id="@+id/action_addGarmentFragment_to_clothesFragment"
+        app:destination="@id/clothesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/garmentFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.GarmentFragment"
+        android:label="GarmentFragment" >
+    <argument
+    android:name="garment"
+    app:argType="it.unimib.yourwardrobe.domain.model.Garment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createOutfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.CreateOutfitFragment"
+        android:label="CreateOutfitFragment" />
+    <fragment
+        android:id="@+id/singleOutfitFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.SingleOutfitFragment"
+        android:label="SingleOutfitFragment" />
+
+</navigation>

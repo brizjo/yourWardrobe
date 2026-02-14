@@ -31,72 +31,74 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
-
-    // LiveData per i dati "statici" (le liste complete)
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allCategories = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
+    private final MutableLiveData<List<String>> allSeasons = new MutableLiveData<>();
 
-    // LiveData per lo stato "dinamico" (le selezioni dell'utente)
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> garmentImage = new MutableLiveData<>();
     private final MutableLiveData<String> garmentName = new MutableLiveData<>();
     private final MutableLiveData<String> selectedCategory = new MutableLiveData<>();
     private final MutableLiveData<List<String>> selectedStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
+    private final MutableLiveData<String> selectedSeason = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
 
     @Inject
     public AddGarmentViewModel(@ApplicationContext Context context, GarmentRepository garmentRepository) {
         this.context = context;
         this.garmentRepository = garmentRepository;
-        // Inizializza le liste di dati
         loadInitialData();
-        // Inizializza la lista delle selezioni come vuota
         selectedColors.setValue(new ArrayList<>());
         selectedStyles.setValue(new ArrayList<>());
         selectedFabrics.setValue(new ArrayList<>());
-        isButtonEnabled.setValue(false); // Inizialmente disabilitato
+        isButtonEnabled.setValue(false);
 
-        // Aggiungi le sorgenti da osservare
         isButtonEnabled.addSource(isImageValid, value -> validateForm());
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
         isButtonEnabled.addSource(selectedCategory, value -> validateForm());
-        isButtonEnabled.addSource(getSelectedColors(), value -> validateForm());
-        isButtonEnabled.addSource(getSelectedStyles(), value -> validateForm());
-        isButtonEnabled.addSource(getSelectedFabrics(), value -> validateForm());
+        isButtonEnabled.addSource(selectedColors, value -> validateForm());
+        isButtonEnabled.addSource(selectedStyles, value -> validateForm());
+        isButtonEnabled.addSource(selectedFabrics, value -> validateForm());
+        isButtonEnabled.addSource(selectedSeason, value -> validateForm());
     }
 
-    // Metodo per caricare i dati dalle risorse (potrebbe venire da un Repository in futuro)
     private void loadInitialData() {
         allColors.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_color)));
         allCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.categories)));
         allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
         allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
+        allSeasons.setValue(Arrays.asList(
+                "Tutte le stagioni",
+                "Primavera",
+                "Estate",
+                "Autunno",
+                "Inverno",
+                "Inverno - Autunno",
+                "Primavera - Estate",
+                "Primavera - Autunno"
+        ));
     }
 
     private void validateForm() {
         boolean imageOk = garmentImage.getValue() != null && Boolean.TRUE.equals(isImageValid.getValue());
-        boolean hasImage = garmentImage.getValue() != null;
         boolean hasName = garmentName.getValue() != null && !garmentName.getValue().isEmpty();
-        boolean hasSeason = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
-        boolean hasColors = getSelectedColors().getValue() != null && !getSelectedColors().getValue().isEmpty();
-        boolean hasStyles = getSelectedStyles().getValue() != null && !getSelectedStyles().getValue().isEmpty();
-        boolean hasFabrics = getSelectedFabrics().getValue() != null && !getSelectedFabrics().getValue().isEmpty();
+        boolean hasCategory = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
+        boolean hasColors = selectedColors.getValue() != null && !selectedColors.getValue().isEmpty();
+        boolean hasStyles = selectedStyles.getValue() != null && !selectedStyles.getValue().isEmpty();
+        boolean hasFabrics = selectedFabrics.getValue() != null && !selectedFabrics.getValue().isEmpty();
+        boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
 
-        isButtonEnabled.setValue(imageOk && hasImage && hasName && hasSeason && hasColors && hasStyles && hasFabrics);
+        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasFabrics && hasSeason);
     }
 
-    public LiveData<Boolean> isButtonEnabled() {
-        return isButtonEnabled;
-    }
+    public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
 
     public void setGarmentImage(Bitmap bitmap) {
         garmentImage.setValue(bitmap);
-
-        // Avvia la validazione AI
         garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -106,11 +108,10 @@ public class AddGarmentViewModel extends ViewModel {
                 } else {
                     errorMessage.postValue(null);
                 }
-                validateForm(); // Ricalcola se il bottone deve essere attivo
+                validateForm();
             }
-
             @Override
-            public void onFailure(String error, Throwable t) { // Aggiunto Throwable t
+            public void onFailure(String error, Throwable t) {
                 isImageValid.postValue(false);
                 errorMessage.postValue("Errore durante il riconoscimento: " + error);
                 validateForm();
@@ -122,39 +123,34 @@ public class AddGarmentViewModel extends ViewModel {
         Bitmap image = garmentImage.getValue();
         String name = garmentName.getValue();
         String category = selectedCategory.getValue();
-        List<String> colors = getSelectedColors().getValue();
-        List<String> styles = getSelectedStyles().getValue();
-        List<String> fabrics = getSelectedFabrics().getValue();
+        List<String> colors = selectedColors.getValue();
+        List<String> styles = selectedStyles.getValue();
+        List<String> fabrics = selectedFabrics.getValue();
+        String season = selectedSeason.getValue();
 
-        // Controllo di validità
-        if (image == null || name == null || name.isEmpty() || category == null || colors == null || colors.isEmpty()) {
+        if (image == null || name == null || name.isEmpty() || category == null
+                || colors == null || colors.isEmpty() || season == null) {
             errorMessage.postValue("Dati mancanti per creare il capo.");
             return;
         }
 
-        // Crea oggetto Garment
         Garment garment = new Garment();
         garment.setName(name);
         garment.setCategory(category);
-        // garment.setSubCategory(...); // Se hai una sottocategoria
-        // garment.setSeason(...); // Se hai la stagione
         garment.setColor(colors);
         garment.setStyle(styles);
         garment.setFabric(fabrics);
+        garment.setSeason(season);
 
         isLoading.postValue(true);
-        //Chiamata a repository per salvare l'immagine e i dati
         garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                // Notifica al Fragment che l'operazione è andata a buon fine
                 garmentAddedSuccessfully.postValue(true);
                 isLoading.postValue(false);
             }
-
             @Override
             public void onFailure(String error, Throwable t) {
-                // Notifica un errore
                 errorMessage.postValue("Errore durante il salvataggio: " + error);
                 garmentAddedSuccessfully.postValue(false);
                 isLoading.postValue(false);
@@ -162,67 +158,24 @@ public class AddGarmentViewModel extends ViewModel {
         });
     }
 
-    public LiveData<Boolean> getGarmentAddedSuccessfully() {
-        return garmentAddedSuccessfully;
-    }
+    public void setGarmentName(String name) { garmentName.setValue(name); }
+    public void setSelectedCategory(String category) { selectedCategory.setValue(category); }
+    public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
 
-    // Chiamato dal Fragment quando il testo del nome cambia
-    public void setGarmentName(String name) {
-        garmentName.setValue(name);
-    }
+    public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
+    public LiveData<List<String>> getAllColors() { return allColors; }
+    public LiveData<List<String>> getAllCategories() { return allCategories; }
+    public LiveData<List<String>> getAllStyles() { return allStyles; }
+    public LiveData<List<String>> getAllFabrics() { return allFabrics; }
+    public LiveData<List<String>> getAllSeasons() { return allSeasons; }
+    public LiveData<List<String>> getSelectedColors() { return selectedColors; }
+    public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
+    public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
+    public LiveData<String> getSelectedSeason() { return selectedSeason; }
+    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<Boolean> getIsLoading() { return isLoading; }
 
-    // Chiamato dal Fragment quando la categoria viene selezionata
-    public void setSelectedCategory(String category) {
-        selectedCategory.setValue(category);
-    }
-
-    // Espone i LiveData (sola lettura) al Fragment
-    public LiveData<List<String>> getAllColors() {
-        return allColors;
-    }
-
-    public LiveData<List<String>> getAllCategories() {
-        return allCategories;
-    }
-
-    public LiveData<List<String>> getAllStyles() {
-        return allStyles;
-    }
-
-    public LiveData<List<String>> getAllFabrics() {
-        return allFabrics;
-    }
-
-    public LiveData<List<String>> getSelectedColors() {
-        return selectedColors;
-    }
-
-    // Metodo chiamato dal Fragment quando l'utente conferma la selezione dei colori
-    public void updateSelectedColors(List<String> newSelection) {
-        selectedColors.setValue(newSelection);
-    }
-
-    public LiveData<List<String>> getSelectedStyles() {
-        return selectedStyles;
-    }
-
-    public void updateSelectedStyles(List<String> newSelection) {
-        selectedStyles.setValue(newSelection);
-    }
-
-    public LiveData<List<String>> getSelectedFabrics() {
-        return selectedFabrics;
-    }
-
-    public void updateSelectedFabrics(List<String> newSelection) {
-        selectedFabrics.setValue(newSelection);
-    }
-
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
-    }
-
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
+    public void updateSelectedColors(List<String> newSelection) { selectedColors.setValue(newSelection); }
+    public void updateSelectedStyles(List<String> newSelection) { selectedStyles.setValue(newSelection); }
+    public void updateSelectedFabrics(List<String> newSelection) { selectedFabrics.setValue(newSelection); }
 }

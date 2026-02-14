@@ -5,178 +5,189 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.fragments.GarmentFragment">
-<RelativeLayout
-    android:id="@+id/garment_container"
-    android:fitsSystemWindows="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!-- Area scorrevole per il contenuto (Immagine e Caratteristiche) -->
-    <ScrollView
+
+    <RelativeLayout
+        android:id="@+id/garment_container"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/edit_buttons_container"
-        android:padding="@dimen/md">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_above="@id/edit_buttons_container"
+            android:padding="@dimen/md">
 
-            <ImageView
-                android:id="@+id/garmentImage"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/xl"
-                android:scaleType="centerInside" />
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/nameGarmentText"
+                <ImageView
+                    android:id="@+id/garmentImage"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/xl"
+                    android:scaleType="centerInside" />
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                    android:textColor="@color/md_theme_primary" />
+                    android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/nameGarmentInputLayout"
-                    style="?attr/textInputOutlinedStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/name"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/nameGarmentEditText"
+                    <TextView
+                        android:id="@+id/nameGarmentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text|textCapSentences"
-                        android:imeOptions="actionDone" />
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                        android:textColor="@color/md_theme_primary" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-            </FrameLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginHorizontal="@dimen/sm"
-                android:layout_marginTop="@dimen/xs"
-                android:background="@color/md_theme_primary" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/nameGarmentInputLayout"
+                        style="?attr/textInputOutlinedStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/name"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-            <!-- Aggiungi qui eventuali altre TextView per colore, tessuto, etc. -->
-            <TextView
-                android:layout_width="match_parent"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/nameGarmentEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text|textCapSentences"
+                            android:imeOptions="actionDone" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="@dimen/sm"
+                    android:layout_marginTop="@dimen/xs"
+                    android:background="@color/md_theme_primary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="@dimen/md"
+                    android:text="@string/color"
+                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_garment_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginEnd="@dimen/md" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="@dimen/md"
+                    android:text="@string/style"
+                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_garment_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginEnd="@dimen/md" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="@dimen/md"
+                    android:text="@string/tessuto"
+                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_garment_fabric"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginEnd="@dimen/md" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="@dimen/md"
+                    android:text="@string/stagione"
+                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_garment_season"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md"
+                    android:layout_marginEnd="@dimen/md" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/edit_buttons_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/update_button"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
-                android:text="@string/color"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_garment_color"
-                android:layout_width="match_parent"
+                android:layout_marginEnd="@dimen/sm"
+                android:layout_weight="1"
+                android:text="@string/applica_modifiche" />
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
-                android:text="@string/style"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_garment_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-
-            </com.google.android.material.chip.ChipGroup>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
-                android:text="@string/tessuto"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
-
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_garment_fabric"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginStart="@dimen/sm"
+                android:layout_weight="1"
+                android:text="@string/annulla"
+                android:textColor="@color/md_theme_error" />
         </LinearLayout>
-    </ScrollView>
-
-    <!-- Contenitore fissato in basso per i bottoni -->
-    <LinearLayout
-        android:id="@+id/edit_buttons_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-
-        android:gravity="center"
-        android:visibility="gone"
-        android:weightSum="2">
-
-        <Button
-            android:id="@+id/update_button"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/sm"
-            android:layout_weight="1"
-            android:text="@string/applica_modifiche" />
-
-        <Button
-            android:id="@+id/cancel_button"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sm"
-            android:layout_weight="1"
-            android:text="@string/annulla"
-            android:textColor="@color/md_theme_error" />
-    </LinearLayout>
 
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="vertical"
+        android:orientation="vertical">
 
-        >
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/edit_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/xl"
+            android:layout_gravity="bottom|end"
+            android:contentDescription="@string/modifica"
+            app:srcCompat="@drawable/ic_edit" />
 
-        android:layout_marginEnd="@dimen/xl"
-        android:layout_gravity="bottom|end"
-        android:contentDescription="@string/modifica"
-        app:srcCompat="@drawable/ic_edit"
-        />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/delete_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/xl"
+            android:contentDescription="@string/modifica"
+            app:srcCompat="@drawable/ic_delete"
+            app:backgroundTint="@color/md_theme_errorContainer_mediumContrast" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/delete_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/xl"
-        android:contentDescription="@string/modifica"
-        app:srcCompat="@drawable/ic_delete"
-        app:backgroundTint="@color/md_theme_errorContainer_mediumContrast"/>
     </LinearLayout>
 </FrameLayout>

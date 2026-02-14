@@ -11,21 +11,23 @@ public class Garment implements Serializable {
     private String name;
     private String category;
     private String subCategory;
-    private Date createdAt; // SENZA @ServerTimestamp
+    private String season;
+    private Date createdAt;
     private String imageUrl;
     private List<String> color;
     private List<String> fabric;
     private List<String> style;
 
-    public Garment() {
-    }
+    public Garment() {}
 
     public Garment(Garment other) {
         this.id = other.id;
         this.name = other.name;
         this.imageUrl = other.imageUrl;
         this.category = other.category;
+        this.subCategory = other.subCategory;
         this.createdAt = other.createdAt;
+        this.season = other.season;
         this.color = (other.color != null) ? new ArrayList<>(other.color) : null;
         this.style = (other.style != null) ? new ArrayList<>(other.style) : null;
         this.fabric = (other.fabric != null) ? new ArrayList<>(other.fabric) : null;
@@ -38,6 +40,7 @@ public class Garment implements Serializable {
         this.name = name;
         this.category = category;
         this.subCategory = subCategory;
+        this.season = season;
         this.imageUrl = imageUrl;
         this.color = color;
         this.fabric = fabric;
@@ -54,6 +57,8 @@ public class Garment implements Serializable {
     public void setCategory(String category) { this.category = category; }
     public String getSubCategory() { return subCategory; }
     public void setSubCategory(String subCategory) { this.subCategory = subCategory; }
+    public String getSeason() { return season; }
+    public void setSeason(String season) { this.season = season; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public List<String> getColor() { return color; }
@@ -65,7 +70,7 @@ public class Garment implements Serializable {
 
     @Override
     public String toString() {
-        return "Garment{name='" + name + "', category='" + category + "'}";
+        return "Garment{name='" + name + "', category='" + category + "', season='" + season + "'}";
     }
 
     @Override

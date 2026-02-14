@@ -200,28 +200,71 @@ public class CreateOutfitViewModel extends ViewModel {
     }
 
     public void saveOutfit() {
-        if (!Boolean.TRUE.equals(isSaveEnabled.getValue())) return;
+        if (!Boolean.TRUE.equals(isSaveEnabled.getValue())) {
+            android.util.Log.w("CreateOutfitVM", "⚠️ Salvataggio bloccato: bottone disabilitato");
+            return;
+        }
+
+        android.util.Log.d("CreateOutfitVM", "════════════════════════════════");
+        android.util.Log.d("CreateOutfitVM", "🚀 INIZIO SALVATAGGIO OUTFIT");
+        android.util.Log.d("CreateOutfitVM", "════════════════════════════════");
 
         isLoading.setValue(true);
 
         List<Garment> allGarments = new ArrayList<>();
-        if (selectedTops.getValue() != null) allGarments.addAll(selectedTops.getValue());
-        if (selectedBottoms.getValue() != null) allGarments.addAll(selectedBottoms.getValue());
-        if (selectedShoes.getValue() != null) allGarments.addAll(selectedShoes.getValue()); // AGGIUNTO
-        if (selectedAccessories.getValue() != null) allGarments.addAll(selectedAccessories.getValue());
+        if (selectedTops.getValue() != null) {
+            android.util.Log.d("CreateOutfitVM", "👕 Top selezionati: " + selectedTops.getValue().size());
+            allGarments.addAll(selectedTops.getValue());
+        } else {
+            android.util.Log.w("CreateOutfitVM", "⚠️ Nessun top selezionato");
+        }
 
+        if (selectedBottoms.getValue() != null) {
+            android.util.Log.d("CreateOutfitVM", "👖 Bottom selezionati: " + selectedBottoms.getValue().size());
+            allGarments.addAll(selectedBottoms.getValue());
+        } else {
+            android.util.Log.w("CreateOutfitVM", "⚠️ Nessun bottom selezionato");
+        }
+
+        if (selectedShoes.getValue() != null) {
+            android.util.Log.d("CreateOutfitVM", "👟 Scarpe selezionate: " + selectedShoes.getValue().size());
+            allGarments.addAll(selectedShoes.getValue());
+        }
+
+        if (selectedAccessories.getValue() != null) {
+            android.util.Log.d("CreateOutfitVM", "👜 Accessori selezionati: " + selectedAccessories.getValue().size());
+            allGarments.addAll(selectedAccessories.getValue());
+        }
+
+        android.util.Log.d("CreateOutfitVM", "📦 Totale capi: " + allGarments.size());
+        android.util.Log.d("CreateOutfitVM", "📝 Nome outfit: " + outfitName.getValue());
+        android.util.Log.d("CreateOutfitVM", "🌤️ Stagione: " + selectedSeason.getValue());
 
         Outfit outfit = new Outfit(outfitName.getValue(), selectedSeason.getValue(), allGarments);
+
+        android.util.Log.d("CreateOutfitVM", "💾 Chiamata a OutfitRepository.saveOutfit()...");
 
         outfitRepository.saveOutfit(outfit, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
+                android.util.Log.d("CreateOutfitVM", "════════════════════════════════");
+                android.util.Log.d("CreateOutfitVM", "✅ OUTFIT SALVATO CON SUCCESSO!");
+                android.util.Log.d("CreateOutfitVM", "════════════════════════════════");
                 isLoading.postValue(false);
                 outfitSavedSuccessfully.postValue(true);
             }
 
             @Override
             public void onFailure(String error, Throwable t) {
+                android.util.Log.e("CreateOutfitVM", "════════════════════════════════");
+                android.util.Log.e("CreateOutfitVM", "❌ ERRORE SALVATAGGIO OUTFIT");
+                android.util.Log.e("CreateOutfitVM", "Messaggio: " + error);
+                if (t != null) {
+                    android.util.Log.e("CreateOutfitVM", "Exception: " + t.getClass().getSimpleName());
+                    android.util.Log.e("CreateOutfitVM", "Dettaglio: " + t.getMessage());
+                    t.printStackTrace();
+                }
+                android.util.Log.e("CreateOutfitVM", "════════════════════════════════");
                 isLoading.postValue(false);
                 errorMessage.postValue(error);
             }

@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Sezione Parte Superiore -->
+        <!-- ========== SEZIONE PARTE SUPERIORE (MULTIPLA) ========== -->
         <TextView
             style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
@@ -34,34 +34,37 @@
             android:text="@string/parte_superiore"
             android:textColor="@color/md_theme_primary" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
+        <!-- Lista orizzontale per TOP -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md">
+            android:layout_marginBottom="@dimen/md"
+            android:scrollbars="none">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_top"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/ic_plus"
+            <LinearLayout
+                android:id="@+id/container_tops"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-                app:iconSize="48dp"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+                <!-- Il bottone + sarà sempre visibile a destra -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_top"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/ic_plus"
+                    app:iconSize="48dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_top_slot"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-        </FrameLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
 
-        <!-- Sezione Parte Inferiore -->
+        <!-- ========== SEZIONE PARTE INFERIORE (SINGOLA) ========== -->
         <TextView
             style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
@@ -93,7 +96,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
         </FrameLayout>
 
-        <!-- Scarpe (NUOVA SEZIONE) -->
+        <!-- ========== SEZIONE SCARPE (SINGOLA) ========== -->
         <TextView
             style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
@@ -127,7 +130,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
         </FrameLayout>
 
-        <!-- Sezione Accessori -->
+        <!-- ========== SEZIONE ACCESSORI (MULTIPLA) ========== -->
         <TextView
             style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
@@ -135,29 +138,33 @@
             android:text="@string/accessori"
             android:textColor="@color/md_theme_primary" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
+        <!-- Lista orizzontale per ACCESSORI -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md">
+            android:layout_marginBottom="@dimen/md"
+            android:scrollbars="none">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_accessory"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:icon="@drawable/ic_plus"
-                app:iconSize="48dp"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+            <LinearLayout
+                android:id="@+id/container_accessories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_accessory_slot"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-        </FrameLayout>
+                <!-- Il bottone + sarà sempre visibile a destra -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_accessory"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:icon="@drawable/ic_plus"
+                    app:iconSize="48dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <!-- Dropdown Stagione -->
         <com.google.android.material.textfield.TextInputLayout

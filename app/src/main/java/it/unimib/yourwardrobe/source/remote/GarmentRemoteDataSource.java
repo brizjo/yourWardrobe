@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -121,10 +122,9 @@ public class GarmentRemoteDataSource {
 
 
     public void saveGarmentDocument(Garment garment, Callback<Boolean> callback){
-
         User currentUser = auth.getCurrentUser();
         String uid = currentUser.getUid();
-        if ( uid == null){
+        if (uid == null){
             callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
             return;
         }
@@ -132,12 +132,10 @@ public class GarmentRemoteDataSource {
         DocumentReference newDoc = firestore.collection("user")
                 .document(uid)
                 .collection("garments")
-                .document(); // Genera l'ID
-
+                .document();
 
         garment.setId(newDoc.getId());
-
-
+        garment.setCreatedAt(new Date()); // ⬅️ IMPOSTA DATA MANUALMENTE
 
         newDoc.set(garment)
                 .addOnSuccessListener(aVoid -> {

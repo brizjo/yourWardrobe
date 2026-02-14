@@ -2,6 +2,7 @@ package it.unimib.yourwardrobe.domain.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Outfit implements Serializable {
@@ -10,8 +11,8 @@ public class Outfit implements Serializable {
     private String name;
     private String style;
     private List<Garment> garments;
+    private Date createdAt;
 
-    // Richiesto da Firestore per la deserializzazione
     public Outfit() {
         this.garments = new ArrayList<>();
     }
@@ -20,6 +21,7 @@ public class Outfit implements Serializable {
         this.name = name;
         this.style = style;
         this.garments = garments != null ? garments : new ArrayList<>();
+        this.createdAt = new Date(); // ⬅️ IMPOSTA DATA ALLA CREAZIONE
     }
 
     public String getId() { return id; }
@@ -33,4 +35,7 @@ public class Outfit implements Serializable {
 
     public List<Garment> getGarments() { return garments; }
     public void setGarments(List<Garment> garments) { this.garments = garments; }
+
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

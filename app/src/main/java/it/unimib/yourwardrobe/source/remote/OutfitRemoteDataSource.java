@@ -1,22 +1,17 @@
 package it.unimib.yourwardrobe.source.remote;
 
 import android.util.Log;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 
 public class OutfitRemoteDataSource {
 
-    private static final String TAG = "OutfitRemoteDataSource";
-
+    private static final String TAG = "OutfitRemoteDS";
     private final FirebaseFirestore firestore;
     private final AuthRemoteDataSource auth;
 
@@ -24,40 +19,64 @@ public class OutfitRemoteDataSource {
     public OutfitRemoteDataSource(AuthRemoteDataSource auth, FirebaseFirestore firestore) {
         this.auth = auth;
         this.firestore = firestore;
+        Log.d(TAG, "DataSource creato - Firestore: " + (firestore != null) + ", Auth: " + (auth != null));
     }
 
     public void saveOutfit(Outfit outfit, Callback<Boolean> callback) {
-        String uid = auth.getCurrentUser().getUid();
-        if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        Log.d(TAG, "=== SAVE OUTFIT ===");
+
+        if (auth.getCurrentUser() == null) {
+            Log.e(TAG, "User NULL");
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
 
-        DocumentReference newDoc = firestore.collection("user")
-                .document(uid)
-                .collection("outfits")
-                .document();
+        String uid = auth.getCurrentUser().getUid();
+        if (uid == null) {
+            Log.e(TAG, "UID NULL");
+            callback.onFailure("UID non disponibile", new IllegalStateException("UID null"));
+            return;
+        }
 
-        outfit.setId(newDoc.getId());
+        Log.d(TAG, "UID: " + uid);
 
-        newDoc.set(outfit)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Outfit salvato con successo su Firestore.");
-                    callback.onSuccess(true);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Errore durante il salvataggio dell'outfit: " + e.getMessage());
-                    callback.onFailure("Errore durante il salvataggio dell'outfit", e);
-                });
+        try {
+            DocumentReference newDoc = firestore.collection("user")
+                    .document(uid)
+                    .collection("outfits")
+                    .document();
+
+            String docId = newDoc.getId();
+            outfit.setId(docId);
+
+            Log.d(TAG, "Path: user/" + uid + "/outfits/" + docId);
+            Log.d(TAG, "Nome: " + outfit.getName() + ", Capi: " + outfit.getGarments().size());
+
+            newDoc.set(outfit)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "FIRESTORE SUCCESS - ID: " + docId);
+                        callback.onSuccess(true);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "FIRESTORE ERROR: " + e.getMessage());
+                        e.printStackTrace();
+                        callback.onFailure("Errore Firestore: " + e.getMessage(), e);
+                    });
+
+        } catch (Exception e) {
+            Log.e(TAG, "EXCEPTION: " + e.getMessage());
+            e.printStackTrace();
+            callback.onFailure("Exception: " + e.getMessage(), e);
+        }
     }
 
     public void getOutfits(Callback<List<Outfit>> callback) {
-        String uid = auth.getCurrentUser().getUid();
-        if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        if (auth.getCurrentUser() == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
 
+        String uid = auth.getCurrentUser().getUid();
         firestore.collection("user").document(uid).collection("outfits")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
@@ -74,11 +93,11 @@ public class OutfitRemoteDataSource {
     public void deleteOutfit(Outfit outfit, Callback<Boolean> callback) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+            callback.onFailure("Utente non autenticato", new IllegalStateException("UID null"));
             return;
         }
         if (outfit.getId() == null) {
-            callback.onFailure("Outfit non trovato: dati mancanti", new IllegalStateException("ID non valido"));
+            callback.onFailure("ID outfit mancante", new IllegalStateException("ID null"));
             return;
         }
 
@@ -88,6 +107,6 @@ public class OutfitRemoteDataSource {
                 .document(outfit.getId())
                 .delete()
                 .addOnSuccessListener(x -> callback.onSuccess(true))
-                .addOnFailureListener(e -> callback.onFailure("Errore durante la cancellazione dell'outfit", e));
+                .addOnFailureListener(e -> callback.onFailure("Errore eliminazione", e));
     }
 }

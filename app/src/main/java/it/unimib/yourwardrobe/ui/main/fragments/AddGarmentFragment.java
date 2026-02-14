@@ -38,6 +38,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import androidx.activity.result.PickVisualMediaRequest;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
@@ -57,31 +57,26 @@ public class AddGarmentFragment extends Fragment {
     private ChipGroup colorChipGroup;
     private ChipGroup styleChipGroup;
     private ChipGroup fabricChipGroup;
+    private ChipGroup seasonChipGroup;
+    private ChipGroup subCategoryChipGroup;
     private AddGarmentViewModel viewModel;
     private TextInputEditText garmentNameEditText;
     private Button addGarmentButton;
     private ProgressBar addGarmentProgressBar;
 
-
-    //Launcher per la richiesta dei permessi (fotocamera)
     private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    // Permesso concesso, lancia la fotocamera
                     launchCamera();
                 } else {
-                    // Permesso negato, informa l'utente
                     Toast.makeText(getContext(), "Permesso fotocamera necessario per scattare una foto", Toast.LENGTH_SHORT).show();
                 }
             });
 
-    //Launcher per ricevere il risultato dalla fotocamera
     private final ActivityResultLauncher<Void> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 if (bitmap != null) {
-                    // Foto scattata, mostrala nell'ImageView
                     addGarmentImageView.setImageBitmap(bitmap);
-                    // Cambia lo scaleType per riempire l'area
                     addGarmentImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     viewModel.setGarmentImage(bitmap);
                 }
@@ -90,7 +85,7 @@ public class AddGarmentFragment extends Fragment {
     private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    launchGallery(); // Se concesso, lancia la galleria
+                    launchGallery();
                 } else {
                     Toast.makeText(getContext(), "Permesso galleria necessario per scegliere una foto", Toast.LENGTH_SHORT).show();
                 }
@@ -99,14 +94,7 @@ public class AddGarmentFragment extends Fragment {
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
-                    // Immagine selezionata, mostrala nell'ImageView
-                    // Usa Glide per caricare l'URI in modo efficiente
-                    Glide.with(requireContext())
-                            .load(uri)
-                            .centerCrop()
-                            .into(addGarmentImageView);
-
-                    // Converti l'URI in Bitmap e passalo al ViewModel
+                    Glide.with(requireContext()).load(uri).centerCrop().into(addGarmentImageView);
                     try {
                         ImageDecoder.Source source = ImageDecoder.createSource(requireActivity().getContentResolver(), uri);
                         Bitmap bitmap = ImageDecoder.decodeBitmap(source);
@@ -114,21 +102,15 @@ public class AddGarmentFragment extends Fragment {
                     } catch (IOException e) {
                         ToastHelper.show(getContext(), "Errore nel caricare l'immagine", true);
                     }
-
                 } else {
                     Log.d("PhotoPicker", "Nessuna immagine selezionata");
                 }
             });
 
+    public AddGarmentFragment() {}
 
-    public AddGarmentFragment() {
-        // Required empty public constructor
-    }
-
-
-    public static AddGarmentFragment newInstance(String param1, String param2) {
-        AddGarmentFragment fragment = new AddGarmentFragment();
-        return fragment;
+    public static AddGarmentFragment newInstance() {
+        return new AddGarmentFragment();
     }
 
     @Override
@@ -139,7 +121,6 @@ public class AddGarmentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_garment, container, false);
     }
 
@@ -148,150 +129,239 @@ public class AddGarmentFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
-        addGarmentImageView = view.findViewById(R.id.addGarmentImage);
-        categoryTextView = view.findViewById(R.id.category_text_view);
-        colorChipGroup = view.findViewById(R.id.chip_group_color);
-        styleChipGroup = view.findViewById(R.id.chip_group_style);
-        fabricChipGroup = view.findViewById(R.id.chip_group_fabric);
-        garmentNameEditText = view.findViewById(R.id.garmentName);
-        addGarmentButton = view.findViewById(R.id.add_garment_button);
+
+        addGarmentImageView  = view.findViewById(R.id.addGarmentImage);
+        categoryTextView     = view.findViewById(R.id.category_text_view);
+        colorChipGroup       = view.findViewById(R.id.chip_group_color);
+        styleChipGroup       = view.findViewById(R.id.chip_group_style);
+        fabricChipGroup      = view.findViewById(R.id.chip_group_fabric);
+        seasonChipGroup      = view.findViewById(R.id.chip_group_season);
+        subCategoryChipGroup = view.findViewById(R.id.chip_group_subcategory);
+        garmentNameEditText  = view.findViewById(R.id.garmentName);
+        addGarmentButton     = view.findViewById(R.id.add_garment_button);
         addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
 
-        addGarmentImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
+        addGarmentImageView.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
+
+        // -------------------------------------------------------------------------
+        // Observers
+        // -------------------------------------------------------------------------
 
         viewModel.getAllCategories().observe(getViewLifecycleOwner(), categories -> {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
             categoryTextView.setAdapter(adapter);
         });
 
-        viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors -> {
-            updateMainChipGroup(colorChipGroup, colors, selected ->viewModel.updateSelectedColors(selected));
+        viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors ->
+                updateMainChipGroup(colorChipGroup, colors,
+                        selected -> viewModel.updateSelectedColors(selected)));
+
+        viewModel.getSelectedStyles().observe(getViewLifecycleOwner(), styles ->
+                updateMainChipGroup(styleChipGroup, styles,
+                        selected -> viewModel.updateSelectedStyles(selected)));
+
+        viewModel.getSelectedFabrics().observe(getViewLifecycleOwner(), fabrics ->
+                updateMainChipGroup(fabricChipGroup, fabrics,
+                        selected -> viewModel.updateSelectedFabrics(selected)));
+
+        // Stagione: chip singola che mostra la selezione corrente
+        viewModel.getSelectedSeason().observe(getViewLifecycleOwner(), season -> {
+            updateSeasonChip(season);
         });
 
-        viewModel.getSelectedStyles().observe(getViewLifecycleOwner(), styles -> {
-            updateMainChipGroup(styleChipGroup, styles, selected ->viewModel.updateSelectedStyles(selected));
-        });
-
-        viewModel.getSelectedFabrics().observe(getViewLifecycleOwner(), fabrics -> {
-            updateMainChipGroup(fabricChipGroup, fabrics, selected ->viewModel.updateSelectedFabrics(selected));
+        // Sottocategoria: chip singola che mostra la selezione corrente
+        viewModel.getSelectedSubCategory().observe(getViewLifecycleOwner(), subCategory -> {
+            updateSubCategoryChip(subCategory);
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null && isLoading) {
-                // Se sta caricando: nascondi il pulsante e mostra la ProgressBar
                 addGarmentButton.setVisibility(View.GONE);
                 addGarmentProgressBar.setVisibility(View.VISIBLE);
             } else {
-                // Se non sta caricando: mostra il pulsante e nascondi la ProgressBar
                 addGarmentButton.setVisibility(View.VISIBLE);
                 addGarmentProgressBar.setVisibility(View.GONE);
             }
         });
 
         viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
-            if (success!=null && success) {
+            if (success != null && success) {
                 ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
                 Navigation.findNavController(view).popBackStack();
             }
         });
 
-        //todo: vedere geterrormessage
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null) {
-                ToastHelper.show(getContext(), error, false);
-            }
+            if (error != null) ToastHelper.show(getContext(), error, false);
         });
 
-        viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled -> {
-            addGarmentButton.setEnabled(isEnabled);
-        });
+        viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled ->
+                addGarmentButton.setEnabled(isEnabled));
 
-        addGarmentImageView.setOnClickListener(v -> {
-            showImagePickerDialog();
-        });
+        // -------------------------------------------------------------------------
+        // Listeners
+        // -------------------------------------------------------------------------
 
-        garmentNameEditText.addTextChangedListener(new TextWatcher() { //controllo inserimento testo
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        addGarmentImageView.setOnClickListener(v -> showImagePickerDialog());
+
+        garmentNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
-                // Notifica il ViewModel del nuovo nome
                 viewModel.setGarmentName(s.toString());
             }
+        });
+
+        categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            viewModel.setSelectedCategory(selectedItem);
         });
 
         setupAddChip(colorChipGroup, "color");
         setupAddChip(styleChipGroup, "style");
         setupAddChip(fabricChipGroup, "fabric");
+        setupSeasonChip();
+        setupSubCategoryChip();
 
-        addGarmentButton.setOnClickListener(v -> {
-            // Chiama il metodo nel ViewModel
-            viewModel.saveGarment();
-        });
-
-        // Opzionale: listener per sapere quando l'utente seleziona un'opzione
-        categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
-            String selectedItem = (String) parent.getItemAtPosition(position);
-            Toast.makeText(getContext(), "Selezionato: " + selectedItem, Toast.LENGTH_SHORT).show();
-            viewModel.setSelectedCategory(selectedItem);
-        });
+        addGarmentButton.setOnClickListener(v -> viewModel.saveGarment());
     }
 
-    private void showImagePickerDialog() {
-        String[] options = getResources().getStringArray(R.array.image_picker_options);
+    // -------------------------------------------------------------------------
+    // Season chip (selezione singola)
+    // -------------------------------------------------------------------------
+
+    private void setupSeasonChip() {
+        seasonChipGroup.removeAllViews();
+        Chip addChip = new Chip(requireContext());
+        addChip.setText("+ Stagione");
+        addChip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        addChip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        addChip.setOnClickListener(v -> showSeasonSelectionDialog());
+        seasonChipGroup.addView(addChip);
+    }
+
+    private void updateSeasonChip(String season) {
+        seasonChipGroup.removeAllViews();
+        if (season == null) {
+            // Nessuna stagione selezionata: mostra chip "+"
+            Chip addChip = new Chip(requireContext());
+            addChip.setText("+ Stagione");
+            addChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            addChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            addChip.setOnClickListener(v -> showSeasonSelectionDialog());
+            seasonChipGroup.addView(addChip);
+        } else {
+            // Stagione selezionata: mostra chip con testo e "X" per rimuoverla
+            Chip chip = new Chip(requireContext());
+            chip.setText(season);
+            chip.setCloseIconVisible(true);
+            chip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            chip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            chip.setOnClickListener(v -> showSeasonSelectionDialog());
+            chip.setOnCloseIconClickListener(v -> viewModel.setSelectedSeason(null));
+            seasonChipGroup.addView(chip);
+        }
+    }
+
+    private void showSeasonSelectionDialog() {
+        List<String> allSeasons = viewModel.getAllSeasons().getValue();
+        if (allSeasons == null) return;
+
+        String[] seasonsArray = allSeasons.toArray(new String[0]);
+        String currentSeason = viewModel.getSelectedSeason().getValue();
+        int currentIndex = currentSeason != null ? allSeasons.indexOf(currentSeason) : -1;
+
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Scegli immagine")
-                .setItems(options, (dialog, which) -> {
-                    if (which == 0) { // "Scatta una foto"
-                        checkCameraPermissionAndLaunch();
-                    } else if (which == 1) { // "Scegli dalla galleria"
-                        checkGalleryPermissionAndLaunch();
-                    }
+                .setTitle("Seleziona Stagione")
+                .setSingleChoiceItems(seasonsArray, currentIndex, (dialog, which) -> {
+                    viewModel.setSelectedSeason(seasonsArray[which]);
+                    dialog.dismiss();
                 })
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
-    // Metodo helper per controllare i permessi della FOTOCAMERA e lanciarla
-    private void checkCameraPermissionAndLaunch() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            launchCamera();
+    // -------------------------------------------------------------------------
+    // SubCategory chip (selezione singola)
+    // -------------------------------------------------------------------------
+
+    private void setupSubCategoryChip() {
+        subCategoryChipGroup.removeAllViews();
+        Chip addChip = new Chip(requireContext());
+        addChip.setText("+ Sottocategoria");
+        addChip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        addChip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        addChip.setOnClickListener(v -> showSubCategorySelectionDialog());
+        subCategoryChipGroup.addView(addChip);
+    }
+
+    private void updateSubCategoryChip(String subCategory) {
+        subCategoryChipGroup.removeAllViews();
+        if (subCategory == null) {
+            // Nessuna sottocategoria selezionata: mostra chip "+"
+            Chip addChip = new Chip(requireContext());
+            addChip.setText("+ Sottocategoria");
+            addChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            addChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            addChip.setOnClickListener(v -> showSubCategorySelectionDialog());
+            subCategoryChipGroup.addView(addChip);
         } else {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+            // Sottocategoria selezionata: mostra chip con testo e "X" per rimuoverla
+            Chip chip = new Chip(requireContext());
+            chip.setText(subCategory);
+            chip.setCloseIconVisible(true);
+            chip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            chip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            chip.setOnClickListener(v -> showSubCategorySelectionDialog());
+            chip.setOnCloseIconClickListener(v -> viewModel.setSelectedSubCategory(null));
+            subCategoryChipGroup.addView(chip);
         }
     }
 
-    private void checkGalleryPermissionAndLaunch() {
-        // Da Android 13 (API 33) in su, serve un permesso specifico
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-                launchGallery();
-            } else {
-                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
-            }
-        } else { // Per versioni precedenti, il permesso di lettura è sufficiente (o non serve per il Photo Picker)
-            launchGallery();
-        }
+    private void showSubCategorySelectionDialog() {
+        List<String> allSubCategories = viewModel.getAllSubCategories().getValue();
+        if (allSubCategories == null) return;
+
+        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
+        String currentSubCategory = viewModel.getSelectedSubCategory().getValue();
+        int currentIndex = currentSubCategory != null ? allSubCategories.indexOf(currentSubCategory) : -1;
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleziona Sottocategoria")
+                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
+                    viewModel.setSelectedSubCategory(subCategoriesArray[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
-    private void launchCamera() {
-        takePictureLauncher.launch(null);
-    }
-
-    private void launchGallery() {
-        // Lancia il Photo Picker di Android
-        // Chiede di selezionare solo immagini.
-        pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
-    }
+    // -------------------------------------------------------------------------
+    // Colori / Stili / Tessuti chip (selezione multipla)
+    // -------------------------------------------------------------------------
 
     private void setupAddChip(ChipGroup chipGroup, final String type) {
         Chip addChip = new Chip(requireContext());
         addChip.setText("+");
-        addChip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        addChip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        addChip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        addChip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         addChip.setOnClickListener(v -> {
             List<String> allOptions = null;
             List<String> currentSelection = null;
@@ -330,17 +400,16 @@ public class AddGarmentFragment extends Fragment {
         void onConfirmed(List<String> newSelection);
     }
 
-    private void showChipSelectionDialog(String title, List<String> allOptions, List<String> currentSelection, OnSelectionConfirmedListener listener) {
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.chip_selector, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setView(dialogView);
-
-        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
+    private void showChipSelectionDialog(String title, List<String> allOptions,
+                                         List<String> currentSelection,
+                                         OnSelectionConfirmedListener listener) {
+        View dialogView = requireActivity().getLayoutInflater().inflate(R.layout.chip_selector, null);
+        TextView dialogTitle      = dialogView.findViewById(R.id.dialog_title);
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
-        Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
+        Button okButton           = dialogView.findViewById(R.id.dialog_ok_button);
 
         dialogTitle.setText(title);
+
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
         int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
         int[][] states = new int[][]{
@@ -371,21 +440,19 @@ public class AddGarmentFragment extends Fragment {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
             chip.setCheckable(true);
-            chip.setChipBackgroundColor(colorStateList);
-            chip.setTextColor(chipTextColorStateList);
-
-            if (currentSelection.contains(option)) {
-                chip.setChecked(true);
-            }
+            chip.setChipBackgroundColor(bgColorStateList);
+            chip.setTextColor(textColorStateList);
+            if (currentSelection.contains(option)) chip.setChecked(true);
             dialogChipGroup.addView(chip);
         }
 
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
 
-        dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            okButton.setEnabled(!checkedIds.isEmpty());
-        });
         okButton.setEnabled(!dialogChipGroup.getCheckedChipIds().isEmpty());
+        dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) ->
+                okButton.setEnabled(!checkedIds.isEmpty()));
 
         okButton.setOnClickListener(v -> {
             List<String> newSelection = new ArrayList<>();
@@ -393,7 +460,6 @@ public class AddGarmentFragment extends Fragment {
                 Chip selectedChip = dialogChipGroup.findViewById(id);
                 newSelection.add(selectedChip.getText().toString());
             }
-            // Usa il listener per notificare il ViewModel
             listener.onConfirmed(newSelection);
             dialog.dismiss();
         });
@@ -401,30 +467,73 @@ public class AddGarmentFragment extends Fragment {
         dialog.show();
     }
 
-    private void updateMainChipGroup(ChipGroup chipGroup, List<String> selectedItems, OnSelectionConfirmedListener listener) {
-        // Rimuovi tutte le chip tranne quella "+"
+    private void updateMainChipGroup(ChipGroup chipGroup, List<String> selectedItems,
+                                     OnSelectionConfirmedListener listener) {
         for (int i = chipGroup.getChildCount() - 1; i >= 0; i--) {
             View child = chipGroup.getChildAt(i);
             if (child instanceof Chip && !((Chip) child).getText().toString().equals("+")) {
                 chipGroup.removeView(child);
             }
         }
-
-        // Aggiungi le nuove chip
         for (String item : selectedItems) {
             Chip chip = new Chip(requireContext());
             chip.setText(item);
             chip.setCloseIconVisible(true);
-            chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            chip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            chip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
             chip.setOnCloseIconClickListener(v -> {
-                // Notifica il ViewModel della rimozione di un elemento
-                List<String> currentSelection = new ArrayList<>(selectedItems);
-                currentSelection.remove(chip.getText().toString());
-                listener.onConfirmed(currentSelection);
+                List<String> current = new ArrayList<>(selectedItems);
+                current.remove(chip.getText().toString());
+                listener.onConfirmed(current);
             });
             chipGroup.addView(chip);
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Image picker
+    // -------------------------------------------------------------------------
+
+    private void showImagePickerDialog() {
+        String[] options = getResources().getStringArray(R.array.image_picker_options);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Scegli immagine")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) checkCameraPermissionAndLaunch();
+                    else if (which == 1) checkGalleryPermissionAndLaunch();
+                })
+                .show();
+    }
+
+    private void checkCameraPermissionAndLaunch() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            launchCamera();
+        } else {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void checkGalleryPermissionAndLaunch() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES)
+                    == PackageManager.PERMISSION_GRANTED) {
+                launchGallery();
+            } else {
+                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+        } else {
+            launchGallery();
+        }
+    }
+
+    private void launchCamera() { takePictureLauncher.launch(null); }
+
+    private void launchGallery() {
+        pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }
 }

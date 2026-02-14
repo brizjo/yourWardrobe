@@ -1,43 +1,41 @@
 package it.unimib.yourwardrobe.domain.model;
 
-public class Outfit {
-    public String sweaterUrl;
-    public String jacketUrl;
-    public String pantsUrl;
-    public String glassesUrl;
-    public String bootsUrl;
-    public String earringsUrl;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-    public Outfit(String sweaterUrl, String jacketUrl, String pantsUrl, String glassesUrl, String bootsUrl, String earringsUrl) {
-        this.sweaterUrl = sweaterUrl;
-        this.jacketUrl = jacketUrl;
-        this.pantsUrl = pantsUrl;
-        this.glassesUrl = glassesUrl;
-        this.bootsUrl = bootsUrl;
-        this.earringsUrl = earringsUrl;
+public class Outfit implements Serializable {
+
+    private String id;
+    private String name;
+    private String season;
+    private List<Garment> garments;
+    private Date createdAt;
+
+    public Outfit() {
+        this.garments = new ArrayList<>();
     }
 
-    public String getSweaterUrl() {
-        return sweaterUrl;
+    public Outfit(String name, String season, List<Garment> garments) {
+        this.name = name;
+        this.season = season;
+        this.garments = garments != null ? garments : new ArrayList<>();
+        this.createdAt = new Date();
     }
 
-    public String getJacketUrl() {
-        return jacketUrl;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getPantsUrl() {
-        return pantsUrl;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getGlassesUrl() {
-        return glassesUrl;
-    }
+    public String getSeason() { return season; }
+    public void setSeason(String season) { this.season = season; }
 
-    public String getBootsUrl() {
-        return bootsUrl;
-    }
+    public List<Garment> getGarments() { return garments; }
+    public void setGarments(List<Garment> garments) { this.garments = garments; }
 
-    public String getEarringsUrl() {
-        return earringsUrl;
-    }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

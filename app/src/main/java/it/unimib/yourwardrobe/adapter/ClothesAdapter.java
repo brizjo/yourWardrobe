@@ -3,23 +3,24 @@ package it.unimib.yourwardrobe.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.components.CardGarment;
-import com.bumptech.glide.Glide;
-
-import android.widget.ImageView;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
-    private List<Garment> clothesList; // Lista di ID immagini
-    private final int layoutId; // ID del layout da utilizzare
+    private List<Garment> clothesList;
+    private final int layoutId;
     private final OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
@@ -27,7 +28,7 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     }
 
     public ClothesAdapter(List<Garment> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
-        this.clothesList = clothesList;
+        this.clothesList = clothesList != null ? clothesList : new ArrayList<>();
         this.layoutId = layoutId;
         this.onItemClickListener = onItemClickListener;
     }
@@ -60,6 +61,15 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     public int getItemCount() {
         return clothesList != null ? clothesList.size() : 0;
     }
+
+    /**
+     * Aggiorna la lista di capi e notifica l'adapter
+     */
+    public void updateGarments(List<Garment> newGarments) {
+        this.clothesList = newGarments != null ? newGarments : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
     public static class ClothesViewHolder extends RecyclerView.ViewHolder {
 
         private final CardGarment cardGarment;
@@ -72,7 +82,8 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         }
 
         public void bind(Garment garment, OnItemClickListener listener) {
-            if (cardGarment != null && garment != null) {// Caricamento immagine tramite Glide nell'ImageView del componente custom
+            if (cardGarment != null && garment != null) {
+                // Caricamento immagine tramite Glide nell'ImageView del componente custom
                 Glide.with(itemView.getContext())
                         .load(garment.getImageUrl())
                         .placeholder(R.drawable.ic_launcher_background)
@@ -88,4 +99,3 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         }
     }
 }
-

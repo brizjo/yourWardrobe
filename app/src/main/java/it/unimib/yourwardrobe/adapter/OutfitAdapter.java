@@ -3,27 +3,31 @@ package it.unimib.yourwardrobe.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.List;
+
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.ui.main.components.CardGarment;
 
-
-//todo: questa è una classe temporanea di placeholder
 public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitViewHolder> {
 
-    private final List<Integer> outfitImages;
+    private final List<Outfit> outfits;
     private final int layoutId;
     private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, Integer item);
+        void onItemClick(View view, Outfit outfit);
     }
 
-    public OutfitAdapter(List<Integer> outfitImages, int layoutId, OnItemClickListener listener) {
-        this.outfitImages = outfitImages;
+    public OutfitAdapter(List<Outfit> outfits, int layoutId, OnItemClickListener listener) {
+        this.outfits = outfits;
         this.layoutId = layoutId;
         this.listener = listener;
     }
@@ -37,13 +41,12 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitView
 
     @Override
     public void onBindViewHolder(@NonNull OutfitViewHolder holder, int position) {
-        Integer resId = outfitImages.get(position);
-        holder.bind(resId, listener);
+        holder.bind(outfits.get(position), listener);
     }
 
     @Override
     public int getItemCount() {
-        return outfitImages != null ? outfitImages.size() : 0;
+        return outfits != null ? outfits.size() : 0;
     }
 
     public static class OutfitViewHolder extends RecyclerView.ViewHolder {
@@ -51,18 +54,26 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitView
 
         public OutfitViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Cerca l'ID del componente nel tuo item_outfit_grid.xml
-            // Se nel layout si chiama diversamente, correggi R.id.clothesCard
             cardGarment = itemView.findViewById(R.id.clothesCard);
         }
 
-        public void bind(Integer resId, OnItemClickListener listener) {
-            if (cardGarment != null) {
-                cardGarment.setCardImage(ContextCompat.getDrawable(itemView.getContext(), resId));
-                cardGarment.setOnCardClickListener(v -> {
-                    if (listener != null) listener.onItemClick(v, resId);
-                });
+        public void bind(Outfit outfit, OnItemClickListener listener) {
+            if (cardGarment == null) return;
+
+            // Carica l'immagine del primo capo come anteprima dell'outfit
+            if (outfit.getGarments() != null && !outfit.getGarments().isEmpty()) {
+                String imageUrl = outfit.getGarments().get(0).getImageUrl();
+                Glide.with(itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .into(cardGarment.getImageView());
             }
+
+            cardGarment.setOnCardClickListener(v -> {
+                if (listener != null) listener.onItemClick(v, outfit);
+            });
         }
     }
 }

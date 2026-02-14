@@ -41,6 +41,18 @@ public class WeatherUtil {
     public static String getFormattedTemperature(double temp) {
         return String.format("%.1f°C", temp);
     }
+    public static String getSeasonFromTemperature(double temperature) {
+        if (temperature < 10) {
+            return "Inverno";
+        } else if (temperature < 15) {
+            return "Autunno";
+        } else if (temperature < 20) {
+            return "Primavera";
+        } else {
+            return "Estate";
+        }
+    }
+
 
 
 }

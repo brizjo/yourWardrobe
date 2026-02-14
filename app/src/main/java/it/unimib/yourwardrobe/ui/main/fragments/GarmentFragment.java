@@ -1,10 +1,19 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import dagger.hilt.android.AndroidEntryPoint;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -12,16 +21,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,6 +34,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.viewmodel.GarmentViewModel;
@@ -45,6 +45,7 @@ public class GarmentFragment extends Fragment {
 
     private GarmentViewModel viewModel;
     private boolean isInitialGarmentLoad = true;
+
     private ImageView garmentImageView;
     private TextView nameTextView;
     private TextInputLayout nameGarmentInputLayout;
@@ -52,20 +53,15 @@ public class GarmentFragment extends Fragment {
     private ChipGroup colorChipGroup;
     private ChipGroup styleChipGroup;
     private ChipGroup fabricChipGroup;
+    private ChipGroup seasonChipGroup;
+    private ChipGroup subCategoryChipGroup;
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
 
-    public GarmentFragment() {
-        // Required empty public constructor
-    }
-
-    public static GarmentFragment newInstance() {
-        GarmentFragment fragment = new GarmentFragment();
-        return fragment;
-    }
+    public GarmentFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,81 +71,73 @@ public class GarmentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_garment, container, false);
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        garmentImageView = view.findViewById(R.id.garmentImage);
-        nameTextView = view.findViewById(R.id.nameGarmentText);
+        garmentImageView       = view.findViewById(R.id.garmentImage);
+        nameTextView           = view.findViewById(R.id.nameGarmentText);
         nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
-        nameGarmentEditText = view.findViewById(R.id.nameGarmentEditText);
-        editButtonsContainer = view.findViewById(R.id.edit_buttons_container);
-        editFab = view.findViewById(R.id.edit_fab);
-        deleteFab = view.findViewById(R.id.delete_fab);
-        //deleteProgressBar = view.findViewById(R.id.garment_delete_progress_bar);
-        Button cancelButton = view.findViewById(R.id.cancel_button);
-        Button updateButton = view.findViewById(R.id.update_button);
-        colorChipGroup = view.findViewById(R.id.chip_group_garment_color);
-        styleChipGroup = view.findViewById(R.id.chip_group_garment_style);
-        fabricChipGroup = view.findViewById(R.id.chip_group_garment_fabric);
+        nameGarmentEditText    = view.findViewById(R.id.nameGarmentEditText);
+        editButtonsContainer   = view.findViewById(R.id.edit_buttons_container);
+        editFab                = view.findViewById(R.id.edit_fab);
+        deleteFab              = view.findViewById(R.id.delete_fab);
+        colorChipGroup         = view.findViewById(R.id.chip_group_garment_color);
+        styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
+        fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
+        seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
+        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
+        Button cancelButton    = view.findViewById(R.id.cancel_button);
+        Button updateButton    = view.findViewById(R.id.update_button);
 
         viewModel = new ViewModelProvider(this).get(GarmentViewModel.class);
 
         if (getArguments() != null) {
-            // GarmentFragmentArgs viene generato automaticamente dal plugin Navigation
             Garment garment = GarmentFragmentArgs.fromBundle(getArguments()).getGarment();
-            if (garment != null) {
-                viewModel.setGarment(garment);
-            }
+            if (garment != null) viewModel.setGarment(garment);
         }
+
         nameGarmentEditText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
             @Override
             public void afterTextChanged(Editable s) {
                 viewModel.setGarmentName(s.toString());
             }
         });
 
-        editFab.setOnClickListener(v -> {
-            viewModel.enterEditMode();
-        });
-
-        deleteFab.setOnClickListener(v -> {
-            showDeleteConfirmationDialog();
-        });
-
-        if (cancelButton != null) {
-            cancelButton.setOnClickListener(v -> viewModel.cancelChanges());
-        }
+        editFab.setOnClickListener(v -> viewModel.enterEditMode());
+        deleteFab.setOnClickListener(v -> showDeleteConfirmationDialog());
+        if (cancelButton != null) cancelButton.setOnClickListener(v -> viewModel.cancelChanges());
         updateButton.setOnClickListener(v -> viewModel.updateGarment());
 
         observeViewModel();
     }
+
+    // -------------------------------------------------------------------------
+    // Observers
+    // -------------------------------------------------------------------------
 
     private void observeViewModel() {
         viewModel.getGarment().observe(getViewLifecycleOwner(), garment -> {
             nameTextView.setText(garment.getName());
             if (isInitialGarmentLoad) {
                 nameGarmentEditText.setText(garment.getName());
-                isInitialGarmentLoad = false; // Imposta il flag a false dopo il primo caricamento
+                isInitialGarmentLoad = false;
             }
-            // CARICAMENTO OTTIMIZZATO
             Glide.with(this)
                     .load(garment.getImageUrl())
-                    .placeholder(R.drawable.ic_launcher_background) // Immagine temporanea mentre carica la prima volta
-                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache totale
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(garmentImageView);
-
             populateChips(garment);
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null && isLoading) {
+            if (Boolean.TRUE.equals(isLoading)) {
                 deleteProgressBar.setVisibility(View.VISIBLE);
                 editFab.hide();
                 deleteFab.hide();
@@ -157,16 +145,14 @@ public class GarmentFragment extends Fragment {
             }
         });
 
-
         viewModel.getIsDeleted().observe(getViewLifecycleOwner(), deleted -> {
-            if (deleted) {
+            if (Boolean.TRUE.equals(deleted)) {
                 if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
                     deleteConfirmationDialog.dismiss();
                 }
                 ToastHelper.show(getContext(), "Capo eliminato", false);
                 Navigation.findNavController(requireView()).navigateUp();
-            }
-            else if (deleted != null && !deleted){
+            } else if (deleted != null) {
                 if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
                     deleteConfirmationDialog.dismiss();
                 }
@@ -191,68 +177,133 @@ public class GarmentFragment extends Fragment {
                 nameGarmentEditText.clearFocus();
                 hideKeyboard(nameGarmentEditText);
             }
-            Garment currentGarment = viewModel.getGarment().getValue();
-            populateChips(currentGarment);
+            populateChips(viewModel.getGarment().getValue());
         });
 
         viewModel.getGarmentUpdatedSuccessfully().observe(getViewLifecycleOwner(), updated -> {
-            if (updated) {
+            if (Boolean.TRUE.equals(updated)) {
                 ToastHelper.show(getContext(), "Modifiche salvate con successo!", false);
-                // La modalità di modifica viene già disattivata dal ViewModel,
-                // quindi i pulsanti si nasconderanno automaticamente.
-            } else {
-                // Potresti voler mostrare un errore specifico per l'update
+            } else if (updated != null) {
                 ToastHelper.show(getContext(), "Errore durante il salvataggio delle modifiche.", true);
             }
         });
     }
 
-    private void showDeleteConfirmationDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_confirm_delete, null);
-        ProgressBar dialogProgressBar = dialogView.findViewById(R.id.dialog_progress_bar);
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Conferma Eliminazione")
-                .setView(dialogView)
-                //.setMessage("Sei sicuro di voler eliminare questo capo? L'azione è irreversibile.")
-                .setNegativeButton("Annulla", (dialog, which) -> {
-                    // L'utente ha premuto "Annulla", chiudo dialog
-                    dialog.dismiss();
-                })
-                .setPositiveButton("Elimina", (dialog, which) -> {
-                    // L'utente ha confermato, procedo con l'eliminazione
-                    //viewModel.deleteGarment();
-                });
-        deleteConfirmationDialog = builder.create();
-        deleteConfirmationDialog.show();
-        Button positiveButton = deleteConfirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        if (positiveButton != null) {
-            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_error));
+    // -------------------------------------------------------------------------
+    // Chips
+    // -------------------------------------------------------------------------
+
+    private void populateChips(Garment garment) {
+        if (garment == null) return;
+
+        boolean isInEditMode = Boolean.TRUE.equals(viewModel.getIsEditMode().getValue());
+
+        colorChipGroup.removeAllViews();
+        styleChipGroup.removeAllViews();
+        fabricChipGroup.removeAllViews();
+        seasonChipGroup.removeAllViews();
+        subCategoryChipGroup.removeAllViews();
+
+        if (isInEditMode) {
+            // Colori (multipla)
+            colorChipGroup.addView(createAddChip(() ->
+                    showChipSelectionDialog("Aggiungi Colori",
+                            viewModel.getAllColors(), garment.getColor(),
+                            newColors -> viewModel.addColors(newColors))));
+
+            // Stili (multipla)
+            styleChipGroup.addView(createAddChip(() ->
+                    showChipSelectionDialog("Aggiungi Stili",
+                            viewModel.getAllStyles(), garment.getStyle(),
+                            newStyles -> viewModel.addStyles(newStyles))));
+
+            // Tessuti (multipla)
+            fabricChipGroup.addView(createAddChip(() ->
+                    showChipSelectionDialog("Aggiungi Tessuti",
+                            viewModel.getAllFabrics(), garment.getFabric(),
+                            newFabrics -> viewModel.addFabrics(newFabrics))));
+
+            // Stagione (singola): chip cliccabile per aprire il dialog di selezione
+            Chip seasonChip = new Chip(requireContext());
+            seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+ Stagione");
+            seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            seasonChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            seasonChip.setOnClickListener(v -> showSeasonSelectionDialog(garment));
+            if (garment.getSeason() != null) {
+                seasonChip.setCloseIconVisible(true);
+                seasonChip.setOnCloseIconClickListener(v -> viewModel.clearSeason());
+            }
+            seasonChipGroup.addView(seasonChip);
+
+            // Sottocategoria (singola): chip cliccabile per aprire il dialog di selezione
+            Chip subCategoryChip = new Chip(requireContext());
+            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+ Sottocategoria");
+            subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+            subCategoryChip.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            subCategoryChip.setOnClickListener(v -> showSubCategorySelectionDialog(garment));
+            if (garment.getSubCategory() != null) {
+                subCategoryChip.setCloseIconVisible(true);
+                subCategoryChip.setOnCloseIconClickListener(v -> viewModel.setSubCategory(null));
+            }
+            subCategoryChipGroup.addView(subCategoryChip);
+
+        } else {
+            // Modalità visualizzazione (non edit)
+            if (garment.getSeason() != null) {
+                seasonChipGroup.addView(
+                        createChip(requireContext(), garment.getSeason(), false, null));
+            }
+            if (garment.getSubCategory() != null) {
+                subCategoryChipGroup.addView(
+                        createChip(requireContext(), garment.getSubCategory(), false, null));
+            }
         }
-        positiveButton.setOnClickListener(v -> {
-            positiveButton.setVisibility(View.GONE);
-            deleteConfirmationDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
-            dialogProgressBar.setVisibility(View.VISIBLE);
-            deleteConfirmationDialog.setCancelable(false);
-            viewModel.deleteGarment();
-        });
+
+        // Colori (sempre visibili)
+        if (garment.getColor() != null) {
+            for (String color : garment.getColor()) {
+                colorChipGroup.addView(createChip(requireContext(), color, isInEditMode,
+                        () -> viewModel.removeColor(color)));
+            }
+        }
+
+        // Stili (sempre visibili)
+        if (garment.getStyle() != null) {
+            for (String style : garment.getStyle()) {
+                styleChipGroup.addView(createChip(requireContext(), style, isInEditMode,
+                        () -> viewModel.removeStyle(style)));
+            }
+        }
+
+        // Tessuti (sempre visibili)
+        if (garment.getFabric() != null) {
+            for (String fabric : garment.getFabric()) {
+                fabricChipGroup.addView(createChip(requireContext(), fabric, isInEditMode,
+                        () -> viewModel.removeFabric(fabric)));
+            }
+        }
     }
 
     private Chip createChip(Context context, String text, boolean isRemovable, Runnable onRemove) {
         Chip chip = new Chip(context);
         chip.setText(text);
-        chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        chip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        chip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         if (isRemovable) {
-            chip.setCloseIconVisible(true); // Mostra la "X"
-            chip.setClickable(true);        // Rende la chip cliccabile per la "X"
+            chip.setCloseIconVisible(true);
+            chip.setClickable(true);
             chip.setFocusable(true);
             chip.setOnCloseIconClickListener(v -> {
-                if (onRemove != null) {
-                    onRemove.run(); // Esegue l'azione di rimozione
-                }
+                if (onRemove != null) onRemove.run();
             });
         } else {
-            chip.setClickable(false); // Non interagibile in modalità visualizzazione
+            chip.setClickable(false);
             chip.setFocusable(false);
         }
         return chip;
@@ -261,96 +312,79 @@ public class GarmentFragment extends Fragment {
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
         chip.setText("+");
-        chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        chip.setChipBackgroundColor(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
+        chip.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnClickListener(v -> onClickAction.run());
         return chip;
     }
 
+    // -------------------------------------------------------------------------
+    // Dialog stagione (selezione singola)
+    // -------------------------------------------------------------------------
+
+    private void showSeasonSelectionDialog(Garment garment) {
+        List<String> allSeasons = viewModel.getAllSeasons();
+        String[] seasonsArray = allSeasons.toArray(new String[0]);
+
+        int currentIndex = garment.getSeason() != null
+                ? allSeasons.indexOf(garment.getSeason())
+                : -1;
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleziona Stagione")
+                .setSingleChoiceItems(seasonsArray, currentIndex, (dialog, which) -> {
+                    viewModel.setSelectedSeason(seasonsArray[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // -------------------------------------------------------------------------
+    // Dialog sottocategoria (selezione singola)
+    // -------------------------------------------------------------------------
+
+    private void showSubCategorySelectionDialog(Garment garment) {
+        List<String> allSubCategories = viewModel.getAllSubCategories();
+        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
+
+        int currentIndex = garment.getSubCategory() != null
+                ? allSubCategories.indexOf(garment.getSubCategory())
+                : -1;
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Seleziona Sottocategoria")
+                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
+                    viewModel.setSubCategory(subCategoriesArray[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    // -------------------------------------------------------------------------
+    // Dialog selezione chip multipla (colori, stili, tessuti)
+    // -------------------------------------------------------------------------
+
     interface OnSelectionListener {
         void onSelected(List<String> selection);
     }
-    private void populateChips(Garment garment) {
-        if (garment == null) return;
 
-        // Determina se siamo in modalità modifica
-        boolean isInEditMode = viewModel.getIsEditMode().getValue() != null && viewModel.getIsEditMode().getValue();
-
-        // Pulisci sempre i gruppi prima di ripopolarli
-        colorChipGroup.removeAllViews();
-        styleChipGroup.removeAllViews();
-        fabricChipGroup.removeAllViews();
-
-        if (isInEditMode) {
-            // Chip '+' per i colori
-            Chip addColorChip = createAddChip(() -> {
-                showChipSelectionDialog("Aggiungi Colori",
-                        viewModel.getAllColors(), // Assumendo che il VM esponga tutti i colori
-                        garment.getColor(), // Passa i colori già selezionati
-                        newColors -> viewModel.addColors(newColors));
-            });
-            colorChipGroup.addView(addColorChip);
-
-            // Chip '+' per gli stili
-            Chip addStyleChip = createAddChip(() -> {
-                showChipSelectionDialog("Aggiungi Stili",
-                        viewModel.getAllStyles(),
-                        garment.getStyle(),
-                        newStyles -> viewModel.addStyles(newStyles));
-            });
-            styleChipGroup.addView(addStyleChip);
-
-            // Chip '+' per i tessuti
-            Chip addFabricChip = createAddChip(() -> {
-                showChipSelectionDialog("Aggiungi Tessuti",
-                        viewModel.getAllFabrics(),
-                        garment.getFabric(),
-                        newFabrics -> viewModel.addFabrics(newFabrics));
-            });
-            fabricChipGroup.addView(addFabricChip);
-        }
-        // Popola le chip dei colori
-        if (garment.getColor() != null) {
-            for (String color : garment.getColor()) {
-                Chip chip = createChip(requireContext(), color, isInEditMode, () -> {
-                    // Azione da eseguire quando la "X" viene premuta
-                    viewModel.removeColor(color);
-                });
-                colorChipGroup.addView(chip);
-            }
-        }
-
-        // Popola le chip degli stili
-        if (garment.getStyle() != null) {
-            for (String style : garment.getStyle()) {
-                Chip chip = createChip(requireContext(), style, isInEditMode, () -> {
-                    viewModel.removeStyle(style);
-                });
-                styleChipGroup.addView(chip);
-            }
-        }
-
-        // Popola le chip dei tessuti
-        if (garment.getFabric() != null) {
-            for (String fabric : garment.getFabric()) {
-                Chip chip = createChip(requireContext(), fabric, isInEditMode, () -> {
-                    viewModel.removeFabric(fabric);
-                });
-                fabricChipGroup.addView(chip);
-            }
-        }
-    }
-
-    private void showChipSelectionDialog(String title, List<String> allOptions, List<String> currentSelection, OnSelectionListener listener) {
+    private void showChipSelectionDialog(String title, List<String> allOptions,
+                                         List<String> currentSelection,
+                                         OnSelectionListener listener) {
         if (allOptions == null || allOptions.isEmpty()) {
             ToastHelper.show(getContext(), "Nessuna opzione da aggiungere.", false);
             return;
         }
 
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.chip_selector, null); // Assumi di avere chip_selector.xml
-        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.chip_selector, null);
+        TextView dialogTitle      = dialogView.findViewById(R.id.dialog_title);
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
-        Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
+        Button okButton           = dialogView.findViewById(R.id.dialog_ok_button);
 
         dialogTitle.setText(title);
 
@@ -385,7 +419,6 @@ public class GarmentFragment extends Fragment {
             chip.setChipBackgroundColor(colorStateList);
             chip.setTextColor(chipTextColorStateList);
             chip.setCheckable(true);
-            // Se l'opzione è già presente, la disabilita per non poterla ri-aggiungere
             if (currentSelection != null && currentSelection.contains(option)) {
                 chip.setEnabled(false);
             }
@@ -396,8 +429,9 @@ public class GarmentFragment extends Fragment {
                 .setView(dialogView)
                 .create();
 
-        dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> okButton.setEnabled(!checkedIds.isEmpty()));
         okButton.setEnabled(false);
+        dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) ->
+                okButton.setEnabled(!checkedIds.isEmpty()));
 
         okButton.setOnClickListener(v -> {
             List<String> newSelection = new ArrayList<>();
@@ -412,19 +446,54 @@ public class GarmentFragment extends Fragment {
         dialog.show();
     }
 
+    // -------------------------------------------------------------------------
+    // Delete dialog
+    // -------------------------------------------------------------------------
+
+    private void showDeleteConfirmationDialog() {
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_confirm_delete, null);
+        ProgressBar dialogProgressBar = dialogView.findViewById(R.id.dialog_progress_bar);
+
+        deleteConfirmationDialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Conferma Eliminazione")
+                .setView(dialogView)
+                .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("Elimina", (dialog, which) -> {})
+                .create();
+
+        deleteConfirmationDialog.show();
+
+        Button positiveButton = deleteConfirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        if (positiveButton != null) {
+            positiveButton.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.md_theme_error));
+            positiveButton.setOnClickListener(v -> {
+                positiveButton.setVisibility(View.GONE);
+                deleteConfirmationDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                        .setVisibility(View.GONE);
+                dialogProgressBar.setVisibility(View.VISIBLE);
+                deleteConfirmationDialog.setCancelable(false);
+                viewModel.deleteGarment();
+            });
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Keyboard helpers
+    // -------------------------------------------------------------------------
+
     private void showKeyboard(@NonNull View view) {
         if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-            }
+            InputMethodManager imm = (InputMethodManager)
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
     private void hideKeyboard(@NonNull View view) {
-        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+        InputMethodManager imm = (InputMethodManager)
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

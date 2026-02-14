@@ -186,17 +186,18 @@ public class CreateOutfitViewModel extends ViewModel {
 
     public void setSelectedSeason(String season) {
         selectedSeason.setValue(season);
+        updateSaveButtonState();
     }
 
     private void updateSaveButtonState() {
         List<Garment> tops = selectedTops.getValue();
         List<Garment> bottoms = selectedBottoms.getValue();
-        // Aggiungi scarpe se vuoi siano obbligatorie
 
         boolean hasItems = (tops != null && !tops.isEmpty()) && (bottoms != null && !bottoms.isEmpty());
         boolean hasName = outfitName.getValue() != null && !outfitName.getValue().trim().isEmpty();
+        boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().trim().isEmpty();
 
-        isSaveEnabled.setValue(hasItems && hasName);
+        isSaveEnabled.setValue(hasItems && hasName && hasSeason);
     }
 
     public void saveOutfit() {

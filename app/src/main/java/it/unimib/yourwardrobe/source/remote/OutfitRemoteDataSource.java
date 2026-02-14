@@ -50,7 +50,7 @@ public class OutfitRemoteDataSource {
             outfit.setId(docId);
 
             Log.d(TAG, "Path: user/" + uid + "/outfits/" + docId);
-            Log.d(TAG, "Nome: " + outfit.getName() + ", Capi: " + outfit.getGarments().size());
+            Log.d(TAG, "Nome: " + outfit.getName() + ", Stagione: " + outfit.getSeason() + ", Capi: " + outfit.getGarments().size());
 
             newDoc.set(outfit)
                     .addOnSuccessListener(aVoid -> {

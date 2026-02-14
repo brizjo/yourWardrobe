@@ -9,7 +9,7 @@ public class Outfit implements Serializable {
 
     private String id;
     private String name;
-    private String style;
+    private String season;
     private List<Garment> garments;
     private Date createdAt;
 
@@ -17,11 +17,11 @@ public class Outfit implements Serializable {
         this.garments = new ArrayList<>();
     }
 
-    public Outfit(String name, String style, List<Garment> garments) {
+    public Outfit(String name, String season, List<Garment> garments) {
         this.name = name;
-        this.style = style;
+        this.season = season;
         this.garments = garments != null ? garments : new ArrayList<>();
-        this.createdAt = new Date(); // ⬅️ IMPOSTA DATA ALLA CREAZIONE
+        this.createdAt = new Date();
     }
 
     public String getId() { return id; }
@@ -30,8 +30,8 @@ public class Outfit implements Serializable {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public String getStyle() { return style; }
-    public void setStyle(String style) { this.style = style; }
+    public String getSeason() { return season; }
+    public void setSeason(String season) { this.season = season; }
 
     public List<Garment> getGarments() { return garments; }
     public void setGarments(List<Garment> garments) { this.garments = garments; }

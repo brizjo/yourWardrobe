@@ -108,6 +108,8 @@
     <string name="insert_order">Ordine di Inserimento</string>
     <string name="order_by_category">Raggruppa per Categoria</string>
     <string name="order_by_a_z">Ordine Alfabetico (A-Z)</string>
+    <string name="armadio_vuoto">Armadio vuoto</string>
+    <string name="empty_wardrobe_message">Sembra che il tuo armadio sia ancora vuoto, iniziamo ad aggiungere dei vestiti?</string>
     <string name="sign_out">Sign Out</string>
     <string name="item_icon">item icon</string>
     <string name="example_item">Example Item</string>

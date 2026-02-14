@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,12 +45,20 @@ public class ClothesFragment extends Fragment {
 
 
     private ClothesViewModel clothesViewModel;
-    private RecyclerView recyclerViewTop, recyclerViewBottom, recyclerViewAccessories;
     private ClothesAdapter.OnItemClickListener listener;
     private ChipGroup activeFiltersChipGroup;
     private HorizontalScrollView activeFiltersScrollView;
     private NestedScrollView categoriesScrollView;
     private RecyclerView gridRecyclerView;
+    private View emptyWardrobeView;
+    private View topButtonsContainer;
+    private View mainContainer;
+    private ProgressBar loadingProgressBar;
+    private ClothesAdapter topAdapter;
+    private ClothesAdapter bottomAdapter;
+    private ClothesAdapter footwearAdapter;
+    private ClothesAdapter accessoriesAdapter;
+    private ClothesAdapter gridAdapter;
 
     public ClothesFragment() {
         // Required empty public constructor
@@ -83,6 +92,19 @@ public class ClothesFragment extends Fragment {
         };
         categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
         gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
+        emptyWardrobeView = view.findViewById(R.id.empty_wardrobe_view);
+        topButtonsContainer = view.findViewById(R.id.top_buttons_container);
+        mainContainer = view.findViewById(R.id.main_container);
+        loadingProgressBar = view.findViewById(R.id.loading_progressbar);
+        Button addFirstGarmentButton = view.findViewById(R.id.add_first_garment_button);
+        addFirstGarmentButton.setOnClickListener(v -> {
+            NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
+                    .findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                NavController navController = navHostFragment.getNavController();
+                navController.navigate(R.id.action_clothesFragment_to_addGarmentFragment);
+            }
+        });
 
         RecyclerView recyclerViewTop = view.findViewById(R.id.parte_superiore_recycler_view);
         RecyclerView recyclerViewBottom = view.findViewById(R.id.parte_inferiore_recycler_view);
@@ -94,7 +116,18 @@ public class ClothesFragment extends Fragment {
         recyclerViewFootWear.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
         recyclerViewAccessories.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
 
-        recyclerViewTop.setNestedScrollingEnabled(false);
+        topAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        bottomAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        footwearAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        accessoriesAdapter = new ClothesAdapter(new ArrayList<>(), listener);
+        gridAdapter = new ClothesAdapter(new ArrayList<>(), R.layout.item_clothes_grid, listener);
+
+        recyclerViewTop.setAdapter(topAdapter);
+        recyclerViewBottom.setAdapter(bottomAdapter);
+        recyclerViewFootWear.setAdapter(footwearAdapter);
+        recyclerViewAccessories.setAdapter(accessoriesAdapter);
+        gridRecyclerView.setAdapter(gridAdapter);
+        //recyclerViewTop.setNestedScrollingEnabled(false);
 
         ImageView orderButton = view.findViewById(R.id.order_button);
         orderButton.setOnClickListener(v -> showOrderDialog());
@@ -120,20 +153,47 @@ public class ClothesFragment extends Fragment {
 
         clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
 
+        clothesViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null) {
+                if (isLoading) {
+                    loadingProgressBar.setVisibility(View.VISIBLE);
+                    mainContainer.setVisibility(View.GONE);
+                } else {
+                    loadingProgressBar.setVisibility(View.GONE);
+                    mainContainer.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        clothesViewModel.getIsWardrobeEmpty().observe(getViewLifecycleOwner(), isEmpty -> {
+            if (isEmpty != null) { // Main check
+                if (isEmpty) {
+                    emptyWardrobeView.setVisibility(View.VISIBLE);
+                    topButtonsContainer.setVisibility(View.GONE);
+                    activeFiltersScrollView.setVisibility(View.GONE);
+                    categoriesScrollView.setVisibility(View.GONE);
+                    gridRecyclerView.setVisibility(View.GONE);
+                } else {
+                    emptyWardrobeView.setVisibility(View.GONE);
+                    topButtonsContainer.setVisibility(View.VISIBLE);
+                    updateLayoutForDisplayMode(clothesViewModel.getDisplayMode().getValue());
+                }
+            }
+        });
+
         clothesViewModel.getDisplayMode().observe(getViewLifecycleOwner(), mode -> {
             updateLayoutForDisplayMode(mode);
         });
 
         clothesViewModel.getGridGarments().observe(getViewLifecycleOwner(), garments -> {
             if (garments != null) {
-                // costruttore dell'adapter che accetta il layoutId
-                gridRecyclerView.setAdapter(new ClothesAdapter(garments, R.layout.item_clothes_grid, listener));
+                gridAdapter.updateGarments(garments);
             }
         });
 
         clothesViewModel.getTopGarments().observe(getViewLifecycleOwner(), topGarments -> {
             if (topGarments != null) {
-                recyclerViewTop.setAdapter(new ClothesAdapter(topGarments, listener));
+                topAdapter.updateGarments(topGarments);
 
                 if (topGarments.isEmpty())
                     //TODO; CORRETTA GESTIONE DI UN ARMADIO ANCORA VUOTO
@@ -143,19 +203,19 @@ public class ClothesFragment extends Fragment {
 
         clothesViewModel.getBottomGarments().observe(getViewLifecycleOwner(), bottomGarments -> {
             if (bottomGarments != null) {
-                recyclerViewBottom.setAdapter(new ClothesAdapter(bottomGarments, listener));
+                bottomAdapter.updateGarments(bottomGarments);
             }
         });
 
         clothesViewModel.getFootwearGarments().observe(getViewLifecycleOwner(), footwear -> {
             if (footwear != null) {
-                recyclerViewFootWear.setAdapter(new ClothesAdapter(footwear, listener));
+                footwearAdapter.updateGarments(footwear);
             }
         });
 
         clothesViewModel.getAccessories().observe(getViewLifecycleOwner(), accessories -> {
             if (accessories != null) {
-                recyclerViewAccessories.setAdapter(new ClothesAdapter(accessories, listener));
+                accessoriesAdapter.updateGarments(accessories);
             }
         });
 

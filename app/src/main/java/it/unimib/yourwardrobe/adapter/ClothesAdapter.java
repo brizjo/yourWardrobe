@@ -18,7 +18,7 @@ import android.widget.ImageView;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
-    private final List<Garment> clothesList; // Lista di ID immagini
+    private List<Garment> clothesList; // Lista di ID immagini
     private final int layoutId; // ID del layout da utilizzare
     private final OnItemClickListener onItemClickListener;
 
@@ -34,6 +34,12 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
 
     public ClothesAdapter(List<Garment> clothesList, OnItemClickListener onItemClickListener) {
         this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
+    }
+
+    public void updateGarments(List<Garment> newGarments) {
+        this.clothesList.clear();
+        this.clothesList.addAll(newGarments);
+        notifyDataSetChanged(); // Notifica al RecyclerView di ridisegnare tutto
     }
 
     @NonNull

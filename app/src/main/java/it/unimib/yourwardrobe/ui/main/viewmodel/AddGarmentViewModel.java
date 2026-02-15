@@ -22,13 +22,15 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @HiltViewModel
 public class AddGarmentViewModel extends ViewModel {
 
     private final Context context;
     private final GarmentRepository garmentRepository;
-    private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
+    private final MutableLiveData<ImageValidationState> imageValidationState = new MutableLiveData<>(ImageValidationState.UNCHECKED);
+
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -60,7 +62,7 @@ public class AddGarmentViewModel extends ViewModel {
         selectedStyles.setValue(new ArrayList<>());
         selectedFabrics.setValue(new ArrayList<>());
         isButtonEnabled.setValue(false);
-        isButtonEnabled.addSource(isImageValid, value -> validateForm());
+        isButtonEnabled.addSource(imageValidationState, this::validateForm);
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
         isButtonEnabled.addSource(selectedCategory, value -> validateForm());
@@ -93,16 +95,20 @@ public class AddGarmentViewModel extends ViewModel {
     }
 
     private void validateForm() {
-        boolean imageOk = garmentImage.getValue() != null && Boolean.TRUE.equals(isImageValid.getValue());
+        ImageValidationState validation = imageValidationState.getValue();
+        boolean imageOk = validation == ImageValidationState.VALID;
         boolean hasName = garmentName.getValue() != null && !garmentName.getValue().isEmpty();
         boolean hasCategory = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
         boolean hasColors = selectedColors.getValue() != null && !selectedColors.getValue().isEmpty();
         boolean hasStyles = selectedStyles.getValue() != null && !selectedStyles.getValue().isEmpty();
-        boolean hasFabrics = selectedFabrics.getValue() != null && !selectedFabrics.getValue().isEmpty();
         boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
         boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty(); // CAMBIATO
 
         isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasSeason && hasSubCategory);
+    }
+
+    private void validateForm(ImageValidationState state){
+        validateForm();
     }
 
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
@@ -112,21 +118,38 @@ public class AddGarmentViewModel extends ViewModel {
         garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                isImageValid.postValue(result);
-                if (!result) {
+                //isImageValid.postValue(result);
+                if (result) {
+                    // L'immagine è valida
+                    imageValidationState.postValue(ImageValidationState.VALID);
+                } else {
+                    // L'immagine NON è valida, notifica il Fragment per mostrare il dialog
+                    imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
+                }
+                /*if (!result) {
                     errorMessage.postValue("L'immagine non sembra un capo d'abbigliamento.");
                 } else {
                     errorMessage.postValue(null);
-                }
-                validateForm();
+                }*/
+                //validateForm();
             }
             @Override
             public void onFailure(String error, Throwable t) {
-                isImageValid.postValue(false);
+                //isImageValid.postValue(false);
+                imageValidationState.postValue(ImageValidationState.ERROR);
                 errorMessage.postValue("Errore durante il riconoscimento: " + error);
-                validateForm();
+                //validateForm();
             }
         });
+    }
+
+    public void forceImageAsValid() {
+        imageValidationState.setValue(ImageValidationState.VALID);
+    }
+
+    public void resetImageSelection() {
+        garmentImage.setValue(null);
+        imageValidationState.setValue(ImageValidationState.UNCHECKED);
     }
 
     public void saveGarment() {
@@ -183,6 +206,9 @@ public class AddGarmentViewModel extends ViewModel {
     public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
     public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
+    public LiveData<ImageValidationState> getImageValidationState() {
+        return imageValidationState;
+    }
     public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
     public LiveData<List<String>> getAllColors() { return allColors; }
     public LiveData<List<String>> getAllCategories() { return allCategories; }

@@ -130,8 +130,6 @@ public class GarmentFragment extends Fragment {
         subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
         cancelButton    = view.findViewById(R.id.cancel_button);
         updateButton    = view.findViewById(R.id.update_button);
-        int iconColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        editFab.setImageTintList(ColorStateList.valueOf(iconColor));
     }
 
     // -------------------------------------------------------------------------

@@ -47,6 +47,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import it.unimib.yourwardrobe.utils.ImageValidationState;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
@@ -148,6 +150,20 @@ public class AddGarmentFragment extends Fragment {
         // Observers
         // -------------------------------------------------------------------------
 
+        viewModel.getImageValidationState().observe(getViewLifecycleOwner(), state -> {
+            if (state == ImageValidationState.INVALID_CONFIRMATION_NEEDED) {
+                // L'immagine non è stata riconosciuta: mostra il dialog di conferma
+                showInvalidGarmentConfirmationDialog();
+            } else if (state == ImageValidationState.ERROR) {
+                // Gestisci il caso di errore se necessario (già gestito da errorMessage)
+            } else if (state == ImageValidationState.UNCHECKED) {
+                // Resetta l'immagine se l'utente ha annullato
+                addGarmentImageView.setImageDrawable(
+                        ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
+                addGarmentImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            }
+        });
+
         viewModel.getAllCategories().observe(getViewLifecycleOwner(), categories -> {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
@@ -228,6 +244,23 @@ public class AddGarmentFragment extends Fragment {
         setupSubCategoryChip();
 
         addGarmentButton.setOnClickListener(v -> viewModel.saveGarment());
+    }
+    // -------------------------------------------------------------------------
+    // Riconoscimento immagine
+    // -------------------------------------------------------------------------
+
+    private void showInvalidGarmentConfirmationDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Capo non riconosciuto")
+                .setMessage("Sembra che l'immagine selezionata non sia un capo d'abbigliamento. Vuoi continuare comunque?")
+                .setPositiveButton("Continua", (dialog, which) -> {
+                    viewModel.forceImageAsValid();
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> {
+                    viewModel.resetImageSelection();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     // -------------------------------------------------------------------------

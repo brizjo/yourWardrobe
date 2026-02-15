@@ -195,7 +195,8 @@
             android:layout_gravity="bottom|end"
             android:contentDescription="@string/modifica"
             app:srcCompat="@drawable/ic_edit"
-            app:backgroundTint="@color/md_theme_primary"/>
+            app:backgroundTint="@color/md_theme_primary"
+            app:tint="@color/md_theme_onPrimary"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/delete_fab"

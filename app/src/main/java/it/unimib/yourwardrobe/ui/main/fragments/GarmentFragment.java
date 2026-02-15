@@ -95,7 +95,7 @@ public class GarmentFragment extends Fragment {
 
         if (getArguments() != null) {
             Garment garment = GarmentFragmentArgs.fromBundle(getArguments()).getGarment();
-            if (garment != null) viewModel.setGarment(garment);
+            viewModel.setGarment(garment);
         }
 
         nameGarmentEditText.addTextChangedListener(new TextWatcher() {
@@ -326,7 +326,7 @@ public class GarmentFragment extends Fragment {
 
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
-        chip.setText("+");
+        chip.setText(R.string.plus);
         chip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         chip.setTextColor(

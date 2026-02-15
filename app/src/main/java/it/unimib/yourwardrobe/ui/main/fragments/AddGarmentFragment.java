@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -132,24 +131,61 @@ public class AddGarmentFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
 
-        addGarmentImageView  = view.findViewById(R.id.addGarmentImage);
-        categoryTextView     = view.findViewById(R.id.category_text_view);
-        colorChipGroup       = view.findViewById(R.id.chip_group_color);
-        styleChipGroup       = view.findViewById(R.id.chip_group_style);
-        fabricChipGroup      = view.findViewById(R.id.chip_group_fabric);
-        seasonChipGroup      = view.findViewById(R.id.chip_group_season);
-        subCategoryChipGroup = view.findViewById(R.id.chip_group_subcategory);
-        garmentNameEditText  = view.findViewById(R.id.garmentName);
-        addGarmentButton     = view.findViewById(R.id.add_garment_button);
-        addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
+        initViews(view);
 
         addGarmentImageView.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
 
         // -------------------------------------------------------------------------
-        // Observers
+        // Listeners
         // -------------------------------------------------------------------------
 
+        addGarmentImageView.setOnClickListener(v -> showImagePickerDialog());
+
+        garmentNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                viewModel.setGarmentName(s.toString());
+            }
+        });
+
+        categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
+            String selectedItem = (String) parent.getItemAtPosition(position);
+            viewModel.setSelectedCategory(selectedItem);
+            subCategoryChipGroup.setEnabled(true);
+        });
+
+        setupAddChip(colorChipGroup, "color");
+        setupAddChip(styleChipGroup, "style");
+        setupAddChip(fabricChipGroup, "fabric");
+        setupSeasonChip();
+        setupSubCategoryChip();
+
+        addGarmentButton.setOnClickListener(v -> viewModel.saveGarment());
+
+        observeViewModel(view);
+    }
+
+    private void initViews(View view){
+        addGarmentImageView   = view.findViewById(R.id.addGarmentImage);
+        categoryTextView      = view.findViewById(R.id.category_text_view);
+        colorChipGroup        = view.findViewById(R.id.chip_group_color);
+        styleChipGroup        = view.findViewById(R.id.chip_group_style);
+        fabricChipGroup       = view.findViewById(R.id.chip_group_fabric);
+        seasonChipGroup       = view.findViewById(R.id.chip_group_season);
+        subCategoryChipGroup  = view.findViewById(R.id.chip_group_subcategory);
+        garmentNameEditText   = view.findViewById(R.id.garmentName);
+        addGarmentButton      = view.findViewById(R.id.add_garment_button);
+        addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
+    }
+
+    // -------------------------------------------------------------------------
+    // Observers
+    // -------------------------------------------------------------------------
+
+    private void observeViewModel(View view) {
         viewModel.getImageValidationState().observe(getViewLifecycleOwner(), state -> {
             if (state == ImageValidationState.INVALID_CONFIRMATION_NEEDED) {
                 // L'immagine non è stata riconosciuta: mostra il dialog di conferma
@@ -216,34 +252,6 @@ public class AddGarmentFragment extends Fragment {
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled ->
                 addGarmentButton.setEnabled(isEnabled));
 
-        // -------------------------------------------------------------------------
-        // Listeners
-        // -------------------------------------------------------------------------
-
-        addGarmentImageView.setOnClickListener(v -> showImagePickerDialog());
-
-        garmentNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override
-            public void afterTextChanged(Editable s) {
-                viewModel.setGarmentName(s.toString());
-            }
-        });
-
-        categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
-            String selectedItem = (String) parent.getItemAtPosition(position);
-            viewModel.setSelectedCategory(selectedItem);
-            subCategoryChipGroup.setEnabled(true);
-        });
-
-        setupAddChip(colorChipGroup, "color");
-        setupAddChip(styleChipGroup, "style");
-        setupAddChip(fabricChipGroup, "fabric");
-        setupSeasonChip();
-        setupSubCategoryChip();
-
-        addGarmentButton.setOnClickListener(v -> viewModel.saveGarment());
     }
     // -------------------------------------------------------------------------
     // Riconoscimento immagine
@@ -408,7 +416,7 @@ public class AddGarmentFragment extends Fragment {
 
     private void setupAddChip(ChipGroup chipGroup, final String type) {
         Chip addChip = new Chip(requireContext());
-        addChip.setText("+");
+        addChip.setText(R.string.plus);
         addChip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         addChip.setTextColor(
@@ -438,7 +446,7 @@ public class AddGarmentFragment extends Fragment {
                         viewModel.updateSelectedColors(newSelection);
                     } else if ("style".equals(type)) {
                         viewModel.updateSelectedStyles(newSelection);
-                    } else if ("fabric".equals(type)) {
+                    } else {
                         viewModel.updateSelectedFabrics(newSelection);
                     }
                 });

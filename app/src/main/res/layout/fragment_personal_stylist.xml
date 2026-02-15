@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Personal Stylist"
+            android:text="@string/personal_stylist"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
@@ -54,7 +54,7 @@
                         android:id="@+id/tv_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20°C"
+                        android:text="@string/default_temperature"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
 
@@ -62,7 +62,7 @@
                         android:id="@+id/tv_suggested_season"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Consigliata: Primavera"
+                        android:text="@string/suggested_spring"
                         android:textSize="14sp"/>
                 </LinearLayout>
             </LinearLayout>
@@ -72,7 +72,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filtri (Opzionali)"
+            android:text="@string/optional_filters"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
@@ -82,7 +82,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Colore"
+            android:hint="@string/color"
             android:layout_marginBottom="12dp">
 
             <AutoCompleteTextView
@@ -97,7 +97,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Stile"
+            android:hint="@string/style"
             android:layout_marginBottom="12dp">
 
             <AutoCompleteTextView
@@ -112,7 +112,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Stagione (sovrascrive meteo)"
+            android:hint="@string/season_personal_stylist"
             android:layout_marginBottom="16dp">
 
             <AutoCompleteTextView
@@ -127,7 +127,7 @@
             android:id="@+id/btn_generate_outfit"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Genera Outfit"
+            android:text="@string/generate_outfit"
             android:layout_marginBottom="24dp"/>
 
         <!-- Risultato Outfit -->
@@ -148,7 +148,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Outfit Generato"
+                    android:text="@string/outfit_generated"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp"/>
@@ -166,7 +166,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nome outfit"
+                    android:hint="@string/outfit_name"
                     android:layout_marginTop="16dp"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
@@ -190,7 +190,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
-                        android:text="Rigenera"/>
+                        android:text="@string/regen"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_save_outfit"
@@ -198,7 +198,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
-                        android:text="Salva"/>
+                        android:text="@string/save"/>
                 </LinearLayout>
 
             </LinearLayout>

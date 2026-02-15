@@ -48,7 +48,7 @@
                     android:layout_marginBottom="16dp"
                     android:textSize="16sp"
                     android:textColor="@color/md_theme_onSurfaceVariant"
-                    android:text="@string/stagione_2" />
+                    android:text="@string/season_2" />
 
                 <View
                     android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="@string/salva" />
+                android:text="@string/save" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"

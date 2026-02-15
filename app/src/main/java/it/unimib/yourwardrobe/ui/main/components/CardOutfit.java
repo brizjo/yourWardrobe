@@ -13,6 +13,7 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class CardOutfit extends MaterialCardView {
     private LinearLayout container;
@@ -66,12 +67,14 @@ public class CardOutfit extends MaterialCardView {
             iv.setLayoutParams(lp);
             iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             iv.setPadding(4, 4, 4, 4);
+
+            // FIX: Imposta lo sfondo trasparente iniziale per evitare il flash verde
+            iv.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+
             target.addView(iv);
 
-            Glide.with(getContext())
-                    .load(g.getImageUrl())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .into(iv);
+            // Carica l'immagine usando la utility ottimizzata
+            GlideLoader.loadImage(getContext(), g.getImageUrl(), iv);
         }
     }
 }

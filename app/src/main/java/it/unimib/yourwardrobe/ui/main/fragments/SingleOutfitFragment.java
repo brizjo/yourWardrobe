@@ -33,7 +33,9 @@ public class SingleOutfitFragment extends Fragment {
     private CardOutfit collageCard;
     private TextView tvName;
     private RecyclerView rv;
-    private View btnDelete, editFab, saveCancelContainer, btnUpdate, btnCancel;
+    private TextView tvSeason;
+
+    private View btnDelete, editFab, saveCancelContainer, btnUpdate, btnCancel, btnAddGarment;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +82,9 @@ public class SingleOutfitFragment extends Fragment {
         saveCancelContainer = view.findViewById(R.id.edit_buttons_container);
         btnUpdate = view.findViewById(R.id.update_button);
         btnCancel = view.findViewById(R.id.cancel_button);
+        tvSeason = view.findViewById(R.id.tv_detail_outfit_season);
+        btnAddGarment = view.findViewById(R.id.btn_add_component);
+
 
         // Configurazione Griglia 3 colonne
         if (rv != null) {
@@ -91,6 +96,14 @@ public class SingleOutfitFragment extends Fragment {
     private void setupListeners() {
         // Ogni listener è protetto da controllo null per evitare crash se l'ID manca nell'XML
         if (editFab != null) editFab.setOnClickListener(v -> viewModel.enterEditMode());
+
+        if (tvSeason != null) {
+            tvSeason.setOnClickListener(v -> {
+                if (Boolean.TRUE.equals(viewModel.getIsEditMode().getValue())) {
+                    showSeasonSelectionDialog();
+                }
+            });
+        }
 
         if (btnCancel != null) btnCancel.setOnClickListener(v -> viewModel.cancelEdit());
 
@@ -108,6 +121,7 @@ public class SingleOutfitFragment extends Fragment {
                     .setPositiveButton("Elimina", (d, w) -> viewModel.deleteOutfit())
                     .setNegativeButton("Annulla", null).show());
         }
+        if (btnAddGarment != null) btnAddGarment.setOnClickListener(v -> openPickerForAddition());
     }
 
     private void observeViewModel() {
@@ -116,14 +130,19 @@ public class SingleOutfitFragment extends Fragment {
             if (o != null) {
                 if (collageCard != null) collageCard.setGarments(o.getGarments());
                 if (tvName != null) tvName.setText(o.getName());
-
-                OutfitComponentAdapter adapter = new OutfitComponentAdapter(o.getGarments(), g -> {
-                    // Logica decisionale spostata: chiediamo al VM se siamo in edit
-                    Boolean editing = viewModel.getIsEditMode().getValue();
-                    if (Boolean.TRUE.equals(editing)) {
-                        showRemoveDialog(g);
+                if (tvSeason != null) tvSeason.setText("Stagione: " + o.getSeason());
+                OutfitComponentAdapter adapter = new OutfitComponentAdapter(o.getGarments(), garment -> {
+                    if (Boolean.TRUE.equals(viewModel.getIsEditMode().getValue())) {
+                        // DIALOG DI MODIFICA COMPONENTE
+                        String[] options = {"Sostituisci", "Rimuovi"};
+                        new MaterialAlertDialogBuilder(requireContext())
+                                .setTitle("Modifica Capo")
+                                .setItems(options, (dialog, which) -> {
+                                    if (which == 0) openPickerForReplacement(garment);
+                                    else viewModel.removeGarment(garment);
+                                }).show();
                     } else {
-                        navigateToGarment(g);
+                        navigateToGarment(garment);
                     }
                 });
                 if (rv != null) rv.setAdapter(adapter);
@@ -136,13 +155,18 @@ public class SingleOutfitFragment extends Fragment {
 
             if (editFab != null) editFab.setVisibility(isEdit ? View.GONE : View.VISIBLE);
             if (btnDelete != null) btnDelete.setVisibility(isEdit ? View.GONE : View.VISIBLE);
+            if (btnAddGarment != null) btnAddGarment.setVisibility(isEdit ? View.VISIBLE : View.GONE);
             if (saveCancelContainer != null) saveCancelContainer.setVisibility(isEdit ? View.VISIBLE : View.GONE);
-
+            if (tvSeason != null) {
+                tvSeason.setClickable(isEdit);
+                tvSeason.setAlpha(isEdit ? 0.7f : 1.0f); // Feedback visivo se è cliccabile
+            }
             if (tvName != null) {
                 tvName.setEnabled(isEdit);
                 tvName.setFocusableInTouchMode(isEdit);
             }
         });
+
 
         // Eventi di Navigazione
         viewModel.getOutfitDeleted().observe(getViewLifecycleOwner(), deleted -> {
@@ -168,5 +192,43 @@ public class SingleOutfitFragment extends Fragment {
         } catch (Exception e) {
             Log.e(TAG, "Errore navigazione verso GarmentFragment", e);
         }
+    }
+
+    private void showSeasonSelectionDialog() {
+        String[] seasons = {"Primavera", "Estate", "Autunno", "Inverno"};
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cambia Stagione")
+                .setItems(seasons, (dialog, which) -> {
+                    viewModel.updateSeason(seasons[which]);
+                }).show();
+    }
+
+    /**
+     * Apre il dialog per aggiungere un nuovo capo (scelta tra le 4 categorie)
+     */
+    private void openPickerForAddition() {
+        String[] categories = {"Parte superiore", "Parte inferiore", "Scarpe", "Accessori"};
+        new MaterialAlertDialogBuilder(requireContext())            .setTitle("Cosa vuoi aggiungere?")
+                .setItems(categories, (dialog, which) -> {
+                    int type = which + 1; // Mappa i tipi 1,2,3,4 del tuo SelectClothesDialogFragment
+                    SelectClothesDialogFragment.newInstance(type, selected -> {
+                        if (!selected.isEmpty()) viewModel.addGarment(selected.get(0));
+                    }).show(getChildFragmentManager(), "add_garment");
+                }).show();
+    }
+
+    /**
+     * Apre il dialog per sostituire un capo esistente mantenendo la stessa categoria
+     */
+    private void openPickerForReplacement(Garment oldGarment) {
+        int type = 1; // Default
+        String cat = oldGarment.getCategory().toLowerCase();
+        if (cat.contains("inferiore")) type = 2;
+        else if (cat.contains("scarpe") || cat.contains("calzature")) type = 3;
+        else if (cat.contains("accessorio")) type = 4;
+
+        SelectClothesDialogFragment.newInstance(type, selected -> {
+            if (!selected.isEmpty()) viewModel.replaceGarment(oldGarment, selected.get(0));
+        }).show(getChildFragmentManager(), "replace_garment");
     }
 }

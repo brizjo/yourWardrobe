@@ -1,7 +1,6 @@
-<!-- C:/Users/Utente/AndroidStudioProjects/yourWardrobe/app/src/main/res/layout/fragment_single_outfit.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -31,25 +30,58 @@
                     app:cardBackgroundColor="@android:color/white"
                     app:cardElevation="0dp" />
 
+                <!-- Nome Outfit -->
                 <TextView
                     android:id="@+id/tv_detail_outfit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="26sp"
                     android:textStyle="bold"
-                    android:textColor="@color/md_theme_primary"
-                    android:layout_marginBottom="8dp" />
+                    android:textColor="@color/md_theme_primary" />
 
+                <!-- Campo Stagione (Aggiunto) -->
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_detail_outfit_season"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Composizione Outfit"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.1"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"
-                    android:textColor="@color/md_theme_onSurfaceVariant" />
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:text="@string/stagione_2" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginBottom="16dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Composizione Outfit"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.1"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                    <!-- Tasto Aggiungi (Aggiunto) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_add_component"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/aggiungi"
+                        android:visibility="gone" />
+                </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_outfit_components_list"
@@ -62,17 +94,16 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- Contenitore Bottoni Modifica (Allineato in basso) -->
+        <!-- Bottoni Modifica (In basso) -->
         <LinearLayout
             android:id="@+id/edit_buttons_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:visibility="gone"
-            android:padding="@dimen/md"
+            android:padding="16dp"
             android:background="@android:color/white"
+            android:visibility="gone"
             android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton
@@ -82,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Salva" />
+                android:text="@string/salva" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"
@@ -96,14 +127,13 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- FABs - Uniformati a GarmentFragment -->
+    <!-- FABs -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:paddingEnd="16dp">
+        android:padding="16dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/edit_fab"
@@ -121,6 +151,5 @@
             app:srcCompat="@drawable/ic_delete"
             app:backgroundTint="@color/md_theme_error"
             app:tint="@android:color/white" />
-
     </LinearLayout>
 </FrameLayout>

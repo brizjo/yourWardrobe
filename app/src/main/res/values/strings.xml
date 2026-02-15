@@ -117,4 +117,7 @@
     <string name="dont_have_an_account">Non hai un account?</string>
     <string name="have_an_account">Hai già un account?</string>
     <string name="nome_outfit">Nome Outfit</string>
+    <string name="stagione_2">Stagione:</string>
+    <string name="aggiungi">+ Aggiungi</string>
+    <string name="salva">Salva</string>
 </resources>

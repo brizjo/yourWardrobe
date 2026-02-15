@@ -3,6 +3,7 @@ package it.unimib.yourwardrobe.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,18 +50,25 @@ public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.Ou
 
     public static class OutfitGridViewHolder extends RecyclerView.ViewHolder {
         private final CardOutfit cardOutfit;
+        private final TextView tvOutfitName; // Aggiungi questo riferimento
 
         public OutfitGridViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Questo ID deve essere presente in item_outfit_grid.xml
             cardOutfit = itemView.findViewById(R.id.card_outfit_component);
+            tvOutfitName = itemView.findViewById(R.id.tv_outfit_name_grid); // Trova la TextView
         }
 
         public void bind(Outfit outfit, OnItemClickListener listener) {
-            if (cardOutfit != null && outfit != null) {
-                // Passiamo la lista dei vestiti al componente custom
-                // Assicurati che il metodo in Outfit.java si chiami getGarments() o getComponents()
-                cardOutfit.setGarments(outfit.getGarments());
+            if (outfit != null) {
+                // Imposta i vestiti nella carta
+                if (cardOutfit != null && outfit.getGarments() != null) {
+                    cardOutfit.setGarments(outfit.getGarments());
+                }
+
+                // Imposta il nome dell'outfit
+                if (tvOutfitName != null) {
+                    tvOutfitName.setText(outfit.getName());
+                }
             }
 
             itemView.setOnClickListener(v -> {

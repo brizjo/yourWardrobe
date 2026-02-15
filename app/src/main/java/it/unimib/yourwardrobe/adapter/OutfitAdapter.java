@@ -15,6 +15,7 @@ import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.ui.main.components.CardGarment;
+import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitViewHolder> {
 
@@ -62,18 +63,14 @@ public class OutfitAdapter extends RecyclerView.Adapter<OutfitAdapter.OutfitView
 
             // Carica l'immagine del primo capo come anteprima dell'outfit
             if (outfit.getGarments() != null && !outfit.getGarments().isEmpty()) {
-                String imageUrl = outfit.getGarments().get(0).getImageUrl();
-                Glide.with(itemView.getContext())
-                        .load(imageUrl)
-                        .placeholder(R.drawable.ic_launcher_background)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .into(cardGarment.getImageView());
-            }
 
-            cardGarment.setOnCardClickListener(v -> {
-                if (listener != null) listener.onItemClick(v, outfit);
-            });
+                String imageUrl = outfit.getGarments().get(0).getImageUrl();
+                GlideLoader.loadImage(itemView.getContext(), imageUrl, cardGarment.getImageView());
+                cardGarment.setOnCardClickListener(v -> {
+                    if (listener != null) listener.onItemClick(v, outfit);
+                });
+            }
         }
     }
+
 }

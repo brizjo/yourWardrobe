@@ -37,11 +37,26 @@ public class SingleOutfitViewModel extends ViewModel {
 
     public void removeGarment(Garment garment) {
         Outfit current = outfit.getValue();
-        if (current != null && current.getGarments() != null) {
-            List<Garment> updatedList = new ArrayList<>(current.getGarments());
-            updatedList.remove(garment);
-            current.setGarments(updatedList);
-            outfit.setValue(current); // Notifica la UI per aggiornare il collage
+        if (current == null) return;
+
+        List<Garment> list = new ArrayList<>(current.getGarments());
+
+        // 3. Vincolo Minimo (1 Top e 1 Bottom obbligatori)
+        String cat = garment.getCategory().toLowerCase();
+        int tops = 0, bottoms = 0;
+        for (Garment g : list) {
+            if (g.getCategory().toLowerCase().contains("superiore")) tops++;
+            if (g.getCategory().toLowerCase().contains("inferiore")) bottoms++;
+        }
+
+        if (cat.contains("superiore") && tops <= 1) {
+            errorMessage.setValue("Un outfit deve avere almeno una parte superiore.");
+        } else if (cat.contains("inferiore") && bottoms <= 1) {
+            errorMessage.setValue("Un outfit deve avere almeno una parte inferiore.");
+        } else {
+            list.remove(garment);
+            current.setGarments(list);
+            outfit.setValue(current);
         }
     }
 
@@ -71,6 +86,86 @@ public class SingleOutfitViewModel extends ViewModel {
                 public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
             });
         }
+    }
+    // Aggiungi questi metodi in SingleOutfitViewModel.java
+
+    /**
+     * Aggiorna la stagione dell'outfit in memoria.
+     */
+    public void updateSeason(String newSeason) {
+        Outfit current = outfit.getValue();
+        if (current != null) {
+            current.setSeason(newSeason); // Assumendo che 'style' sia il campo usato per la stagione
+            outfit.setValue(current);
+        }
+    }
+
+    /**
+     * Aggiunge un nuovo capo alla lista dei componenti dell'outfit.
+     */
+    public void addGarment(Garment newGarment) {
+        Outfit current = outfit.getValue();
+        if (current == null) return;
+
+        List<Garment> list = new ArrayList<>(current.getGarments());
+
+        // 1. Vincolo Totale Card
+        if (list.size() >= 6) {
+            errorMessage.setValue("La carta può mostrare massimo 6 capi.");
+            return;
+        }
+
+        // 2. Vincoli per Categoria
+        String cat = newGarment.getCategory().toLowerCase();
+        int tops = 0, bottoms = 0, shoes = 0, accessories = 0;
+
+        for (Garment g : list) {
+            String c = g.getCategory().toLowerCase();
+            if (c.contains("superiore")) tops++;
+            else if (c.contains("inferiore")) bottoms++;
+            else if (c.contains("scarpe") || c.contains("calzature")) shoes++;
+            else accessories++;
+        }
+
+        if (cat.contains("superiore") && tops >= 3) {
+            errorMessage.setValue("Massimo 3 parti superiori consentite.");
+        } else if (cat.contains("inferiore") && bottoms >= 1) {
+            errorMessage.setValue("Massimo 1 parte inferiore consentita.");
+        } else if ((cat.contains("scarpe") || cat.contains("calzature")) && shoes >= 1) {
+            errorMessage.setValue("Massimo 1 paio di scarpe consentito.");
+        } else if (cat.contains("accessorio") && accessories >= 4) {
+            errorMessage.setValue("Massimo 4 accessori consentiti.");
+        } else {
+            list.add(newGarment);
+            current.setGarments(list);
+            outfit.setValue(current);
+        }
+    }
+
+    /**
+     * Sostituisce un capo esistente (Logica per la funzione "Top")
+     */
+    public void replaceGarment(Garment oldGarment, Garment newGarment) {
+        Outfit current = outfit.getValue();
+        if (current != null) {
+            List<Garment> updatedList = new ArrayList<>(current.getGarments());
+            int index = -1;
+            for (int i = 0; i < updatedList.size(); i++) {
+                if (updatedList.get(i).getId().equals(oldGarment.getId())) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                updatedList.set(index, newGarment);
+                current.setGarments(updatedList);
+                outfit.setValue(current);
+            }
+        }
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
     }
 
 

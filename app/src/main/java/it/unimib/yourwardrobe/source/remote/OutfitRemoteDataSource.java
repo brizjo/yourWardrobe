@@ -109,4 +109,15 @@ public class OutfitRemoteDataSource {
                 .addOnSuccessListener(x -> callback.onSuccess(true))
                 .addOnFailureListener(e -> callback.onFailure("Errore eliminazione", e));
     }
+
+
+    public void updateOutfit(Outfit outfit, Callback<Boolean> callback) {    String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || outfit.getId() == null) return;
+
+        firestore.collection("user").document(uid)
+                .collection("outfits").document(outfit.getId())
+                .set(outfit) // Sovrascrive il documento con la nuova lista di componenti
+                .addOnSuccessListener(aVoid -> callback.onSuccess(true))
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage(), e));
+    }
 }

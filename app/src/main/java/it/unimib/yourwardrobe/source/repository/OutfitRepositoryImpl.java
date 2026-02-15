@@ -46,4 +46,11 @@ public class OutfitRepositoryImpl implements OutfitRepository {
     public void deleteOutfit(Outfit outfit, Callback<Boolean> callback) {
         dataSource.deleteOutfit(outfit, callback);
     }
+
+    @Override
+    public void updateOutfit(Outfit outfit, Callback<Boolean> callback) {
+        dataSource.updateOutfit(outfit, callback);
+    }
+
+
 }

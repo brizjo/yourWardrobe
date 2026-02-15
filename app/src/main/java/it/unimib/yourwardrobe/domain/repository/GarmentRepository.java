@@ -19,4 +19,5 @@ public interface GarmentRepository {
         void updateGarment(Garment garment, Callback<Boolean> callback);
         void getGarmentsByCategory(String category, Callback<List<Garment>> callback);
 
+
 }

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.OutfitAdapter;
+import it.unimib.yourwardrobe.adapter.OutfitGridAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.OutfitMenuViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
@@ -67,7 +67,7 @@ public class OutfitMenuFragment extends Fragment {
 
         Log.d(TAG, "LayoutManager impostato: GridLayoutManager con 2 colonne");
 
-        OutfitAdapter.OnItemClickListener listener = (v, outfit) -> {
+        OutfitGridAdapter.OnItemClickListener listener = (v, outfit) -> {
             Log.d(TAG, "Click su outfit: " + outfit.getName());
             Bundle bundle = new Bundle();
             bundle.putSerializable("outfit", outfit);
@@ -94,7 +94,7 @@ public class OutfitMenuFragment extends Fragment {
                 }
 
                 // Crea e imposta adapter
-                OutfitAdapter adapter = new OutfitAdapter(outfits, R.layout.item_outfit_grid, listener);
+                OutfitGridAdapter adapter = new OutfitGridAdapter(outfits, R.layout.item_outfit_grid, listener);
                 recyclerViewOutfit.setAdapter(adapter);
                 Log.d(TAG, "✅ Adapter impostato sulla RecyclerView");
                 Log.d(TAG, "   Item count nell'adapter: " + adapter.getItemCount());

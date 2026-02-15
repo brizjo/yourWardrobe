@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/carousel_item_container"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:layout_marginStart="@dimen/xs"
-    android:layout_marginEnd="@dimen/xs"
-    app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
-    <it.unimib.yourwardrobe.ui.main.components.CardGarment
-        android:id="@+id/clothesCard"
+    <!-- Qui usiamo la CardOutfit (quella con i 6 slot/collage) -->
+    <it.unimib.yourwardrobe.ui.main.components.CardOutfit
+        android:id="@+id/card_outfit_component"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

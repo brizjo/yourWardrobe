@@ -105,7 +105,7 @@ public class CreateOutfitViewModel extends ViewModel {
         });
 
         // Carichiamo gli Accessori
-        garmentRepository.getGarmentsByCategory("Accessori", new Callback<List<Garment>>() {
+        garmentRepository.getGarmentsByCategory("Accessorio", new Callback<List<Garment>>() {
             @Override
             public void onSuccess(List<Garment> result) {
                 accessoryGarments.postValue(result);

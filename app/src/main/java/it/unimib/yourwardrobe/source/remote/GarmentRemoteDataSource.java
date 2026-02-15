@@ -31,11 +31,15 @@ public class GarmentRemoteDataSource {
     private static final Set<String> KEYWORDS_GARMENT = new HashSet<>(Arrays.asList(
             // Categorie Generali (Rimosso "Fashion", "Textile", "Pattern" perché troppo generici)
             "Clothing", "Outerwear", "Top", "Apparel", "Garment",
-
-            // Capi Specifici (Mantieni questi, sono molto precisi)
             "Shirt", "T-shirt", "Pants", "Dress", "Suit", "Jersey", "Trousers", "Jeans",
             "Shorts", "Skirt", "Coat", "Jacket", "Vest", "Sweater", "Cardigan", "Blouse",
             "Hoodie", "Uniform", "Activewear", "Sportswear",
+            "Sleeve", "Pocket", "Neck", "Collar", "Zipper", "Hem",
+            "Wool", "Cotton", "Denim", "Leather", "Silk", "Woven", "Knitting",
+            "Scarf", "Tie", "Belt", "Gloves", "Hat", "Beanie", "Sunglasses", "Watch",
+            "Shoe", "Footwear", "Sneakers", "Sandal", "Boot", "High heels", "Sport shoe",
+            "Jewelry", "Necklace", "Ring", "Bracelet", "Earrings", "Pendant", "Gemstone", "Bling",
+
 
             // Parti di vestiti (Rimosso "Button" perché ML Kit lo vede in ogni cerchio)
             "Sleeve", "Pocket", "Neck", "Collar", "Zipper", "Hem",
@@ -57,7 +61,6 @@ public class GarmentRemoteDataSource {
         this.auth = auth;
         this.firestore = firestore;
         this.storage = storage;
-        //TODO: spostare la creazione del classifier in un singleton per non ricrearlo ogni volta
         this.classifier = ImageLabeling.getClient(new ImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.6f)
                 .build());
@@ -135,8 +138,7 @@ public class GarmentRemoteDataSource {
                 .document();
 
         garment.setId(newDoc.getId());
-        garment.setCreatedAt(new Date()); // ⬅️ IMPOSTA DATA MANUALMENTE
-
+        garment.setCreatedAt(new Date()); //
         newDoc.set(garment)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("FIRESTORE_SUCCESS", "Documento scritto correttamente su Firestore");

@@ -1,47 +1,126 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- C:/Users/Utente/AndroidStudioProjects/yourWardrobe/app/src/main/res/layout/fragment_single_outfit.xml -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.main.fragments.SingleOutfitFragment">
+    android:fitsSystemWindows="true"
+    android:background="@android:color/white">
 
-
-    <ImageView
-        android:id="@+id/imageLogin"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:scaleType="centerInside"/>
-
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/edit_buttons_container">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:paddingBottom="120dp">
+
+                <it.unimib.yourwardrobe.ui.main.components.CardOutfit
+                    android:id="@+id/detail_outfit_collage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardElevation="0dp" />
+
+                <TextView
+                    android:id="@+id/tv_detail_outfit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_primary"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Composizione Outfit"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.1"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="@color/md_theme_onSurfaceVariant" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_outfit_components_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Contenitore Bottoni Modifica (Allineato in basso) -->
+        <LinearLayout
+            android:id="@+id/edit_buttons_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="@dimen/md"
+            android:background="@android:color/white"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/update_button"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Salva" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Annulla"
+                android:textColor="@color/md_theme_error" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- FABs - Uniformati a GarmentFragment -->
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/caratteristiche_principali"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
+        android:layout_gravity="bottom|end"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingEnd="16dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/edit_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:srcCompat="@drawable/ic_edit"
+            app:backgroundTint="@color/md_theme_primary"
+            app:tint="@android:color/white" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/md"
-        android:text="@string/componenti_dell_outfit"
-        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-        android:textColor="@color/md_theme_primary"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_delete_outfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_delete"
+            app:backgroundTint="@color/md_theme_error"
+            app:tint="@android:color/white" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:background="@color/md_theme_primary" />
-
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>

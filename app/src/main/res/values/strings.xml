@@ -172,5 +172,6 @@
     <string name="default_temperature">20°C</string>
     <string name="plus">+</string>
     <string name="select">"Seleziona "</string>
-
+    <string name="season_2">Stagione:</string>
+    <string name="aggiungi">+ Aggiungi</string>
 </resources>

@@ -18,6 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -58,6 +61,8 @@ public class GarmentFragment extends Fragment {
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
+    private Button cancelButton;
+    private Button updateButton;
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
 
@@ -78,26 +83,19 @@ public class GarmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        garmentImageView       = view.findViewById(R.id.garmentImage);
-        nameTextView           = view.findViewById(R.id.nameGarmentText);
-        nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
-        nameGarmentEditText    = view.findViewById(R.id.nameGarmentEditText);
-        editButtonsContainer   = view.findViewById(R.id.edit_buttons_container);
-        editFab                = view.findViewById(R.id.edit_fab);
-        deleteFab              = view.findViewById(R.id.delete_fab);
-        colorChipGroup         = view.findViewById(R.id.chip_group_garment_color);
-        styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
-        fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
-        seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
-        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
-        Button cancelButton    = view.findViewById(R.id.cancel_button);
-        Button updateButton    = view.findViewById(R.id.update_button);
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
+
+        initViews(view);
 
         viewModel = new ViewModelProvider(this).get(GarmentViewModel.class);
 
         if (getArguments() != null) {
             Garment garment = GarmentFragmentArgs.fromBundle(getArguments()).getGarment();
-            if (garment != null) viewModel.setGarment(garment);
+            viewModel.setGarment(garment);
         }
 
         nameGarmentEditText.addTextChangedListener(new TextWatcher() {
@@ -115,6 +113,23 @@ public class GarmentFragment extends Fragment {
         updateButton.setOnClickListener(v -> viewModel.updateGarment());
 
         observeViewModel();
+    }
+
+    private void initViews(View view){
+        garmentImageView       = view.findViewById(R.id.garmentImage);
+        nameTextView           = view.findViewById(R.id.nameGarmentText);
+        nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
+        nameGarmentEditText    = view.findViewById(R.id.nameGarmentEditText);
+        editButtonsContainer   = view.findViewById(R.id.edit_buttons_container);
+        editFab                = view.findViewById(R.id.edit_fab);
+        deleteFab              = view.findViewById(R.id.delete_fab);
+        colorChipGroup         = view.findViewById(R.id.chip_group_garment_color);
+        styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
+        fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
+        seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
+        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
+        cancelButton    = view.findViewById(R.id.cancel_button);
+        updateButton    = view.findViewById(R.id.update_button);
     }
 
     // -------------------------------------------------------------------------
@@ -225,7 +240,7 @@ public class GarmentFragment extends Fragment {
 
             // Stagione (singola): chip cliccabile per aprire il dialog di selezione
             Chip seasonChip = new Chip(requireContext());
-            seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+ Stagione");
+            seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+");
             seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             seasonChip.setTextColor(
@@ -239,7 +254,7 @@ public class GarmentFragment extends Fragment {
 
             // Sottocategoria (singola): chip cliccabile per aprire il dialog di selezione
             Chip subCategoryChip = new Chip(requireContext());
-            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+ Sottocategoria");
+            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+");
             subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             subCategoryChip.setTextColor(
@@ -311,7 +326,7 @@ public class GarmentFragment extends Fragment {
 
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
-        chip.setText("+");
+        chip.setText(R.string.plus);
         chip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         chip.setTextColor(
@@ -347,17 +362,19 @@ public class GarmentFragment extends Fragment {
     // -------------------------------------------------------------------------
 
     private void showSubCategorySelectionDialog(Garment garment) {
-        List<String> allSubCategories = viewModel.getAllSubCategories();
-        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
-
-        int currentIndex = garment.getSubCategory() != null
-                ? allSubCategories.indexOf(garment.getSubCategory())
-                : -1;
-
+        List<String> subCategories = viewModel.getAvailableSubcategoriesForGarment();
+        if (subCategories.isEmpty()) {
+            ToastHelper.show(getContext(), "Nessuna sottocategoria disponibile.", false);
+            return;
+        }
+        String[] subCategoriesArray = subCategories.toArray(new String[0]);
+        String currentSubCategory = garment.getSubCategory();
+        //int checkedItem = subCategories.indexOf(currentSubCategory);
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Sottocategoria")
-                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
-                    viewModel.setSubCategory(subCategoriesArray[which]);
+                .setItems(subCategoriesArray, (dialog, which) -> {
+                    String selectedSubCategory = subCategoriesArray[which];
+                    viewModel.setSubCategory(selectedSubCategory);
                     dialog.dismiss();
                 })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())

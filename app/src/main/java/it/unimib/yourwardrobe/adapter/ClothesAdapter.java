@@ -79,6 +79,7 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
             super(itemView);
             cardGarment = itemView.findViewById(R.id.clothesCard);
             targetImageView = cardGarment.findViewById(R.id.card_garment_image);
+            cardGarment.setClipToOutline(true);
         }
 
         public void bind(Garment garment, OnItemClickListener listener) {

@@ -1,83 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="subcategories">
     <!-- Parte superiore -->
-    <item>T-shirt</item>
-    <item>Camicia</item>
-    <item>Polo</item>
-    <item>Maglione</item>
-    <item>Cardigan</item>
-    <item>Felpa</item>
-    <item>Hoodie</item>
-    <item>Canotta</item>
-    <item>Top</item>
-    <item>Blusa</item>
-    <item>Blazer</item>
-    <item>Giacca</item>
-    <item>Giubbotto</item>
-    <item>Cappotto</item>
-    <item>Parka</item>
-    <item>Trench</item>
-    <item>Bomber</item>
-    <item>Piumino</item>
+    <string-array name="subcategories_top">
+        <item>@string/subcategory_top_tshirt</item>
+        <item>@string/subcategory_top_shirt</item>
+        <item>@string/subcategory_top_polo</item>
+        <item>@string/subcategory_top_sweater</item>
+        <item>@string/subcategory_top_cardigan</item>
+        <item>@string/subcategory_top_sweatshirt</item>
+        <item>@string/subcategory_top_tracksuit</item>
+        <item>@string/subcategory_top_tanktop</item>
+        <item>@string/subcategory_top_top</item>
+        <item>@string/subcategory_top_blazer</item>
+        <item>@string/subcategory_top_jacket</item>
+        <item>@string/subcategory_top_coat</item>
+        <item>@string/subcategory_top_parka</item>
+        <item>@string/subcategory_top_downjacket</item>
+        <item>@string/subcategory_top_swimsuit</item>
+        <item>@string/subcategory_top_eveningdress</item>
+    </string-array>
 
     <!-- Parte inferiore -->
-    <item>Jeans</item>
-    <item>Pantaloni</item>
-    <item>Chino</item>
-    <item>Cargo</item>
-    <item>Leggings</item>
-    <item>Shorts</item>
-    <item>Bermuda</item>
-    <item>Gonna</item>
-    <item>Gonna lunga</item>
-    <item>Gonna corta</item>
-    <item>Gonna a tubino</item>
-
-    <!-- Vestiti -->
-    <item>Vestito lungo</item>
-    <item>Vestito corto</item>
-    <item>Vestito midi</item>
-    <item>Abito da sera</item>
-    <item>Abito casual</item>
-    <item>Jumpsuit</item>
-    <item>Tuta</item>
-
-    <!-- Intimo e pigiami -->
-    <item>Reggiseno</item>
-    <item>Slip</item>
-    <item>Boxer</item>
-    <item>Calzini</item>
-    <item>Collant</item>
-    <item>Pigiama</item>
-    <item>Vestaglia</item>
+    <string-array name="subcategories_bottom">
+        <item>@string/subcategory_bottom_jeans</item>
+        <item>@string/subcategory_bottom_trousers</item>
+        <item>@string/subcategory_bottom_chinos</item>
+        <item>@string/subcategory_bottom_cargo</item>
+        <item>@string/subcategory_bottom_leggings</item>
+        <item>@string/subcategory_bottom_shorts</item>
+        <item>@string/subcategory_bottom_bermuda</item>
+        <item>@string/subcategory_bottom_skirt</item>
+        <item>@string/subcategory_bottom_sport_tracksuit</item>
+    </string-array>
 
     <!-- Accessori abbigliamento -->
-    <item>Sciarpa</item>
-    <item>Cappello</item>
-    <item>Berretto</item>
-    <item>Guanti</item>
-    <item>Cintura</item>
-    <item>Cravatta</item>
-    <item>Papillon</item>
+    <string-array name="subcategories_accessories">
+        <item>@string/subcategory_accessories_scarf</item>
+        <item>@string/subcategory_accessories_hat</item>
+        <item>@string/subcategory_accessories_cap</item>
+        <item>@string/subcategory_accessories_gloves</item>
+        <item>@string/subcategory_accessories_belt</item>
+        <item>@string/subcategory_accessories_bag</item>
+        <item>@string/subcategory_accessories_tie</item>
+        <item>@string/subcategory_accessories_watch</item>
+        <item>@string/subcategory_accessories_bowtie</item>
+        <item>@string/subcategory_accessories_socks</item>
+        <item>@string/subcategory_accessories_underwear</item>
+    </string-array>
 
     <!-- Calzature -->
-    <item>Sneakers</item>
-    <item>Scarpe eleganti</item>
-    <item>Stivali</item>
-    <item>Stivaletti</item>
-    <item>Sandali</item>
-    <item>Ciabatte</item>
-    <item>Mocassini</item>
-    <item>Décolleté</item>
-    <item>Ballerine</item>
-    <item>Scarpe da ginnastica</item>
-
-    <!-- Sport e tempo libero -->
-    <item>Costume da bagno</item>
-    <item>Bikini</item>
-    <item>Tuta sportiva</item>
-    <item>Leggings sportivi</item>
-    <item>Top sportivo</item>
-</string-array>
+    <string-array name="subcategories_footwear">
+        <item>@string/subcategory_footwear_sneakers</item>
+        <item>@string/subcategory_footwear_elegantshoes</item>
+        <item>@string/subcategory_footwear_boots</item>
+        <item>@string/subcategory_footwear_ankleboots</item>
+        <item>@string/subcategory_footwear_sandals</item>
+        <item>@string/subcategory_footwear_slippers</item>
+        <item>@string/subcategory_footwear_loafers</item>
+        <item>@string/subcategory_footwear_ballerinas</item>
+    </string-array>
 </resources>

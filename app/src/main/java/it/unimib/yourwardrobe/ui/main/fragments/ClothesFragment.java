@@ -36,9 +36,7 @@ import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 
-import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.ui.main.viewmodel.ClothesViewModel;
-import it.unimib.yourwardrobe.ui.main.viewmodel.factory.ClothesViewModelFactory;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -74,7 +72,7 @@ public class ClothesFragment extends Fragment {
     }
 
 
-    public static ClothesFragment newInstance(String param1, String param2) {
+    public static ClothesFragment newInstance() {
         ClothesFragment fragment = new ClothesFragment();
         return fragment;
     }
@@ -384,7 +382,7 @@ public class ClothesFragment extends Fragment {
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
         Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
 
-        dialogTitle.setText("Seleziona " + title);
+        dialogTitle.setText(getString(R.string.select) + title);
 
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
         int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);

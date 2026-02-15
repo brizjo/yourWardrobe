@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -20,13 +22,15 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @HiltViewModel
 public class AddGarmentViewModel extends ViewModel {
 
     private final Context context;
     private final GarmentRepository garmentRepository;
-    private final MutableLiveData<Boolean> isImageValid = new MutableLiveData<>(false);
+    private final MutableLiveData<ImageValidationState> imageValidationState = new MutableLiveData<>(ImageValidationState.UNCHECKED);
+
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -37,6 +41,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allSeasons = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allSubCategories = new MutableLiveData<>();
+    private final Map<String, List<String>> subcategoryMap = new HashMap<>();
 
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> garmentImage = new MutableLiveData<>();
@@ -57,8 +62,7 @@ public class AddGarmentViewModel extends ViewModel {
         selectedStyles.setValue(new ArrayList<>());
         selectedFabrics.setValue(new ArrayList<>());
         isButtonEnabled.setValue(false);
-
-        isButtonEnabled.addSource(isImageValid, value -> validateForm());
+        isButtonEnabled.addSource(imageValidationState, this::validateForm);
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
         isButtonEnabled.addSource(selectedCategory, value -> validateForm());
@@ -74,7 +78,6 @@ public class AddGarmentViewModel extends ViewModel {
         allCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.categories)));
         allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
         allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
-        allSubCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.subcategories)));
         allSeasons.setValue(Arrays.asList(
                 "Tutte le stagioni",
                 "Primavera",
@@ -85,19 +88,27 @@ public class AddGarmentViewModel extends ViewModel {
                 "Primavera - Estate",
                 "Primavera - Autunno"
         ));
+        subcategoryMap.put(context.getString(R.string.top_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_top)));
+        subcategoryMap.put(context.getString(R.string.bottom_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_bottom)));
+        subcategoryMap.put(context.getString(R.string.footwear), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_footwear)));
+        subcategoryMap.put(context.getString(R.string.accessory), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_accessories)));
     }
 
     private void validateForm() {
-        boolean imageOk = garmentImage.getValue() != null && Boolean.TRUE.equals(isImageValid.getValue());
+        ImageValidationState validation = imageValidationState.getValue();
+        boolean imageOk = validation == ImageValidationState.VALID;
         boolean hasName = garmentName.getValue() != null && !garmentName.getValue().isEmpty();
         boolean hasCategory = selectedCategory.getValue() != null && !selectedCategory.getValue().isEmpty();
         boolean hasColors = selectedColors.getValue() != null && !selectedColors.getValue().isEmpty();
         boolean hasStyles = selectedStyles.getValue() != null && !selectedStyles.getValue().isEmpty();
-        boolean hasFabrics = selectedFabrics.getValue() != null && !selectedFabrics.getValue().isEmpty();
         boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
         boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty(); // CAMBIATO
 
-        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasFabrics && hasSeason && hasSubCategory);
+        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasSeason && hasSubCategory);
+    }
+
+    private void validateForm(ImageValidationState state){
+        validateForm();
     }
 
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
@@ -107,21 +118,38 @@ public class AddGarmentViewModel extends ViewModel {
         garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                isImageValid.postValue(result);
-                if (!result) {
+                //isImageValid.postValue(result);
+                if (result) {
+                    // L'immagine è valida
+                    imageValidationState.postValue(ImageValidationState.VALID);
+                } else {
+                    // L'immagine NON è valida, notifica il Fragment per mostrare il dialog
+                    imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
+                }
+                /*if (!result) {
                     errorMessage.postValue("L'immagine non sembra un capo d'abbigliamento.");
                 } else {
                     errorMessage.postValue(null);
-                }
-                validateForm();
+                }*/
+                //validateForm();
             }
             @Override
             public void onFailure(String error, Throwable t) {
-                isImageValid.postValue(false);
+                //isImageValid.postValue(false);
+                imageValidationState.postValue(ImageValidationState.ERROR);
                 errorMessage.postValue("Errore durante il riconoscimento: " + error);
-                validateForm();
+                //validateForm();
             }
         });
+    }
+
+    public void forceImageAsValid() {
+        imageValidationState.setValue(ImageValidationState.VALID);
+    }
+
+    public void resetImageSelection() {
+        garmentImage.setValue(null);
+        imageValidationState.setValue(ImageValidationState.UNCHECKED);
     }
 
     public void saveGarment() {
@@ -167,10 +195,20 @@ public class AddGarmentViewModel extends ViewModel {
     }
 
     public void setGarmentName(String name) { garmentName.setValue(name); }
-    public void setSelectedCategory(String category) { selectedCategory.setValue(category); }
+    public void setSelectedCategory(String category) {
+        if (this.selectedCategory.getValue() == null || !this.selectedCategory.getValue().equals(category)) {
+            setSelectedSubCategory(null);
+        }
+        selectedCategory.setValue(category);
+        List<String> availableSubcategories = subcategoryMap.get(category);
+        allSubCategories.setValue(availableSubcategories != null ? availableSubcategories : new ArrayList<>());
+    }
     public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
     public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
+    public LiveData<ImageValidationState> getImageValidationState() {
+        return imageValidationState;
+    }
     public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
     public LiveData<List<String>> getAllColors() { return allColors; }
     public LiveData<List<String>> getAllCategories() { return allCategories; }
@@ -178,11 +216,15 @@ public class AddGarmentViewModel extends ViewModel {
     public LiveData<List<String>> getAllFabrics() { return allFabrics; }
     public LiveData<List<String>> getAllSeasons() { return allSeasons; }
     public LiveData<List<String>> getAllSubCategories() { return allSubCategories; }
+    public LiveData<List<String>> getAvailableSubCategories() {
+        return allSubCategories;
+    }
     public LiveData<List<String>> getSelectedColors() { return selectedColors; }
     public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
     public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
     public LiveData<String> getSelectedSeason() { return selectedSeason; }
-    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; } // CAMBIATO
+    public LiveData<String> getSelectedCategory() { return selectedCategory; }
+    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; }
 
     public LiveData<String> getErrorMessage() { return errorMessage; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }

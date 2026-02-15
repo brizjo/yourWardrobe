@@ -56,7 +56,6 @@ public class CardMenu extends LinearLayout {
             TextView textView = materialCardView.findViewById(R.id.text_view);
             textView.setTextAppearance(font);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 34);
-            textView.setAllCaps(true);
             textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
             textView.setTextColor(color);
         }

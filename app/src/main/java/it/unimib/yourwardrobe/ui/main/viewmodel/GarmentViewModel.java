@@ -14,7 +14,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.HashMap;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
@@ -26,6 +28,8 @@ public class GarmentViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
     private Garment originalGarment;
+    private final Map<String, List<String>> subcategoryMap = new HashMap<>();
+
     private final MutableLiveData<Garment> garment = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isDeleted = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -37,6 +41,14 @@ public class GarmentViewModel extends AndroidViewModel {
     public GarmentViewModel(@NonNull Application application, GarmentRepository garmentRepository) {
         super(application);
         this.garmentRepository = garmentRepository;
+        loadSubcategoryOptions();
+    }
+    private void loadSubcategoryOptions() {
+        Application app = getApplication();
+        subcategoryMap.put(app.getString(R.string.top_garment), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_top)));
+        subcategoryMap.put(app.getString(R.string.bottom_garment), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_bottom)));
+        subcategoryMap.put(app.getString(R.string.footwear), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_footwear)));
+        subcategoryMap.put(app.getString(R.string.accessory), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_accessories)));
     }
 
     public LiveData<Garment> getGarment() { return garment; }
@@ -173,8 +185,16 @@ public class GarmentViewModel extends AndroidViewModel {
         );
     }
 
-    public List<String> getAllSubCategories() {
-        return Arrays.asList(getApplication().getResources().getStringArray(R.array.subcategories));
+    public List<String> getAvailableSubcategoriesForGarment() {
+        Garment currentGarment = garment.getValue();
+        if (currentGarment != null && !currentGarment.getCategory().isEmpty()) {
+            Garment newGarment = new Garment(currentGarment);
+            List<String> subcategories = subcategoryMap.get(newGarment.getCategory());
+            return subcategories != null ? subcategories : new ArrayList<>();
+        }
+        else{
+            return new ArrayList<>();
+        }
     }
 
     // -------------------------------------------------------------------------

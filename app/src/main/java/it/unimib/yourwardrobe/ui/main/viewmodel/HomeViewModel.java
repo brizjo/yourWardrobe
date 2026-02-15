@@ -1,16 +1,24 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -31,10 +39,14 @@ import it.unimib.yourwardrobe.utils.WeatherUtil;
 @HiltViewModel
 public class HomeViewModel extends ViewModel {
     private static final String TAG = HomeViewModel.class.getSimpleName();
+    private static final String PREF_OUTFIT_KEY = "daily_outfit";
+    private static final String PREF_OUTFIT_DATE_KEY = "outfit_date";
 
     private final WeatherRepository weatherRepository;
     private final AuthRepository authRepository;
     private final GarmentRepository garmentRepository;
+    private final SharedPreferences sharedPreferences;
+    private final Gson gson;
 
     private final MutableLiveData<Result<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
     public final LiveData<Result<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
@@ -52,13 +64,19 @@ public class HomeViewModel extends ViewModel {
     private final Map<String, Set<String>> styleCompatibility = new HashMap<>();
     private final Map<String, Set<String>> seasonCompatibility = new HashMap<>();
 
+    // Cached weather info per rigenerazione manuale
+    private WeatherInfo cachedWeatherInfo;
+
     @Inject
     public HomeViewModel(WeatherRepository weatherRepository,
                          AuthRepository authRepository,
-                         GarmentRepository garmentRepository) {
+                         GarmentRepository garmentRepository,
+                         SharedPreferences sharedPreferences) {
         this.weatherRepository = weatherRepository;
         this.authRepository = authRepository;
         this.garmentRepository = garmentRepository;
+        this.sharedPreferences = sharedPreferences;
+        this.gson = new Gson();
 
         initializeColorHarmony();
         initializeStyleCompatibility();
@@ -109,16 +127,68 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onSuccess(WeatherInfo data) {
                 _currentWeatherResult.setValue(Result.success(data));
-                generateOutfitOfTheDay(data);
+                cachedWeatherInfo = data;
+                // Carica outfit salvato o genera nuovo se necessario
+                loadOrGenerateOutfit(data);
             }
 
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.e(TAG, errorMessage, t);
                 _currentWeatherResult.setValue(Result.error(errorMessage, null));
-                generateOutfitOfTheDayWithDefaultSeason();
+                loadOrGenerateOutfitWithDefaultSeason();
             }
         });
+    }
+
+    /**
+     * Carica outfit salvato se è di oggi, altrimenti genera nuovo
+     */
+    private void loadOrGenerateOutfit(WeatherInfo weatherInfo) {
+        String today = getTodayDate();
+        String savedDate = sharedPreferences.getString(PREF_OUTFIT_DATE_KEY, "");
+
+        if (today.equals(savedDate)) {
+            // Carica outfit salvato
+            List<Garment> savedOutfit = loadSavedOutfit();
+            if (savedOutfit != null && !savedOutfit.isEmpty()) {
+                Log.d(TAG, "Caricato outfit salvato con " + savedOutfit.size() + " capi");
+                _outfitOfTheDay.setValue(savedOutfit);
+                return;
+            }
+        }
+
+        // Genera nuovo outfit
+        Log.d(TAG, "Generazione nuovo outfit del giorno");
+        generateOutfitOfTheDay(weatherInfo);
+    }
+
+    private void loadOrGenerateOutfitWithDefaultSeason() {
+        String today = getTodayDate();
+        String savedDate = sharedPreferences.getString(PREF_OUTFIT_DATE_KEY, "");
+
+        if (today.equals(savedDate)) {
+            List<Garment> savedOutfit = loadSavedOutfit();
+            if (savedOutfit != null && !savedOutfit.isEmpty()) {
+                Log.d(TAG, "Caricato outfit salvato con " + savedOutfit.size() + " capi");
+                _outfitOfTheDay.setValue(savedOutfit);
+                return;
+            }
+        }
+
+        generateOutfitOfTheDayWithDefaultSeason();
+    }
+
+    /**
+     * Forza rigenerazione outfit (chiamato dal bottone)
+     */
+    public void regenerateOutfit() {
+        Log.d(TAG, "Rigenerazione manuale outfit");
+        if (cachedWeatherInfo != null) {
+            generateOutfitOfTheDay(cachedWeatherInfo);
+        } else {
+            generateOutfitOfTheDayWithDefaultSeason();
+        }
     }
 
     private void generateOutfitOfTheDay(WeatherInfo weatherInfo) {
@@ -146,6 +216,10 @@ public class HomeViewModel extends ViewModel {
                 }
 
                 List<Garment> outfit = generateSmartOutfit(garments, season);
+
+                // Salva outfit generato
+                saveOutfit(outfit);
+
                 _outfitOfTheDay.postValue(outfit);
                 _isGeneratingOutfit.postValue(false);
             }
@@ -172,6 +246,10 @@ public class HomeViewModel extends ViewModel {
                 }
 
                 List<Garment> outfit = generateSmartOutfit(garments, "Primavera");
+
+                // Salva outfit generato
+                saveOutfit(outfit);
+
                 _outfitOfTheDay.postValue(outfit);
                 _isGeneratingOutfit.postValue(false);
             }
@@ -183,6 +261,67 @@ public class HomeViewModel extends ViewModel {
                 _isGeneratingOutfit.postValue(false);
             }
         });
+    }
+
+    /**
+     * Salva outfit in SharedPreferences
+     */
+    private void saveOutfit(List<Garment> outfit) {
+        if (outfit == null || outfit.isEmpty()) {
+            return;
+        }
+
+        String outfitJson = gson.toJson(outfit);
+        String today = getTodayDate();
+
+        sharedPreferences.edit()
+                .putString(PREF_OUTFIT_KEY, outfitJson)
+                .putString(PREF_OUTFIT_DATE_KEY, today)
+                .apply();
+
+        Log.d(TAG, "Outfit salvato per la data: " + today);
+    }
+
+    /**
+     * Carica outfit salvato da SharedPreferences
+     */
+    private List<Garment> loadSavedOutfit() {
+        String outfitJson = sharedPreferences.getString(PREF_OUTFIT_KEY, null);
+        if (outfitJson == null) {
+            return null;
+        }
+
+        try {
+            Type listType = new TypeToken<List<Garment>>() {}.getType();
+            return gson.fromJson(outfitJson, listType);
+        } catch (Exception e) {
+            Log.e(TAG, "Errore caricamento outfit salvato", e);
+            return null;
+        }
+    }
+
+    /**
+     * Cancella outfit salvato (da chiamare al logout)
+     */
+    public void clearSavedOutfit() {
+        sharedPreferences.edit()
+                .remove(PREF_OUTFIT_KEY)
+                .remove(PREF_OUTFIT_DATE_KEY)
+                .apply();
+
+        // Pulisci anche il LiveData e la cache
+        _outfitOfTheDay.postValue(null);
+        cachedWeatherInfo = null;
+
+        Log.d(TAG, "Outfit salvato cancellato e cache pulita");
+    }
+
+    /**
+     * Ottiene data di oggi in formato yyyy-MM-dd
+     */
+    private String getTodayDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date());
     }
 
     /**

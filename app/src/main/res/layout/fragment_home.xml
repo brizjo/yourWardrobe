@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/md"
-    tools:context=".ui.main.viewmodel.HomeFragment">
+    tools:context=".ui.main.fragments.HomeFragment">
 
     <!-- Welcome Section -->
     <LinearLayout

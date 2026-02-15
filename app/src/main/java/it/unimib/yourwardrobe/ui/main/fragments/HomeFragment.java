@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,8 @@ public class HomeFragment extends Fragment {
         ProgressBar pbWeather = view.findViewById(R.id.pb_weather);
         TextView tvUsername = view.findViewById(R.id.tv_username);
         CardWeather cardWeather = view.findViewById(R.id.card_weather);
+        ImageButton btnRegenerateOutfit = view.findViewById(R.id.btn_regenerate_outfit);
+        ProgressBar pbOutfit = view.findViewById(R.id.pb_outfit);
 
         // Setup RecyclerView per l'outfit del giorno - GRID 2 COLONNE
         recyclerView = view.findViewById(R.id.rv_outfit);
@@ -88,6 +91,11 @@ public class HomeFragment extends Fragment {
                     Toast.makeText(getContext(), "Clicked: " + garment.getName(), Toast.LENGTH_SHORT).show();
                 });
         recyclerView.setAdapter(clothesAdapter);
+
+        // Bottone rigenerazione outfit
+        btnRegenerateOutfit.setOnClickListener(v -> {
+            homeViewModel.regenerateOutfit();
+        });
 
         // Observe User
         homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
@@ -138,10 +146,15 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Observe loading state
+        // Observe loading state per mostrare/nascondere bottone e progress bar
         homeViewModel.isGeneratingOutfit.observe(getViewLifecycleOwner(), isGenerating -> {
             if (Boolean.TRUE.equals(isGenerating)) {
                 Log.d(TAG, "Generazione outfit in corso...");
+                btnRegenerateOutfit.setVisibility(View.GONE);
+                pbOutfit.setVisibility(View.VISIBLE);
+            } else {
+                btnRegenerateOutfit.setVisibility(View.VISIBLE);
+                pbOutfit.setVisibility(View.GONE);
             }
         });
     }
@@ -156,7 +169,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        checkPermissionAndGetLocation();
     }
 
     private boolean isLocationEnabled() {

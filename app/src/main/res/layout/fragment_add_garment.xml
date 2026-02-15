@@ -99,27 +99,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="@string/color"
+                android:text="@string/subcategory"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_color"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
-                android:text="@string/style"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_style"
+                android:id="@+id/chip_group_subcategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
@@ -142,17 +126,32 @@
                 android:layout_marginEnd="@dimen/md">
             </com.google.android.material.chip.ChipGroup>
 
-            <!-- Sottocategoria - SPOSTATA QUI TRA STAGIONE E TESSUTO -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="@string/subcategory"
+                android:text="@string/color"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_subcategory"
+                android:id="@+id/chip_group_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginEnd="@dimen/md">
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/md"
+                android:layout_marginTop="@dimen/md"
+                android:text="@string/style"
+                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"

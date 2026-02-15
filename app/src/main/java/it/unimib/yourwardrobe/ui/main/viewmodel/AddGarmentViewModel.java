@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allSeasons = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allSubCategories = new MutableLiveData<>();
+    private final Map<String, List<String>> subcategoryMap = new HashMap<>();
 
     private final MutableLiveData<List<String>> selectedColors = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> garmentImage = new MutableLiveData<>();
@@ -57,7 +60,6 @@ public class AddGarmentViewModel extends ViewModel {
         selectedStyles.setValue(new ArrayList<>());
         selectedFabrics.setValue(new ArrayList<>());
         isButtonEnabled.setValue(false);
-
         isButtonEnabled.addSource(isImageValid, value -> validateForm());
         isButtonEnabled.addSource(garmentImage, value -> validateForm());
         isButtonEnabled.addSource(garmentName, value -> validateForm());
@@ -74,7 +76,6 @@ public class AddGarmentViewModel extends ViewModel {
         allCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.categories)));
         allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
         allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
-        allSubCategories.setValue(Arrays.asList(context.getResources().getStringArray(R.array.subcategories)));
         allSeasons.setValue(Arrays.asList(
                 "Tutte le stagioni",
                 "Primavera",
@@ -85,6 +86,10 @@ public class AddGarmentViewModel extends ViewModel {
                 "Primavera - Estate",
                 "Primavera - Autunno"
         ));
+        subcategoryMap.put(context.getString(R.string.top_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_top)));
+        subcategoryMap.put(context.getString(R.string.bottom_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_bottom)));
+        subcategoryMap.put(context.getString(R.string.footwear), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_footwear)));
+        subcategoryMap.put(context.getString(R.string.accessory), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_accessories)));
     }
 
     private void validateForm() {
@@ -167,7 +172,14 @@ public class AddGarmentViewModel extends ViewModel {
     }
 
     public void setGarmentName(String name) { garmentName.setValue(name); }
-    public void setSelectedCategory(String category) { selectedCategory.setValue(category); }
+    public void setSelectedCategory(String category) {
+        if (this.selectedCategory.getValue() == null || !this.selectedCategory.getValue().equals(category)) {
+            setSelectedSubCategory(null);
+        }
+        selectedCategory.setValue(category);
+        List<String> availableSubcategories = subcategoryMap.get(category);
+        allSubCategories.setValue(availableSubcategories != null ? availableSubcategories : new ArrayList<>());
+    }
     public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
     public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
@@ -178,11 +190,15 @@ public class AddGarmentViewModel extends ViewModel {
     public LiveData<List<String>> getAllFabrics() { return allFabrics; }
     public LiveData<List<String>> getAllSeasons() { return allSeasons; }
     public LiveData<List<String>> getAllSubCategories() { return allSubCategories; }
+    public LiveData<List<String>> getAvailableSubCategories() {
+        return allSubCategories;
+    }
     public LiveData<List<String>> getSelectedColors() { return selectedColors; }
     public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
     public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
     public LiveData<String> getSelectedSeason() { return selectedSeason; }
-    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; } // CAMBIATO
+    public LiveData<String> getSelectedCategory() { return selectedCategory; }
+    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; }
 
     public LiveData<String> getErrorMessage() { return errorMessage; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }

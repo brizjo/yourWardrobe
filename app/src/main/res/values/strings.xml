@@ -11,7 +11,6 @@
     <string name="dressinlogin">dressinLogin</string>
     <string name="o">o</string>
 
-    <string name="stagione">Stagione</string>
     <string name="cloudy">Cloudy</string>
     <string name="example_weather_temp">30</string>
     <string name="degree_symbol">°</string>
@@ -22,8 +21,8 @@
     <string name="daily_outfit">Outfit del giorno</string>
     <string name="confirm_password">Conferma password</string>
     <string name="sign_up_phrase">Entra subito nel tuo wardrobe personale</string>
-    <string name="vestiario">vestiario</string>
-    <string name="outfit">outfit</string>
+    <string name="vestiario">Vestiario</string>
+    <string name="outfit">Outfit</string>
     <string name="magliette">Magliette</string>
     <string name="pantaloni">Pantaloni</string>
     <string name="felpe">Felpe</string>

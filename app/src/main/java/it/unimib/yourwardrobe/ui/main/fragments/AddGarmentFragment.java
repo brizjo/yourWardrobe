@@ -218,6 +218,7 @@ public class AddGarmentFragment extends Fragment {
         categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
             String selectedItem = (String) parent.getItemAtPosition(position);
             viewModel.setSelectedCategory(selectedItem);
+            subCategoryChipGroup.setEnabled(true);
         });
 
         setupAddChip(colorChipGroup, "color");
@@ -302,7 +303,14 @@ public class AddGarmentFragment extends Fragment {
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         addChip.setTextColor(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
-        addChip.setOnClickListener(v -> showSubCategorySelectionDialog());
+        subCategoryChipGroup.setEnabled(false);
+        addChip.setOnClickListener(v -> {
+            if (viewModel.getSelectedCategory().getValue() == null) {
+                ToastHelper.show(getContext(), "Seleziona prima una categoria", false);
+                return;
+            }
+            showSubCategorySelectionDialog();
+        });
         subCategoryChipGroup.addView(addChip);
     }
 
@@ -316,7 +324,13 @@ public class AddGarmentFragment extends Fragment {
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             addChip.setTextColor(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
-            addChip.setOnClickListener(v -> showSubCategorySelectionDialog());
+            addChip.setOnClickListener(v ->{
+                if (viewModel.getSelectedCategory().getValue() == null) {
+                    ToastHelper.show(getContext(), "Seleziona prima una categoria", false);
+                    return;
+                }
+                showSubCategorySelectionDialog();
+            });
             subCategoryChipGroup.addView(addChip);
         } else {
             // Sottocategoria selezionata: mostra chip con testo e "X" per rimuoverla
@@ -334,18 +348,22 @@ public class AddGarmentFragment extends Fragment {
     }
 
     private void showSubCategorySelectionDialog() {
-        List<String> allSubCategories = viewModel.getAllSubCategories().getValue();
-        if (allSubCategories == null) return;
+        List<String> subCategories = viewModel.getAvailableSubCategories().getValue();
+        if (subCategories == null || subCategories.isEmpty()) {
+            ToastHelper.show(getContext(), "Nessuna sottocategoria disponibile per la categoria selezionata.", false);
+        return;
+        }
 
-        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
-        String currentSubCategory = viewModel.getSelectedSubCategory().getValue();
-        int currentIndex = currentSubCategory != null ? allSubCategories.indexOf(currentSubCategory) : -1;
+        String[] subCategoriesArray = subCategories.toArray(new String[0]);
+        //String currentSubCategory = viewModel.getSelectedSubCategory().getValue();
+        //int currentIndex = currentSubCategory != null ? subCategories.indexOf(currentSubCategory) : -1;
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Sottocategoria")
-                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
-                    viewModel.setSelectedSubCategory(subCategoriesArray[which]);
-                    dialog.dismiss();
+                .setItems(subCategoriesArray, (dialog, which) -> {
+                    String selectedSubCategory = subCategoriesArray[which];
+                    viewModel.setSelectedSubCategory(selectedSubCategory);
+                    //dialog.dismiss();
                 })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
                 .show();

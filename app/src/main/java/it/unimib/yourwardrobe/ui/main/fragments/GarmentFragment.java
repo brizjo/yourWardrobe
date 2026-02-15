@@ -130,6 +130,8 @@ public class GarmentFragment extends Fragment {
         subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
         cancelButton    = view.findViewById(R.id.cancel_button);
         updateButton    = view.findViewById(R.id.update_button);
+        int iconColor = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        editFab.setImageTintList(ColorStateList.valueOf(iconColor));
     }
 
     // -------------------------------------------------------------------------
@@ -240,7 +242,7 @@ public class GarmentFragment extends Fragment {
 
             // Stagione (singola): chip cliccabile per aprire il dialog di selezione
             Chip seasonChip = new Chip(requireContext());
-            seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+ Stagione");
+            seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+");
             seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             seasonChip.setTextColor(
@@ -254,7 +256,7 @@ public class GarmentFragment extends Fragment {
 
             // Sottocategoria (singola): chip cliccabile per aprire il dialog di selezione
             Chip subCategoryChip = new Chip(requireContext());
-            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+ Sottocategoria");
+            subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+");
             subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             subCategoryChip.setTextColor(
@@ -362,17 +364,19 @@ public class GarmentFragment extends Fragment {
     // -------------------------------------------------------------------------
 
     private void showSubCategorySelectionDialog(Garment garment) {
-        List<String> allSubCategories = viewModel.getAllSubCategories();
-        String[] subCategoriesArray = allSubCategories.toArray(new String[0]);
-
-        int currentIndex = garment.getSubCategory() != null
-                ? allSubCategories.indexOf(garment.getSubCategory())
-                : -1;
-
+        List<String> subCategories = viewModel.getAvailableSubcategoriesForGarment();
+        if (subCategories.isEmpty()) {
+            ToastHelper.show(getContext(), "Nessuna sottocategoria disponibile.", false);
+            return;
+        }
+        String[] subCategoriesArray = subCategories.toArray(new String[0]);
+        String currentSubCategory = garment.getSubCategory();
+        //int checkedItem = subCategories.indexOf(currentSubCategory);
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Sottocategoria")
-                .setSingleChoiceItems(subCategoriesArray, currentIndex, (dialog, which) -> {
-                    viewModel.setSubCategory(subCategoriesArray[which]);
+                .setItems(subCategoriesArray, (dialog, which) -> {
+                    String selectedSubCategory = subCategoriesArray[which];
+                    viewModel.setSubCategory(selectedSubCategory);
                     dialog.dismiss();
                 })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())

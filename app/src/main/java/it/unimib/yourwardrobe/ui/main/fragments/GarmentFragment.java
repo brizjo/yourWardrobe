@@ -18,6 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -58,6 +61,8 @@ public class GarmentFragment extends Fragment {
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
+    private Button cancelButton;
+    private Button updateButton;
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
 
@@ -78,20 +83,13 @@ public class GarmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        garmentImageView       = view.findViewById(R.id.garmentImage);
-        nameTextView           = view.findViewById(R.id.nameGarmentText);
-        nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
-        nameGarmentEditText    = view.findViewById(R.id.nameGarmentEditText);
-        editButtonsContainer   = view.findViewById(R.id.edit_buttons_container);
-        editFab                = view.findViewById(R.id.edit_fab);
-        deleteFab              = view.findViewById(R.id.delete_fab);
-        colorChipGroup         = view.findViewById(R.id.chip_group_garment_color);
-        styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
-        fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
-        seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
-        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
-        Button cancelButton    = view.findViewById(R.id.cancel_button);
-        Button updateButton    = view.findViewById(R.id.update_button);
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+            return insets;
+        });
+
+        initViews(view);
 
         viewModel = new ViewModelProvider(this).get(GarmentViewModel.class);
 
@@ -115,6 +113,23 @@ public class GarmentFragment extends Fragment {
         updateButton.setOnClickListener(v -> viewModel.updateGarment());
 
         observeViewModel();
+    }
+
+    private void initViews(View view){
+        garmentImageView       = view.findViewById(R.id.garmentImage);
+        nameTextView           = view.findViewById(R.id.nameGarmentText);
+        nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
+        nameGarmentEditText    = view.findViewById(R.id.nameGarmentEditText);
+        editButtonsContainer   = view.findViewById(R.id.edit_buttons_container);
+        editFab                = view.findViewById(R.id.edit_fab);
+        deleteFab              = view.findViewById(R.id.delete_fab);
+        colorChipGroup         = view.findViewById(R.id.chip_group_garment_color);
+        styleChipGroup         = view.findViewById(R.id.chip_group_garment_style);
+        fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
+        seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
+        subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
+        cancelButton    = view.findViewById(R.id.cancel_button);
+        updateButton    = view.findViewById(R.id.update_button);
     }
 
     // -------------------------------------------------------------------------

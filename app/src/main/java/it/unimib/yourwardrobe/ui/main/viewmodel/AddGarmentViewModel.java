@@ -97,7 +97,7 @@ public class AddGarmentViewModel extends ViewModel {
         boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
         boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty(); // CAMBIATO
 
-        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasFabrics && hasSeason && hasSubCategory);
+        isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasSeason && hasSubCategory);
     }
 
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }

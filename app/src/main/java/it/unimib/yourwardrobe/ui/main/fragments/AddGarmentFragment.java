@@ -236,7 +236,7 @@ public class AddGarmentFragment extends Fragment {
     private void setupSeasonChip() {
         seasonChipGroup.removeAllViews();
         Chip addChip = new Chip(requireContext());
-        addChip.setText("+ Stagione");
+        addChip.setText("+");
         addChip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         addChip.setTextColor(
@@ -250,7 +250,7 @@ public class AddGarmentFragment extends Fragment {
         if (season == null) {
             // Nessuna stagione selezionata: mostra chip "+"
             Chip addChip = new Chip(requireContext());
-            addChip.setText("+ Stagione");
+            addChip.setText("+");
             addChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             addChip.setTextColor(
@@ -297,7 +297,7 @@ public class AddGarmentFragment extends Fragment {
     private void setupSubCategoryChip() {
         subCategoryChipGroup.removeAllViews();
         Chip addChip = new Chip(requireContext());
-        addChip.setText("+ Sottocategoria");
+        addChip.setText("+");
         addChip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         addChip.setTextColor(
@@ -311,7 +311,7 @@ public class AddGarmentFragment extends Fragment {
         if (subCategory == null) {
             // Nessuna sottocategoria selezionata: mostra chip "+"
             Chip addChip = new Chip(requireContext());
-            addChip.setText("+ Sottocategoria");
+            addChip.setText("+");
             addChip.setChipBackgroundColor(ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             addChip.setTextColor(
@@ -495,7 +495,6 @@ public class AddGarmentFragment extends Fragment {
     // -------------------------------------------------------------------------
     // Image picker
     // -------------------------------------------------------------------------
-
     private void showImagePickerDialog() {
         String[] options = getResources().getStringArray(R.array.image_picker_options);
         new MaterialAlertDialogBuilder(requireContext())

@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="Stagione"
+                android:text="@string/season"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup
@@ -148,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/md"
-                android:text="Sottocategoria"
+                android:text="@string/subcategory"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.chip.ChipGroup

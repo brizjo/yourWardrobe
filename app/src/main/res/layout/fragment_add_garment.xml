@@ -4,9 +4,8 @@
     android:id="@+id/add_garment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".ui.main.fragments.AddGarmentFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -25,11 +24,11 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
+                android:layout_marginBottom="@dimen/lg"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:scaleType="centerInside"
-                android:layout_marginBottom="@dimen/lg" />
+                android:scaleType="centerInside" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -38,8 +37,8 @@
                 android:layout_marginEnd="@dimen/md"
                 android:text="@string/caratteristiche_principali"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                android:textSize="@dimen/text_lg"
-                android:textColor="@color/md_theme_primary" />
+                android:textColor="@color/md_theme_primary"
+                android:textSize="@dimen/text_lg" />
 
             <View
                 android:layout_width="match_parent"
@@ -61,18 +60,18 @@
                     android:id="@+id/garmentName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text|textCapSentences"
-                    android:imeOptions="actionDone" />
+                    android:imeOptions="actionDone"
+                    android:inputType="text|textCapSentences" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"
                 android:layout_marginTop="@dimen/lg"
+                android:layout_marginEnd="@dimen/md"
+                android:gravity="top"
                 android:text="@string/Category"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
@@ -107,8 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="match_parent"
@@ -123,8 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="match_parent"
@@ -139,8 +136,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="match_parent"
@@ -155,8 +151,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="match_parent"
@@ -171,8 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md">
-            </com.google.android.material.chip.ChipGroup>
+                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
 
         </LinearLayout>
 
@@ -196,10 +190,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:enabled="false"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
-            android:text="@string/aggiungi_capo"
-            android:enabled="false" />
+            android:text="@string/add_garment" />
 
     </RelativeLayout>
 

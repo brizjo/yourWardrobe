@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -46,9 +49,6 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private HomeViewModel homeViewModel;
     private FusedLocationProviderClient fusedLocationClient;
-    private ClothesAdapter clothesAdapter;
-    private RecyclerView recyclerView;
-
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -57,6 +57,8 @@ public class HomeFragment extends Fragment {
                     Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show();
                 }
             });
+    private ClothesAdapter clothesAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,8 +78,11 @@ public class HomeFragment extends Fragment {
         ProgressBar pbWeather = view.findViewById(R.id.pb_weather);
         TextView tvUsername = view.findViewById(R.id.tv_username);
         CardWeather cardWeather = view.findViewById(R.id.card_weather);
-        ImageButton btnRegenerateOutfit = view.findViewById(R.id.btn_regenerate_outfit);
+        MaterialButton btnRegenerateOutfit = view.findViewById(R.id.btn_regenerate_outfit);
+        ExtendedFloatingActionButton btnGoToAddGarment = view.findViewById(R.id.btn_go_to_add_garment);
+        ExtendedFloatingActionButton btnGoToComposeOutfit = view.findViewById(R.id.btn_go_to_compose_outfit);
         ProgressBar pbOutfit = view.findViewById(R.id.pb_outfit);
+        LinearLayout lEmptyState = view.findViewById(R.id.layout_empty_state);
 
         // Setup RecyclerView per l'outfit del giorno - GRID 2 COLONNE
         recyclerView = view.findViewById(R.id.rv_outfit);
@@ -96,6 +101,15 @@ public class HomeFragment extends Fragment {
         btnRegenerateOutfit.setOnClickListener(v -> {
             homeViewModel.regenerateOutfit();
         });
+
+        btnGoToComposeOutfit.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_createOutfitFragment);
+        });
+
+        btnGoToAddGarment.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_addGarmentFragment);
+        });
+
 
         // Observe User
         homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
@@ -137,11 +151,13 @@ public class HomeFragment extends Fragment {
         homeViewModel.outfitOfTheDay.observe(getViewLifecycleOwner(), garments -> {
             if (garments != null && !garments.isEmpty()) {
                 Log.d(TAG, "Outfit del giorno ricevuto con " + garments.size() + " capi");
-                recyclerView.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(VISIBLE);
+                lEmptyState.setVisibility(GONE);
                 clothesAdapter.updateGarments(garments);
             } else {
                 Log.d(TAG, "Nessun outfit disponibile");
-                recyclerView.setVisibility(View.GONE);
+                recyclerView.setVisibility(GONE);
+                lEmptyState.setVisibility(VISIBLE);
                 clothesAdapter.updateGarments(new ArrayList<>());
             }
         });

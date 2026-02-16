@@ -44,23 +44,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.top_bar), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, 0, systemBars.right, 0);
-            MaterialToolbar toolbar = findViewById(R.id.top_bar);
-            if (toolbar != null) {
-                toolbar.setPadding(
-                        toolbar.getPaddingLeft(),
-                        systemBars.top,
-                        toolbar.getPaddingRight(),
-                        toolbar.getPaddingBottom()
-                );
-            }
-            BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
-            if (bottomNav != null) {
-                bottomNav.setPadding(0, 0, 0, systemBars.bottom);
-            }
-
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+            });
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+            ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
             return insets;
         });
 
@@ -140,8 +132,6 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 navController.navigate(item.getItemId(), null, navOptions);
             });
-
-
 
         }
     }

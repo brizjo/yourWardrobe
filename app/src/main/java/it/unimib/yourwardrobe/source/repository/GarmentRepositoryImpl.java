@@ -10,30 +10,27 @@ import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.source.remote.GarmentRemoteDataSource;
 
-
 import java.util.List;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
+
     private final GarmentRemoteDataSource dataSource;
 
     @Inject
     public GarmentRepositoryImpl(GarmentRemoteDataSource dataSource) {
         this.dataSource = dataSource;
-
     }
 
     @Override
     public void validateGarment(Bitmap garmentBitmap, Callback<Boolean> callback) {
-
         dataSource.isGarment(garmentBitmap, callback);
     }
-
 
     @Override
     public void addGarment(Bitmap image, Garment garment, Callback<Boolean> callback) {
         dataSource.uploadImage(image, new Callback<String>() {
             @Override
-            public void onSuccess(String imageUrl){
+            public void onSuccess(String imageUrl) {
                 garment.setImageUrl(imageUrl);
                 dataSource.saveGarmentDocument(garment, new Callback<Boolean>() {
                     @Override
@@ -41,30 +38,50 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                         Log.d("GarmentRepositoryImpl", "Documento salvato con successo.");
                         callback.onSuccess(true);
                     }
-
                     @Override
                     public void onFailure(String errorMessage, Throwable t) {
                         callback.onFailure("Errore salvataggio dati: " + errorMessage, t);
                     }
                 });
             }
-
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 callback.onFailure("Errore caricamento immagine: " + errorMessage, t);
             }
-
-
         });
-
     }
 
+    @Override
+    public void updateGarmentImage(Bitmap newImage, Garment garment, Callback<Boolean> callback) {
+        dataSource.uploadImage(newImage, new Callback<String>() {
+            @Override
+            public void onSuccess(String newImageUrl) {
+                garment.setImageUrl(newImageUrl);
+                dataSource.updateGarment(garment, new Callback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        Log.d("GarmentRepositoryImpl", "Immagine aggiornata con successo.");
+                        callback.onSuccess(true);
+                    }
+                    @Override
+                    public void onFailure(String errorMessage, Throwable t) {
+                        callback.onFailure("Errore aggiornamento documento: " + errorMessage, t);
+                    }
+                });
+            }
+            @Override
+            public void onFailure(String errorMessage, Throwable t) {
+                callback.onFailure("Errore caricamento nuova immagine: " + errorMessage, t);
+            }
+        });
+    }
 
     @Override
     public void deleteGarment(Garment garment, Callback<Boolean> callback) {
         dataSource.deleteGarment(garment, callback);
     }
 
+    @Override
     public void updateGarment(Garment garment, Callback<Boolean> callback) {
         dataSource.updateGarment(garment, callback);
     }
@@ -76,9 +93,6 @@ public class GarmentRepositoryImpl implements GarmentRepository {
 
     @Override
     public void getGarments(Callback<List<Garment>> callback) {
-            dataSource.getGarments(callback);
+        dataSource.getGarments(callback);
     }
-
-
-
 }

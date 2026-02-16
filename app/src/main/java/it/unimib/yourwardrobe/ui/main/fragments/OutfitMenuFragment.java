@@ -107,6 +107,12 @@ public class OutfitMenuFragment extends Fragment {
         orderButton = view.findViewById(R.id.order_button);
         activeFiltersScrollView = view.findViewById(R.id.active_filters_scrollview);
         activeFiltersChipGroup = view.findViewById(R.id.active_filters_chipgroup);
+
+        if (recyclerViewOutfit == null) {
+            Log.e(TAG, "❌ RecyclerView è NULL! Controlla gli ID nel layout");
+            return;
+        }
+        Log.d(TAG, "✅ Tutte le view inizializzate correttamente");
     }
 
     private void setupRecyclerView() {
@@ -196,7 +202,7 @@ public class OutfitMenuFragment extends Fragment {
             if (outfits != null) {
                 if (outfits.isEmpty()) {
                     Log.w(TAG, "⚠️ Lista vuota - nessun outfit salvato");
-                    ToastHelper.show(getContext(), "Nessun outfit salvato. Creane uno!", false);
+                    ToastHelper.show(getContext(), "Nessun outfit trovato con questi filtri", false);
                 } else {
                     Log.d(TAG, "✅ Trovati " + outfits.size() + " outfit:");
                     for (int i = 0; i < outfits.size(); i++) {
@@ -213,7 +219,7 @@ public class OutfitMenuFragment extends Fragment {
             } else {
                 Log.e(TAG, "❌ Lista outfits è NULL!");
             }
-            Log.d(TAG, "════════════════════════════════════════");
+            Log.d(TAG, "═══════════════════════════════════════");
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {

@@ -81,6 +81,7 @@ public class OutfitMenuViewModel extends ViewModel {
     }
 
     public void fetchOutfits() {
+        Log.d(TAG, "=== FETCH OUTFITS ===");
         outfitRepository.getOutfits(new Callback<List<Outfit>>() {
             @Override
             public void onSuccess(List<Outfit> result) {
@@ -96,6 +97,7 @@ public class OutfitMenuViewModel extends ViewModel {
 
             @Override
             public void onFailure(String error, Throwable t) {
+                Log.e(TAG, "❌ Errore: " + error, t);
                 errorMessage.postValue(error);
                 uiState.postValue(UiState.NO_OUTFITS);
             }

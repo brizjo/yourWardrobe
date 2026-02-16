@@ -26,10 +26,10 @@
     <string name="magliette">Magliette</string>
     <string name="pantaloni">Pantaloni</string>
     <string name="felpe">Felpe</string>
-    <string name="aggiungi_capo">aggiungi capo</string>
+    <string name="add_garment">Aggiungi capo</string>
     <string name="caratteristiche_principali">Caratteristiche principali</string>
     <string name="componenti_dell_outfit">Componenti dell\'outfit</string>
-    <string name="componi_outfit">componi outfit</string>
+    <string name="compose_outfit">Componi outfit</string>
     <string name="parte_superiore">Parte superiore</string>
     <string name="parte_inferiore">Parte inferiore</string>
     <string name="accessori">Accessori</string>
@@ -174,4 +174,7 @@
     <string name="select">"Seleziona "</string>
     <string name="season_2">Stagione:</string>
     <string name="aggiungi">+ Aggiungi</string>
+    <string name="welcome_home">Ciao,</string>
+    <string name="guest">Guest</string>
+    <string name="reload_outfit">Rigenera outfit</string>
 </resources>

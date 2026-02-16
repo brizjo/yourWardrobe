@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -179,6 +180,9 @@ public class AddGarmentFragment extends Fragment {
         garmentNameEditText   = view.findViewById(R.id.garmentName);
         addGarmentButton      = view.findViewById(R.id.add_garment_button);
         addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
+
+        categoryTextView.setFocusable(false);
+        categoryTextView.setClickable(true);
     }
 
     // -------------------------------------------------------------------------
@@ -202,7 +206,7 @@ public class AddGarmentFragment extends Fragment {
 
         viewModel.getAllCategories().observe(getViewLifecycleOwner(), categories -> {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
+                    requireContext(), R.layout.dropdown_item, categories);
             categoryTextView.setAdapter(adapter);
         });
 
@@ -320,11 +324,10 @@ public class AddGarmentFragment extends Fragment {
 
         String[] seasonsArray = allSeasons.toArray(new String[0]);
         String currentSeason = viewModel.getSelectedSeason().getValue();
-        int currentIndex = currentSeason != null ? allSeasons.indexOf(currentSeason) : -1;
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Stagione")
-                .setSingleChoiceItems(seasonsArray, currentIndex, (dialog, which) -> {
+                .setItems(seasonsArray, (dialog, which) -> {
                     viewModel.setSelectedSeason(seasonsArray[which]);
                     dialog.dismiss();
                 })

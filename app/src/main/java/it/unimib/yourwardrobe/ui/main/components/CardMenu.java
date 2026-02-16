@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class CardMenu extends LinearLayout {
             TextView textView = materialCardView.findViewById(R.id.text_view);
             textView.setTextAppearance(font);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 34);
-            textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+            textView.setTextAlignment(TEXT_ALIGNMENT_VIEW_START);
             textView.setTextColor(color);
         }
     }
@@ -73,7 +74,7 @@ public class CardMenu extends LinearLayout {
         if (materialCardView != null) {
            materialCardView.setClipToOutline(true);
            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) materialCardView.getLayoutParams();
-           params.height =(int) (100 * getResources().getDisplayMetrics().density);
+           params.height =(int) (150 * getResources().getDisplayMetrics().density);
            params.bottomMargin =(int) (16 * getResources().getDisplayMetrics().density);
            materialCardView.setLayoutParams(params);
         }

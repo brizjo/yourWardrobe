@@ -123,5 +123,10 @@
             app:argType="it.unimib.yourwardrobe.domain.model.Outfit" />
     </fragment>
 
-    <include app:graph="@navigation/nav_graph_wardrobe" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
+
 </navigation>

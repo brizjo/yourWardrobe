@@ -11,59 +11,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/lg">
 
         <!-- Titolo -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/md"
+            android:fontFamily="@font/playfairdisplay_bold"
             android:text="@string/personal_stylist"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textAppearance="?attr/textAppearanceHeadline4" />
 
         <!-- Info meteo -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardElevation="2dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:gravity="center_vertical">
+                android:padding="@dimen/md">
 
                 <ImageView
                     android:id="@+id/iv_weather_icon"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_launcher_background"/>
+                    android:src="@drawable/ic_launcher_background" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/lg"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/default_temperature"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
+                        android:textSize="@dimen/text_md"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_suggested_season"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/suggested_spring"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -72,24 +72,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="@string/optional_filters"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textStyle="bold" />
 
         <!-- Filtro Colore -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/color"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:hint="@string/color">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Filtro Stile -->
@@ -97,14 +97,14 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/style"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="12dp"
+            android:hint="@string/style">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Filtro Stagione -->
@@ -112,23 +112,26 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/season_personal_stylist"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:hint="@string/season_personal_stylist">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Bottone Genera -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_generate_outfit"
+            style="?attr/materialButtonElevatedStyle"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/xl"
+            android:backgroundTint="?attr/colorPrimary"
             android:text="@string/generate_outfit"
-            android:layout_marginBottom="24dp"/>
+            android:textColor="?attr/colorOnPrimary" />
 
         <!-- Risultato Outfit -->
         <com.google.android.material.card.MaterialCardView
@@ -136,22 +139,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="12dp">
+            app:cardCornerRadius="@dimen/lg"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/lg">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/lg"
                     android:text="@string/outfit_generated"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:textSize="@dimen/text_lg"
+                    android:textStyle="bold" />
 
                 <!-- Griglia capi -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -160,45 +163,45 @@
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="2"/>
+                    app:spanCount="2" />
 
                 <!-- Campo Nome Outfit -->
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/outfit_name"
                     android:layout_marginTop="16dp"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+                    android:hint="@string/outfit_name">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_outfit_name"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Bottoni Azioni -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="@dimen/lg"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_regenerate"
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/md"
                         android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/regen"/>
+                        android:text="@string/regen" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_save_outfit"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/md"
                         android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:text="@string/save"/>
+                        android:text="@string/save" />
                 </LinearLayout>
 
             </LinearLayout>

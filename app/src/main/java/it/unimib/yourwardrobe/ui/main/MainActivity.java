@@ -2,16 +2,9 @@ package it.unimib.yourwardrobe.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ListPopupWindow;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -50,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
-            ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
             return insets;
@@ -60,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         setUpObservers();
         setupNavigation();
-        setupListPopup();
     }
 
     public void setUpObservers() {
@@ -97,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
             Set<Integer> topLevelDestinations = new HashSet<>();
             topLevelDestinations.add(R.id.homeFragment);
-            topLevelDestinations.add(R.id.wardrobe_nav_graph);
             topLevelDestinations.add(R.id.wardrobeFragment);
             topLevelDestinations.add(R.id.personalStylistFragment);
+            topLevelDestinations.add(R.id.profileFragment);
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
             setSupportActionBar(toolbar);
             NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
@@ -120,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     bottomNav.setVisibility(android.view.View.VISIBLE);
                 }
+
                 boolean isTopLevelDestination = topLevelDestinations.contains(destination.getId());
                 if (!isTopLevelDestination) {
                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -136,48 +129,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupListPopup() {
-        var ivAvatar = (ImageView) findViewById(R.id.iv_avatar);
-        var listPopupWindow = getListPopupWindow(ivAvatar);
-        ivAvatar.setOnClickListener(v -> {
-            listPopupWindow.show();
-        });
-    }
-
-    private ListPopupWindow getListPopupWindow(ImageView ivAvatar) {
-        var listPopupWindow = new ListPopupWindow(this);
-
-        String[] labels = {"Sign Out"};
-        int[] icons = {R.drawable.ic_sign_out};
-
-        var adapter = new ArrayAdapter<>(this, R.layout.profile_item_row, R.id.item_text, labels) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                ImageView itemIcon = view.findViewById(R.id.item_icon);
-                itemIcon.setImageResource(icons[position]);
-                return view;
-            }
-        };
-
-        listPopupWindow.setAdapter(adapter);
-        listPopupWindow.setAnchorView(ivAvatar);
-        listPopupWindow.setWidth(500);
-
-        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    authViewModel.signOut();
-                }
-
-                listPopupWindow.dismiss();
-            }
-        });
-
-        return listPopupWindow;
-    }
 
     private void navigateToWelcomeActivity() {
         var intent = new Intent(this, WelcomeActivity.class);

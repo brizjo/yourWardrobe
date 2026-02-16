@@ -113,7 +113,7 @@
     <string name="order_by_a_z">Ordine Alfabetico (A-Z)</string>
     <string name="armadio_vuoto">Armadio vuoto</string>
     <string name="empty_wardrobe_message">Sembra che il tuo armadio sia ancora vuoto, iniziamo ad aggiungere dei vestiti?</string>
-    <string name="sign_out">Sign Out</string>
+    <string name="sign_out">Esci dall app</string>
     <string name="item_icon">item icon</string>
     <string name="example_item">Example Item</string>
     <string name="sign_in_with_google">Accedi con Google</string>
@@ -183,4 +183,6 @@
     <string name="reload_outfit">Rigenera outfit</string>
     <string name="importa_capi_dalla_galleria">Importa capi dalla galleria</string>
     <string name="salva_tutti_i_capi">Salva tutti i capi</string>
+    <string name="example_email">mario@example.com</string>
+    <string name="profile">Profilo</string>
 </resources>

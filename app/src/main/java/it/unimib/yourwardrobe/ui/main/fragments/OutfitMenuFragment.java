@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,7 +41,13 @@ public class OutfitMenuFragment extends Fragment {
 
     private static final String TAG = "OutfitMenuFragment";
     private OutfitMenuViewModel viewModel;
-
+    private OutfitGridAdapter adapter;
+    private View mainOutfitContent;
+    private View emptyOutfitView;
+    private ImageView emptyOutfitIcon;
+    private TextView emptyOutfitMessage;
+    private Button emptyOutfitActionButton;
+    private ProgressBar loadingProgressBar;
     private RecyclerView recyclerViewOutfit;
     private Button createOutfitButton;
     private ImageView filterButton;
@@ -75,12 +82,25 @@ public class OutfitMenuFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(OutfitMenuViewModel.class);
 
         initViews(view);
+
+        RecyclerView recyclerViewOutfit = view.findViewById(R.id.outfit_recycler_view);
+
         setupRecyclerView();
-        setupButtons();
+
+        setupClickListeners();
+
         observeViewModel();
+
+        Log.d(TAG, "Setup completato!");
     }
 
     private void initViews(View view) {
+        mainOutfitContent = view.findViewById(R.id.main_outfit_content);
+        emptyOutfitView = view.findViewById(R.id.empty_outfit_view);
+        emptyOutfitIcon = view.findViewById(R.id.empty_outfit_icon);
+        emptyOutfitMessage = view.findViewById(R.id.empty_outfit_message);
+        emptyOutfitActionButton = view.findViewById(R.id.empty_outfit_action_button);
+        loadingProgressBar = view.findViewById(R.id.loading_progressbar);
         recyclerViewOutfit = view.findViewById(R.id.outfit_recycler_view);
         createOutfitButton = view.findViewById(R.id.create_outfit_button);
         filterButton = view.findViewById(R.id.filter_button);
@@ -92,41 +112,90 @@ public class OutfitMenuFragment extends Fragment {
             Log.e(TAG, "❌ RecyclerView è NULL! Controlla gli ID nel layout");
             return;
         }
-
         Log.d(TAG, "✅ Tutte le view inizializzate correttamente");
     }
 
     private void setupRecyclerView() {
         recyclerViewOutfit.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerViewOutfit.setNestedScrollingEnabled(false);
-        Log.d(TAG, "LayoutManager impostato: GridLayoutManager con 2 colonne");
+
+        OutfitGridAdapter.OnItemClickListener listener = (v, outfit) -> {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("outfit", outfit);
+            Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_singleOutfitFragment, bundle);
+        };
+        adapter = new OutfitGridAdapter(new ArrayList<>(), R.layout.item_outfit_grid, listener);
+        recyclerViewOutfit.setAdapter(adapter);
     }
 
-    private void setupButtons() {
-        // Bottone crea outfit
-        createOutfitButton.setOnClickListener(v -> {
-            Log.d(TAG, "Click su 'Crea Outfit' button");
-            Navigation.findNavController(v).navigate(
-                    R.id.action_outfitFragment_to_createOutfitFragment);
+    private void setupClickListeners() {
+        Button createOutfitButton = requireView().findViewById(R.id.create_outfit_button);
+        createOutfitButton.setOnClickListener(v -> navigateToCreateOutfit());
+        emptyOutfitActionButton.setOnClickListener(v -> {
+            // L'azione del pulsante dipende dallo stato
+            if (viewModel.getUiState().getValue() == OutfitMenuViewModel.UiState.NOT_ENOUGH_GARMENTS) {
+                // Naviga al fragment per aggiungere capi
+                Navigation.findNavController(v).navigate(R.id.action_outfitFragment_to_clothesFragment);
+            } else {
+                // Naviga al fragment per creare outfit
+                navigateToCreateOutfit();
+            }
         });
-
-        // Bottone filtri
         filterButton.setOnClickListener(v -> {
             Log.d(TAG, "Click su 'Filtri' button");
             showFilterCategoryMenu();
         });
 
-        // Bottone ordinamento
         orderButton.setOnClickListener(v -> {
             Log.d(TAG, "Click su 'Ordina' button");
             showOrderDialog();
         });
     }
 
+    private void navigateToCreateOutfit() {
+        Navigation.findNavController(requireView()).navigate(R.id.action_outfitFragment_to_createOutfitFragment);
+    }
+
     private void observeViewModel() {
-        // Observe outfit
+        viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
+            // Nascondi tutto di default
+            loadingProgressBar.setVisibility(View.GONE);
+            mainOutfitContent.setVisibility(View.GONE);
+            emptyOutfitView.setVisibility(View.GONE);
+
+            switch (state) {
+                case LOADING:
+                    loadingProgressBar.setVisibility(View.VISIBLE);
+                    break;
+
+                case NOT_ENOUGH_GARMENTS:
+                    emptyOutfitView.setVisibility(View.VISIBLE);
+                    emptyOutfitIcon.setImageResource(R.drawable.ic_hanger); // Icona che suggerisce di aggiungere vestiti
+                    emptyOutfitMessage.setText("Aggiungi almeno un capo superiore e uno inferiore per creare un outfit.");
+                    emptyOutfitActionButton.setText(R.string.add_garment);
+                    break;
+
+                case NO_OUTFITS:
+                    emptyOutfitView.setVisibility(View.VISIBLE);
+                    emptyOutfitIcon.setImageResource(R.drawable.ic_outfit);
+                    emptyOutfitMessage.setText("Nessun outfit creato. Inizia a comporre il tuo primo look!");
+                    emptyOutfitActionButton.setText(R.string.compose_outfit);
+                    break;
+
+                case HAS_OUTFITS:
+                    mainOutfitContent.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
+
         viewModel.getOutfits().observe(getViewLifecycleOwner(), outfits -> {
-            Log.d(TAG, "═══════════════════════════════════════");
+            if (outfits != null) {
+                adapter.updateOutfits(outfits);
+            }
+        });
+
+        viewModel.getOutfits().observe(getViewLifecycleOwner(), outfits -> {
+            Log.d(TAG, "════════════════════════════════════════");
             Log.d(TAG, "Observer chiamato!");
             Log.d(TAG, "Outfits ricevuti: " + (outfits != null ? outfits.size() : "NULL"));
 
@@ -142,17 +211,8 @@ public class OutfitMenuFragment extends Fragment {
                                 outfits.get(i).getGarments().size() : "null"));
                     }
                 }
-
+                adapter.updateOutfits(outfits);
                 // Crea e imposta adapter
-                OutfitGridAdapter.OnItemClickListener listener = (itemView, outfit) -> {
-                    Log.d(TAG, "Click su outfit: " + outfit.getName());
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("outfit", outfit);
-                    Navigation.findNavController(itemView).navigate(
-                            R.id.action_outfitFragment_to_singleOutfitFragment, bundle);
-                };
-
-                OutfitGridAdapter adapter = new OutfitGridAdapter(outfits, R.layout.item_outfit_grid, listener);
                 recyclerViewOutfit.setAdapter(adapter);
                 Log.d(TAG, "✅ Adapter impostato sulla RecyclerView");
                 Log.d(TAG, "   Item count nell'adapter: " + adapter.getItemCount());
@@ -162,7 +222,6 @@ public class OutfitMenuFragment extends Fragment {
             Log.d(TAG, "═══════════════════════════════════════");
         });
 
-        // Observe errori
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Log.e(TAG, "❌❌❌ ERRORE dal ViewModel: " + error);
@@ -170,15 +229,11 @@ public class OutfitMenuFragment extends Fragment {
             }
         });
 
-        // Observe filtri attivi
         viewModel.getActiveFilters().observe(getViewLifecycleOwner(), activeFiltersMap -> {
             updateActiveFiltersChips(activeFiltersMap);
         });
     }
 
-    /**
-     * Aggiorna le chip dei filtri attivi
-     */
     private void updateActiveFiltersChips(Map<String, List<String>> activeFiltersMap) {
         activeFiltersChipGroup.removeAllViews();
         boolean hasActiveFilters = false;

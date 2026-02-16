@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,8 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,24 +17,27 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
+import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 
 @HiltViewModel
 public class OutfitMenuViewModel extends ViewModel {
 
+    private final Context context;
     private static final String TAG = "OutfitMenuViewModel";
     private final OutfitRepository outfitRepository;
-
-    private final MutableLiveData<List<Outfit>> outfits = new MutableLiveData<>();
-    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final MutableLiveData<Map<String, List<String>>> activeFilters = new MutableLiveData<>(new HashMap<>());
-
-    private List<Outfit> allOutfits = new ArrayList<>();
-    private SortOrder currentSortOrder = SortOrder.BY_NAME_ASC;
-
+    private final GarmentRepository garmentRepository;
+    public enum UiState {
+        LOADING,
+        NOT_ENOUGH_GARMENTS,
+        NO_OUTFITS,
+        HAS_OUTFITS
+    }
     public enum SortOrder {
         BY_NAME_ASC,
         BY_NAME_DESC,
@@ -42,10 +46,44 @@ public class OutfitMenuViewModel extends ViewModel {
         BY_GARMENT_COUNT
     }
 
+    private final MutableLiveData<Map<String, List<String>>> activeFilters = new MutableLiveData<>(new HashMap<>());
+    private List<Outfit> allOutfits = new ArrayList<>();
+    private SortOrder currentSortOrder = SortOrder.BY_NAME_ASC;
+
+    private final MutableLiveData<List<Outfit>> outfits = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.LOADING);
+
     @Inject
-    public OutfitMenuViewModel(OutfitRepository outfitRepository) {
+    public OutfitMenuViewModel(@ApplicationContext Context context, OutfitRepository outfitRepository, GarmentRepository garmentRepository) {
+        this.context = context;
         this.outfitRepository = outfitRepository;
-        fetchOutfits();
+        this.garmentRepository = garmentRepository;
+        checkDataAndFetchOutfits();
+    }
+
+    private void checkDataAndFetchOutfits() {
+        uiState.setValue(UiState.LOADING);
+
+        garmentRepository.getGarments(new Callback<List<Garment>>() {
+            @Override
+            public void onSuccess(List<Garment> garments) {
+                boolean hasTop = garments.stream().anyMatch(g -> "Parte superiore".equals(g.getCategory()));
+                boolean hasBottom = garments.stream().anyMatch(g -> "Parte inferiore".equals(g.getCategory()));
+
+                if (hasTop && hasBottom) {
+                    fetchOutfits();
+                } else {
+                    uiState.postValue(UiState.NOT_ENOUGH_GARMENTS);
+                }
+            }
+
+            @Override
+            public void onFailure(String error, Throwable t) {
+                errorMessage.postValue(error);
+                uiState.postValue(UiState.NOT_ENOUGH_GARMENTS); // Gestisci l'errore come se non ci fossero capi
+            }
+        });
     }
 
     public void fetchOutfits() {
@@ -53,22 +91,25 @@ public class OutfitMenuViewModel extends ViewModel {
         outfitRepository.getOutfits(new Callback<List<Outfit>>() {
             @Override
             public void onSuccess(List<Outfit> result) {
-                Log.d(TAG, "✅ Ricevuti " + result.size() + " outfit");
-                allOutfits = result;
-                applyFiltersAndSort();
+                outfits.postValue(result);
+                if (result == null || result.isEmpty()) {
+                    uiState.postValue(UiState.NO_OUTFITS);
+                } else {
+                    uiState.postValue(UiState.HAS_OUTFITS);
+                    allOutfits = result;
+                    applyFiltersAndSort();
+                }
             }
 
             @Override
             public void onFailure(String error, Throwable t) {
                 Log.e(TAG, "❌ Errore: " + error, t);
                 errorMessage.postValue(error);
+                uiState.postValue(UiState.NO_OUTFITS);
             }
         });
     }
 
-    /**
-     * Applica filtri e ordinamento sugli outfit
-     */
     private void applyFiltersAndSort() {
         Log.d(TAG, "=== APPLY FILTERS AND SORT ===");
 
@@ -105,9 +146,6 @@ public class OutfitMenuViewModel extends ViewModel {
         outfits.postValue(filteredOutfits);
     }
 
-    /**
-     * Filtra outfit che contengono almeno un capo con uno degli stili selezionati
-     */
     private List<Outfit> filterByStyles(List<Outfit> outfitList, List<String> styles) {
         List<Outfit> result = new ArrayList<>();
         for (Outfit outfit : outfitList) {
@@ -127,9 +165,6 @@ public class OutfitMenuViewModel extends ViewModel {
         return result;
     }
 
-    /**
-     * Filtra outfit che contengono almeno un capo con una delle stagioni selezionate
-     */
     private List<Outfit> filterBySeasons(List<Outfit> outfitList, List<String> seasons) {
         List<Outfit> result = new ArrayList<>();
         for (Outfit outfit : outfitList) {
@@ -141,9 +176,6 @@ public class OutfitMenuViewModel extends ViewModel {
         return result;
     }
 
-    /**
-     * Filtra outfit che contengono almeno un capo con uno dei colori selezionati
-     */
     private List<Outfit> filterByColors(List<Outfit> outfitList, List<String> colors) {
         List<Outfit> result = new ArrayList<>();
         for (Outfit outfit : outfitList) {
@@ -163,9 +195,6 @@ public class OutfitMenuViewModel extends ViewModel {
         return result;
     }
 
-    /**
-     * Ordina gli outfit secondo il criterio specificato
-     */
     private void sortOutfits(List<Outfit> outfitList, SortOrder order) {
         switch (order) {
             case BY_NAME_ASC:
@@ -241,16 +270,10 @@ public class OutfitMenuViewModel extends ViewModel {
         applyFiltersAndSort();
     }
 
-    // =========================================================================
-    // LiveData getters
-    // =========================================================================
-
-    public LiveData<List<Outfit>> getOutfits() {
-        return outfits;
-    }
-
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
+    public LiveData<List<Outfit>> getOutfits() { return outfits; }
+    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<UiState> getUiState() {
+        return uiState;
     }
 
     public LiveData<Map<String, List<String>>> getActiveFilters() {
@@ -262,16 +285,15 @@ public class OutfitMenuViewModel extends ViewModel {
     // =========================================================================
 
     public List<String> getAllStyles() {
-        return List.of("Casual", "Elegante", "Sportivo", "Formale", "Streetwear", "Business", "Boho", "Vintage");
+        //return List.of("Casual", "Elegante", "Sportivo", "Formale", "Streetwear", "Business", "Boho", "Vintage");
+        return Arrays.asList(context.getResources().getStringArray(R.array.garment_styles));
     }
 
     public List<String> getAllSeasons() {
-        return List.of("Tutte le stagioni", "Primavera", "Estate", "Autunno", "Inverno",
-                "Inverno - Autunno", "Primavera - Estate", "Primavera - Autunno");
+        return Arrays.asList(context.getResources().getStringArray(R.array.seasons));
     }
 
     public List<String> getAllColors() {
-        return List.of("Nero", "Bianco", "Grigio", "Blu", "Rosso", "Verde", "Beige", "Marrone", "Rosa",
-                "Giallo", "Arancione", "Viola", "Blu scuro");
+        return Arrays.asList(context.getResources().getStringArray(R.array.garment_color));
     }
 }

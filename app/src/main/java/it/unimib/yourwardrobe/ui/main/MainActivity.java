@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.bottom_nav), (v, insets) -> {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+            ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
             return insets;
@@ -90,8 +91,27 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
             BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+            MaterialToolbar toolbar = findViewById(R.id.top_bar);
+
             NavigationUI.setupWithNavController(bottomNav, navController);
+
+            Set<Integer> topLevelDestinations = new HashSet<>();
+            topLevelDestinations.add(R.id.homeFragment);
+            topLevelDestinations.add(R.id.wardrobe_nav_graph);
+            topLevelDestinations.add(R.id.wardrobeFragment);
+            topLevelDestinations.add(R.id.personalStylistFragment);
+            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
+            setSupportActionBar(toolbar);
+            NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
+
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+
+
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                toolbar.setTitle(null);
+
                 if (destination.getId() == R.id.addGarmentFragment ||
                         destination.getId() == R.id.garmentFragment ||
                         destination.getId() == R.id.createOutfitFragment ||
@@ -99,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
                     bottomNav.setVisibility(android.view.View.GONE);
                 } else {
                     bottomNav.setVisibility(android.view.View.VISIBLE);
+                }
+                boolean isTopLevelDestination = topLevelDestinations.contains(destination.getId());
+                if (!isTopLevelDestination) {
+                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
                 }
             });
             bottomNav.setOnItemReselectedListener(item -> {
@@ -109,17 +133,6 @@ public class MainActivity extends AppCompatActivity {
                 navController.navigate(item.getItemId(), null, navOptions);
             });
 
-            MaterialToolbar toolbar = findViewById(R.id.top_bar);
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayShowTitleEnabled(false);
-            }
-            Set<Integer> topLevelDestinations = new HashSet<>();
-            topLevelDestinations.add(R.id.homeFragment);
-            topLevelDestinations.add(R.id.wardrobeFragment);
-            topLevelDestinations.add(R.id.personalStylistFragment);
-            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         }
     }
 

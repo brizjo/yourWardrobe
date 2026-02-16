@@ -1,97 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.main.fragments.OutfitMenuFragment">
 
-    <!-- Header con titolo e bottoni -->
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="I tuoi Outfit"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/playfairdisplay_medium"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/filter_button" />
-
-    <!-- Bottone Filtri -->
-    <ImageView
-        android:id="@+id/filter_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_filter"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Filtri"
-        app:layout_constraintTop_toTopOf="@id/title_text"
-        app:layout_constraintBottom_toBottomOf="@id/title_text"
-        app:layout_constraintEnd_toStartOf="@id/order_button" />
-
-    <!-- Bottone Ordina -->
-    <ImageView
-        android:id="@+id/order_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_order"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Ordina"
-        app:layout_constraintTop_toTopOf="@id/title_text"
-        app:layout_constraintBottom_toBottomOf="@id/title_text"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Barra filtri attivi (nascosta di default) -->
-    <HorizontalScrollView
-        android:id="@+id/active_filters_scrollview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:scrollbars="none"
+    <LinearLayout
+        android:id="@+id/main_outfit_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/title_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/active_filters_chipgroup"
+        <TextView
+            android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleLine="true"
-            app:chipSpacing="8dp" />
+            android:text="I tuoi Outfit"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/playfairdisplay_medium"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            />
 
-    </HorizontalScrollView>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="@dimen/md">
 
-    <!-- RecyclerView Outfit -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/outfit_recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp"
-        app:layout_constraintTop_toBottomOf="@id/active_filters_scrollview"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_outfit_grid"
-        tools:itemCount="6" />
+            <ImageView
+                android:id="@+id/filter_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/filter_garments"
+                android:focusable="true"
+                android:padding="@dimen/sm"
+                android:src="@drawable/ic_filter" />
 
-    <!-- Bottone Crea Outfit (floating) -->
-    <Button
-        android:id="@+id/create_outfit_button"
+            <ImageView
+                android:id="@+id/order_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/filter_button"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/filter_garments"
+                android:focusable="true"
+                android:padding="@dimen/sm"
+                android:src="@drawable/ic_order" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_outfit_button"
+                android:layout_width="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/md"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/compose_outfit"
+                />
+
+        </RelativeLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/active_filters_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/active_filters_chipgroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:chipSpacing="8dp" />
+        </HorizontalScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/outfit_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:paddingBottom="80dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_outfit_grid"
+            tools:itemCount="6"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/empty_outfit_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ImageView
+            android:id="@+id/empty_outfit_icon"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_outfit"
+            app:tint="?attr/colorPrimary"
+            android:contentDescription="@string/outfit" />
+
+        <TextView
+            android:id="@+id/empty_outfit_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="Nessun outfit creato. Inizia a comporre il tuo primo look!" />
+
+        <Button
+            android:id="@+id/empty_outfit_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:icon="@drawable/ic_add"
+            tools:text="@string/compose_outfit" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Crea Outfit"
-        android:textAllCaps="false"
-        app:icon="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

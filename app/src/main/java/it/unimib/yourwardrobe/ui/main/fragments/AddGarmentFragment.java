@@ -129,8 +129,7 @@ public class AddGarmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(AddGarmentViewModel.class);
-
+        viewModel = new ViewModelProvider(requireActivity()).get(AddGarmentViewModel.class);
         initViews(view);
 
         addGarmentImageView.setImageDrawable(
@@ -241,12 +240,23 @@ public class AddGarmentFragment extends Fragment {
         viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
             if (success != null && success) {
                 ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
-                Navigation.findNavController(view).popBackStack();
+                viewModel.resetViewModel();
+                Navigation.findNavController(requireView()).popBackStack();
             }
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) ToastHelper.show(getContext(), error, false);
+        });
+        // Osserva l'immagine catturata e scontornata dalla Camera custom
+        viewModel.getGarmentImage().observe(getViewLifecycleOwner(), bitmap -> {
+            if (bitmap != null) {
+                addGarmentImageView.setImageBitmap(bitmap);
+                addGarmentImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                // Opzionale: avvia il riconoscimento automatico della categoria sul bitmap "pulito"
+                viewModel.recognizeCategory(bitmap);
+            }
         });
 
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled ->
@@ -555,14 +565,18 @@ public class AddGarmentFragment extends Fragment {
     // Image picker
     // -------------------------------------------------------------------------
     private void showImagePickerDialog() {
-        String[] options = getResources().getStringArray(R.array.image_picker_options);
+        String[] options = {"Scatta Foto (AI)", "Scegli dalla Galleria", "Annulla"};
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Scegli immagine")
+                .setTitle("Aggiungi Foto")
                 .setItems(options, (dialog, which) -> {
-                    if (which == 0) checkCameraPermissionAndLaunch();
-                    else if (which == 1) checkGalleryPermissionAndLaunch();
-                })
-                .show();
+                    if (which == 0) {
+                        // NAVIGA AL NUOVO CAMERA FRAGMENT
+                        Navigation.findNavController(requireView())
+                                .navigate(R.id.action_addGarmentFragment_to_cameraFragment);
+                    } else if (which == 1) {
+                        launchGallery();
+                    }
+                }).show();
     }
 
     private void checkCameraPermissionAndLaunch() {

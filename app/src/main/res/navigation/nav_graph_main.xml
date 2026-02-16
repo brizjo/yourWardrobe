@@ -78,10 +78,16 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.AddGarmentFragment"
         android:label="AddGarmentFragment"
         tools:layout="@layout/fragment_add_garment">
+
         <action
-            android:id="@+id/action_addGarmentFragment_to_clothesFragment"
-            app:destination="@id/clothesFragment" />
+            android:id="@+id/action_addGarmentFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.CameraFragment"
+        android:label="Fotocamera"
+        tools:layout="@layout/fragment_camera" />
 
     <fragment
         android:id="@+id/garmentFragment"

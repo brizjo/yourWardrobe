@@ -30,7 +30,7 @@ public class GarmentRemoteDataSource {
 
     private static final Set<String> KEYWORDS_GARMENT = new HashSet<>(Arrays.asList(
             // Categorie Generali (Rimosso "Fashion", "Textile", "Pattern" perché troppo generici)
-            "Clothing", "Outerwear", "Top", "Apparel", "Garment",
+            "Clothing", "Outerwear", "Top", "Apparel", "Garment", "Pattern",
             "Shirt", "T-shirt", "Pants", "Dress", "Suit", "Jersey", "Trousers", "Jeans",
             "Shorts", "Skirt", "Coat", "Jacket", "Vest", "Sweater", "Cardigan", "Blouse",
             "Hoodie", "Uniform", "Activewear", "Sportswear",
@@ -48,7 +48,7 @@ public class GarmentRemoteDataSource {
             "Wool", "Cotton", "Denim", "Leather", "Silk", "Woven", "Knitting",
 
             // Accessori
-            "Scarf", "Tie", "Belt", "Gloves", "Hat"
+            "Scarf", "Tie", "Belt", "Gloves", "Hat", "Jewellery", "Watch", "Clock"
     ));
     private final ImageLabeler classifier; //usato per controllare se foto è un vestito
     private final FirebaseFirestore firestore;
@@ -74,7 +74,7 @@ public class GarmentRemoteDataSource {
         classifier.process(fotoGarment).addOnCompleteListener(labels -> {
                     boolean garmentCheck = false;
                     for (ImageLabel label : labels.getResult()) {
-
+                        Log.d("ML_DEBUG", "Label: " + label.getText() + " (" + label.getConfidence() + ")");
                         if (KEYWORDS_GARMENT.contains(label.getText())) {
                             garmentCheck = true;
                             break;
@@ -100,7 +100,7 @@ public class GarmentRemoteDataSource {
         }
 
 
-        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".png";
         StorageReference storageRef = storage.getReference()
                 .child("users")
                 .child(uid)
@@ -108,7 +108,7 @@ public class GarmentRemoteDataSource {
                 .child(fileName);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] byteFoto = baos.toByteArray();
 
             storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot->{

@@ -342,9 +342,9 @@ public class HomeViewModel extends ViewModel {
 
         List<Garment> accessories;
         if (isWarmSeason) {
-            accessories = filterByCategoryAndSeason(allGarments, "Accessori", filterSeason);
+            accessories = filterByCategoryAndSeason(allGarments, "Accessorio", filterSeason);
         } else {
-            accessories = filterByCategory(allGarments, "Accessori");
+            accessories = filterByCategory(allGarments, "Accessorio");
         }
 
         if (tops.isEmpty() || bottoms.isEmpty()) {

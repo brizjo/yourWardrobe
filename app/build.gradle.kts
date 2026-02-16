@@ -9,6 +9,7 @@ plugins {
 }
 
 val localProperties = Properties()
+val camerax_version = "1.4.0-rc01"
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.reader())
@@ -41,6 +42,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     compileOptions {
@@ -70,6 +72,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation(libs.swiperefreshlayout)
+    implementation(libs.play.services.mlkit.subject.segmentation)
     annotationProcessor("com.github.bumptech.glide:compiler:5.0.5")
     implementation("com.google.dagger:hilt-android:2.51.1")
     annotationProcessor("com.google.dagger:hilt-compiler:2.51.1")
@@ -81,5 +84,12 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.lottie)
+    implementation(libs.play.services.mlkit.subject.segmentation)
+    implementation("com.google.guava:guava:33.0.0-android")
+    implementation ("androidx.camera:camera-core:${camerax_version}")
+    implementation ("androidx.camera:camera-camera2:${camerax_version}")
+    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation ("androidx.camera:camera-view:${camerax_version}")
+
 
 }

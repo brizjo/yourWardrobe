@@ -2,11 +2,18 @@ package it.unimib.yourwardrobe.ui.main.viewmodel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.label.ImageLabel;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +29,7 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.ImageProcessor;
 import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @HiltViewModel
@@ -31,6 +39,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final GarmentRepository garmentRepository;
     private final MutableLiveData<ImageValidationState> imageValidationState = new MutableLiveData<>(ImageValidationState.UNCHECKED);
 
+    private final ImageProcessor imageProcessor = new ImageProcessor();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -114,7 +123,7 @@ public class AddGarmentViewModel extends ViewModel {
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
 
     public void setGarmentImage(Bitmap bitmap) {
-        garmentImage.setValue(bitmap);
+        garmentImage.postValue(bitmap);
         garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -153,21 +162,63 @@ public class AddGarmentViewModel extends ViewModel {
     }
 
     public void saveGarment() {
-        Bitmap image = garmentImage.getValue();
+        Bitmap rawImage = garmentImage.getValue();
         String name = garmentName.getValue();
         String category = selectedCategory.getValue();
         List<String> colors = selectedColors.getValue();
         List<String> styles = selectedStyles.getValue();
         List<String> fabrics = selectedFabrics.getValue();
         String season = selectedSeason.getValue();
-        String subCategory = selectedSubCategory.getValue(); // CAMBIATO
+        String subCategory = selectedSubCategory.getValue();
 
-        if (image == null || name == null || name.isEmpty() || category == null
+        // 1. Validazione dati
+        if (rawImage == null || name == null || name.isEmpty() || category == null
                 || colors == null || colors.isEmpty() || season == null
-                || subCategory == null || subCategory.isEmpty()) { // CAMBIATO
+                || subCategory == null || subCategory.isEmpty()) {
             errorMessage.postValue("Dati mancanti per creare il capo.");
             return;
         }
+        isLoading.postValue(true);
+
+        // 2. Scontornamento dell'immagine tramite ML Kit
+        imageProcessor.removeBackground(rawImage)
+                .addOnSuccessListener(transparentBitmap -> {
+                    // 3. Creazione dell'oggetto Garment con i dati correnti
+                    Garment garment = new Garment();
+                    garment.setName(name);
+                    garment.setCategory(category);
+                    garment.setColor(colors);
+                    garment.setStyle(styles);
+                    garment.setFabric(fabrics);
+                    garment.setSeason(season);
+                    garment.setSubCategory(subCategory);
+
+                    // 4. Invio al Repository (Passando il bitmap scontornato)
+                    garmentRepository.addGarment(transparentBitmap, garment, new Callback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            garmentAddedSuccessfully.postValue(true);
+                            isLoading.postValue(false);
+                        }
+
+                        @Override
+                        public void onFailure(String error, Throwable t) {
+                            errorMessage.postValue("Errore durante il salvataggio: " + error);
+                            isLoading.postValue(false);
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    errorMessage.postValue("Errore durante la rimozione dello sfondo. Procedo con l'originale...");
+                    // Fallback: se lo scontornamento fallisce, salviamo l'originale
+                    saveGarmentBG(rawImage, name, category, colors, styles, fabrics, season, subCategory);
+                });
+    }
+
+
+        public void saveGarmentBG(Bitmap bitmap, String name, String category, List<String> colors,
+                                List<String> styles, List<String> fabrics, String season, String subCategory) {
+
 
         Garment garment = new Garment();
         garment.setName(name);
@@ -179,7 +230,7 @@ public class AddGarmentViewModel extends ViewModel {
         garment.setSubCategory(subCategory); // CAMBIATO
 
         isLoading.postValue(true);
-        garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
+        garmentRepository.addGarment(bitmap, garment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 garmentAddedSuccessfully.postValue(true);
@@ -206,6 +257,11 @@ public class AddGarmentViewModel extends ViewModel {
     public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
     public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
+
+
+    public LiveData<Bitmap> getGarmentImage() {
+        return garmentImage;
+    }
     public LiveData<ImageValidationState> getImageValidationState() {
         return imageValidationState;
     }
@@ -232,4 +288,46 @@ public class AddGarmentViewModel extends ViewModel {
     public void updateSelectedColors(List<String> newSelection) { selectedColors.setValue(newSelection); }
     public void updateSelectedStyles(List<String> newSelection) { selectedStyles.setValue(newSelection); }
     public void updateSelectedFabrics(List<String> newSelection) { selectedFabrics.setValue(newSelection); }
+
+    public void resetViewModel() {
+        garmentImage.setValue(null);
+        garmentName.setValue(null);
+        selectedCategory.setValue(null);
+        selectedSeason.setValue(null);
+        selectedSubCategory.setValue(null);
+
+        selectedColors.setValue(new ArrayList<>());
+        selectedStyles.setValue(new ArrayList<>());
+        selectedFabrics.setValue(new ArrayList<>());
+        garmentAddedSuccessfully.setValue(false);
+        imageValidationState.setValue(ImageValidationState.UNCHECKED);
+    }
+    public void recognizeCategory(Bitmap bitmap) {
+        if (bitmap == null) return;
+
+        isLoading.postValue(true);
+
+        // Usiamo il metodo già esistente nel Repository
+        garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isGarment) {
+                isLoading.postValue(false);
+                if (isGarment) {
+                    // Se è un capo valido, impostiamo lo stato su VALID
+                    imageValidationState.postValue(ImageValidationState.VALID);
+
+                } else {
+                    // Se non è riconosciuto, chiediamo conferma all'utente
+                    imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
+                }
+            }
+
+            @Override
+            public void onFailure(String error, Throwable t) {
+                isLoading.postValue(false);
+                imageValidationState.postValue(ImageValidationState.ERROR);
+                errorMessage.postValue("Errore nel riconoscimento del capo: " + error);
+            }
+        });
+    }
 }

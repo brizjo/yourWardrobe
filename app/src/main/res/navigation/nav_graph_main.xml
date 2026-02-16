@@ -115,5 +115,5 @@
             app:argType="it.unimib.yourwardrobe.domain.model.Outfit" />
     </fragment>
 
-
+    <include app:graph="@navigation/nav_graph_wardrobe" />
 </navigation>

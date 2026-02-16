@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/md"
+        android:padding="@dimen/lg"
         tools:context=".ui.main.fragments.HomeFragment">
 
         <!-- Welcome Section -->
@@ -17,7 +17,6 @@
             android:id="@+id/layout_welcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/md"
             android:orientation="horizontal">
 
             <TextView
@@ -25,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/playfairdisplay_medium"
                 android:text="@string/welcome_home"
-                android:textSize="@dimen/text_2xl" />
+                android:textAppearance="?attr/textAppearanceHeadline4" />
 
             <TextView
                 android:id="@+id/tv_username"
@@ -33,8 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sm"
                 android:fontFamily="@font/playfairdisplay_medium"
-                android:text="@string/guest"
-                android:textSize="@dimen/text_2xl" />
+                android:textAppearance="?attr/textAppearanceHeadline4"
+                tools:text="@string/guest" />
 
         </LinearLayout>
 
@@ -118,7 +117,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/playfairdisplay_medium"
                 android:text="@string/daily_outfit"
-                android:textSize="@dimen/text_2xl" />
+                android:textAppearance="?attr/textAppearanceHeadline5" />
 
             <Button
                 android:id="@+id/btn_regenerate_outfit"

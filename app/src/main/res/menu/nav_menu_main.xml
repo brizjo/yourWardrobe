@@ -7,7 +7,7 @@
         android:title="@string/home" />
 
     <item
-        android:id="@+id/wardrobe_nav_graph"
+        android:id="@+id/wardrobeFragment"
         android:icon="@drawable/idc_dresser_selector"
         android:title="@string/wardrobe" />
 
@@ -15,5 +15,10 @@
         android:id="@+id/personalStylistFragment"
         android:icon="@drawable/ic_bot_selector"
         android:title="@string/personal_stylist" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_user_circle_selector"
+        android:title="@string/profile" />
 
 </menu>

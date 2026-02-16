@@ -1,10 +1,16 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +19,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +44,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +52,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.viewmodel.GarmentViewModel;
+import it.unimib.yourwardrobe.utils.ImageValidationState;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
@@ -48,6 +60,7 @@ public class GarmentFragment extends Fragment {
 
     private GarmentViewModel viewModel;
     private boolean isInitialGarmentLoad = true;
+    private Bitmap pendingBitmap = null;
 
     private ImageView garmentImageView;
     private TextView nameTextView;
@@ -65,6 +78,41 @@ public class GarmentFragment extends Fragment {
     private Button updateButton;
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
+
+    // -------------------------------------------------------------------------
+    // Launchers fotocamera / galleria
+    // -------------------------------------------------------------------------
+
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) launchCamera();
+                else Toast.makeText(getContext(), "Permesso fotocamera necessario", Toast.LENGTH_SHORT).show();
+            });
+
+    private final ActivityResultLauncher<Void> takePictureLauncher =
+            registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
+                if (bitmap != null) handleNewImage(bitmap);
+            });
+
+    private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) launchGallery();
+                else Toast.makeText(getContext(), "Permesso galleria necessario", Toast.LENGTH_SHORT).show();
+            });
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    try {
+                        ImageDecoder.Source source = ImageDecoder.createSource(
+                                requireActivity().getContentResolver(), uri);
+                        Bitmap bitmap = ImageDecoder.decodeBitmap(source);
+                        handleNewImage(bitmap);
+                    } catch (IOException e) {
+                        ToastHelper.show(getContext(), "Errore nel caricare l'immagine", true);
+                    }
+                }
+            });
 
     public GarmentFragment() {}
 
@@ -115,7 +163,7 @@ public class GarmentFragment extends Fragment {
         observeViewModel();
     }
 
-    private void initViews(View view){
+    private void initViews(View view) {
         garmentImageView       = view.findViewById(R.id.garmentImage);
         nameTextView           = view.findViewById(R.id.nameGarmentText);
         nameGarmentInputLayout = view.findViewById(R.id.nameGarmentInputLayout);
@@ -128,8 +176,8 @@ public class GarmentFragment extends Fragment {
         fabricChipGroup        = view.findViewById(R.id.chip_group_garment_fabric);
         seasonChipGroup        = view.findViewById(R.id.chip_group_garment_season);
         subCategoryChipGroup   = view.findViewById(R.id.chip_group_garment_subcategory);
-        cancelButton    = view.findViewById(R.id.cancel_button);
-        updateButton    = view.findViewById(R.id.update_button);
+        cancelButton           = view.findViewById(R.id.cancel_button);
+        updateButton           = view.findViewById(R.id.update_button);
     }
 
     // -------------------------------------------------------------------------
@@ -143,20 +191,33 @@ public class GarmentFragment extends Fragment {
                 nameGarmentEditText.setText(garment.getName());
                 isInitialGarmentLoad = false;
             }
-            Glide.with(this)
-                    .load(garment.getImageUrl())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(garmentImageView);
+            // Mostra la nuova immagine in anteprima se è in pending, altrimenti quella salvata
+            if (pendingBitmap != null) {
+                garmentImageView.setImageBitmap(pendingBitmap);
+            } else {
+                Glide.with(this)
+                        .load(garment.getImageUrl())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(garmentImageView);
+            }
             populateChips(garment);
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (Boolean.TRUE.equals(isLoading)) {
-                deleteProgressBar.setVisibility(View.VISIBLE);
                 editFab.hide();
                 deleteFab.hide();
-                editButtonsContainer.setVisibility(View.GONE);
+                // NON nascondere il container, disabilita solo i bottoni
+                updateButton.setEnabled(false);
+                cancelButton.setEnabled(false);
+            } else {
+                // Riabilita i bottoni solo se sei in edit mode
+                Boolean isEditMode = viewModel.getIsEditMode().getValue();
+                if (Boolean.TRUE.equals(isEditMode)) {
+                    updateButton.setEnabled(true);
+                    cancelButton.setEnabled(true);
+                }
             }
         });
 
@@ -183,6 +244,8 @@ public class GarmentFragment extends Fragment {
                 deleteFab.setVisibility(View.GONE);
                 nameGarmentEditText.requestFocus();
                 showKeyboard(nameGarmentEditText);
+                // In edit mode l'immagine è cliccabile per cambiarla
+                garmentImageView.setOnClickListener(v -> showImagePickerDialog());
             } else {
                 nameTextView.setVisibility(View.VISIBLE);
                 nameGarmentInputLayout.setVisibility(View.GONE);
@@ -191,8 +254,24 @@ public class GarmentFragment extends Fragment {
                 deleteFab.setVisibility(View.VISIBLE);
                 nameGarmentEditText.clearFocus();
                 hideKeyboard(nameGarmentEditText);
+                // In visualizzazione l'immagine non è cliccabile
+                garmentImageView.setOnClickListener(null);
+                pendingBitmap = null;
             }
             populateChips(viewModel.getGarment().getValue());
+        });
+
+        // Gestione validazione immagine (stesso pattern di AddGarmentFragment)
+        viewModel.getImageValidationState().observe(getViewLifecycleOwner(), state -> {
+            if (state == ImageValidationState.VALID && pendingBitmap != null) {
+                garmentImageView.setImageBitmap(pendingBitmap);
+                ToastHelper.show(getContext(), "Immagine aggiornata", false);
+            } else if (state == ImageValidationState.INVALID_CONFIRMATION_NEEDED) {
+                showInvalidImageDialog();
+            } else if (state == ImageValidationState.ERROR) {
+                pendingBitmap = null;
+                ToastHelper.show(getContext(), "Errore validazione immagine", true);
+            }
         });
 
         viewModel.getGarmentUpdatedSuccessfully().observe(getViewLifecycleOwner(), updated -> {
@@ -202,6 +281,82 @@ public class GarmentFragment extends Fragment {
                 ToastHelper.show(getContext(), "Errore durante il salvataggio delle modifiche.", true);
             }
         });
+    }
+
+    // -------------------------------------------------------------------------
+    // Image picker
+    // -------------------------------------------------------------------------
+
+    private void handleNewImage(Bitmap bitmap) {
+        pendingBitmap = bitmap;
+        // Mostra subito l'anteprima
+        garmentImageView.setImageBitmap(bitmap);
+        // Manda al ViewModel per la validazione ML Kit
+        viewModel.onNewImageSelected(bitmap);
+    }
+
+    private void showImagePickerDialog() {
+        String[] options = {"Scatta una foto", "Scegli dalla galleria"};
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cambia immagine")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) checkCameraPermissionAndLaunch();
+                    else checkGalleryPermissionAndLaunch();
+                })
+                .show();
+    }
+
+    private void showInvalidImageDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Immagine non riconosciuta")
+                .setMessage("L'immagine non sembra un capo d'abbigliamento. Vuoi usarla comunque?")
+                .setPositiveButton("Usa comunque", (dialog, which) -> {
+                    if (pendingBitmap != null) viewModel.forceImageAsValid(pendingBitmap);
+                })
+                .setNegativeButton("Annulla", (dialog, which) -> {
+                    pendingBitmap = null;
+                    viewModel.cancelImageChange();
+                    // Ripristina immagine originale
+                    Garment current = viewModel.getGarment().getValue();
+                    if (current != null) {
+                        Glide.with(this)
+                                .load(current.getImageUrl())
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(garmentImageView);
+                    }
+                })
+                .show();
+    }
+
+    private void checkCameraPermissionAndLaunch() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            launchCamera();
+        } else {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void checkGalleryPermissionAndLaunch() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES)
+                    == PackageManager.PERMISSION_GRANTED) {
+                launchGallery();
+            } else {
+                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+        } else {
+            launchGallery();
+        }
+    }
+
+    private void launchCamera() { takePictureLauncher.launch(null); }
+
+    private void launchGallery() {
+        pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 
     // -------------------------------------------------------------------------
@@ -220,25 +375,21 @@ public class GarmentFragment extends Fragment {
         subCategoryChipGroup.removeAllViews();
 
         if (isInEditMode) {
-            // Colori (multipla)
             colorChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Colori",
                             viewModel.getAllColors(), garment.getColor(),
                             newColors -> viewModel.addColors(newColors))));
 
-            // Stili (multipla)
             styleChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Stili",
                             viewModel.getAllStyles(), garment.getStyle(),
                             newStyles -> viewModel.addStyles(newStyles))));
 
-            // Tessuti (multipla)
             fabricChipGroup.addView(createAddChip(() ->
                     showChipSelectionDialog("Aggiungi Tessuti",
                             viewModel.getAllFabrics(), garment.getFabric(),
                             newFabrics -> viewModel.addFabrics(newFabrics))));
 
-            // Stagione (singola): chip cliccabile per aprire il dialog di selezione
             Chip seasonChip = new Chip(requireContext());
             seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+");
             seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
@@ -252,7 +403,6 @@ public class GarmentFragment extends Fragment {
             }
             seasonChipGroup.addView(seasonChip);
 
-            // Sottocategoria (singola): chip cliccabile per aprire il dialog di selezione
             Chip subCategoryChip = new Chip(requireContext());
             subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+");
             subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
@@ -267,18 +417,14 @@ public class GarmentFragment extends Fragment {
             subCategoryChipGroup.addView(subCategoryChip);
 
         } else {
-            // Modalità visualizzazione (non edit)
             if (garment.getSeason() != null) {
-                seasonChipGroup.addView(
-                        createChip(requireContext(), garment.getSeason(), false, null));
+                seasonChipGroup.addView(createChip(requireContext(), garment.getSeason(), false, null));
             }
             if (garment.getSubCategory() != null) {
-                subCategoryChipGroup.addView(
-                        createChip(requireContext(), garment.getSubCategory(), false, null));
+                subCategoryChipGroup.addView(createChip(requireContext(), garment.getSubCategory(), false, null));
             }
         }
 
-        // Colori (sempre visibili)
         if (garment.getColor() != null) {
             for (String color : garment.getColor()) {
                 colorChipGroup.addView(createChip(requireContext(), color, isInEditMode,
@@ -286,7 +432,6 @@ public class GarmentFragment extends Fragment {
             }
         }
 
-        // Stili (sempre visibili)
         if (garment.getStyle() != null) {
             for (String style : garment.getStyle()) {
                 styleChipGroup.addView(createChip(requireContext(), style, isInEditMode,
@@ -294,7 +439,6 @@ public class GarmentFragment extends Fragment {
             }
         }
 
-        // Tessuti (sempre visibili)
         if (garment.getFabric() != null) {
             for (String fabric : garment.getFabric()) {
                 fabricChipGroup.addView(createChip(requireContext(), fabric, isInEditMode,
@@ -308,15 +452,12 @@ public class GarmentFragment extends Fragment {
         chip.setText(text);
         chip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(
-                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         if (isRemovable) {
             chip.setCloseIconVisible(true);
             chip.setClickable(true);
             chip.setFocusable(true);
-            chip.setOnCloseIconClickListener(v -> {
-                if (onRemove != null) onRemove.run();
-            });
+            chip.setOnCloseIconClickListener(v -> { if (onRemove != null) onRemove.run(); });
         } else {
             chip.setClickable(false);
             chip.setFocusable(false);
@@ -329,23 +470,19 @@ public class GarmentFragment extends Fragment {
         chip.setText(R.string.plus);
         chip.setChipBackgroundColor(ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(
-                ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnClickListener(v -> onClickAction.run());
         return chip;
     }
 
     // -------------------------------------------------------------------------
-    // Dialog stagione (selezione singola)
+    // Dialogs
     // -------------------------------------------------------------------------
 
     private void showSeasonSelectionDialog(Garment garment) {
         List<String> allSeasons = viewModel.getAllSeasons();
         String[] seasonsArray = allSeasons.toArray(new String[0]);
-
-        int currentIndex = garment.getSeason() != null
-                ? allSeasons.indexOf(garment.getSeason())
-                : -1;
+        int currentIndex = garment.getSeason() != null ? allSeasons.indexOf(garment.getSeason()) : -1;
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Stagione")
@@ -357,10 +494,6 @@ public class GarmentFragment extends Fragment {
                 .show();
     }
 
-    // -------------------------------------------------------------------------
-    // Dialog sottocategoria (selezione singola)
-    // -------------------------------------------------------------------------
-
     private void showSubCategorySelectionDialog(Garment garment) {
         List<String> subCategories = viewModel.getAvailableSubcategoriesForGarment();
         if (subCategories.isEmpty()) {
@@ -368,22 +501,16 @@ public class GarmentFragment extends Fragment {
             return;
         }
         String[] subCategoriesArray = subCategories.toArray(new String[0]);
-        String currentSubCategory = garment.getSubCategory();
-        //int checkedItem = subCategories.indexOf(currentSubCategory);
+
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Sottocategoria")
                 .setItems(subCategoriesArray, (dialog, which) -> {
-                    String selectedSubCategory = subCategoriesArray[which];
-                    viewModel.setSubCategory(selectedSubCategory);
+                    viewModel.setSubCategory(subCategoriesArray[which]);
                     dialog.dismiss();
                 })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
                 .show();
     }
-
-    // -------------------------------------------------------------------------
-    // Dialog selezione chip multipla (colori, stili, tessuti)
-    // -------------------------------------------------------------------------
 
     interface OnSelectionListener {
         void onSelected(List<String> selection);
@@ -397,8 +524,7 @@ public class GarmentFragment extends Fragment {
             return;
         }
 
-        View dialogView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.chip_selector, null);
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.chip_selector, null);
         TextView dialogTitle      = dialogView.findViewById(R.id.dialog_title);
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
         Button okButton           = dialogView.findViewById(R.id.dialog_ok_button);
@@ -406,45 +532,30 @@ public class GarmentFragment extends Fragment {
         dialogTitle.setText(title);
 
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
-        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        int[][] states = new int[][]{
-                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
-                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
-        };
-        int[] colors = new int[]{
-                colorSelected,
-                colorDefault
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-
-        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
-        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
-
-        int[][] textStates = new int[][]{
-                new int[]{android.R.attr.state_checked},
-                new int[]{-android.R.attr.state_checked}
-        };
-        int[] textColors = new int[]{
-                textColorSelected,
-                textColorDefault
-        };
-        ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
+        int colorDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        ColorStateList bgStateList = new ColorStateList(
+                new int[][]{ new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked} },
+                new int[]{ colorSelected, colorDefault }
+        );
+        int textSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int textDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
+        ColorStateList textStateList = new ColorStateList(
+                new int[][]{ new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked} },
+                new int[]{ textSelected, textDefault }
+        );
 
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
-            chip.setChipBackgroundColor(colorStateList);
-            chip.setTextColor(chipTextColorStateList);
             chip.setCheckable(true);
-            if (currentSelection != null && currentSelection.contains(option)) {
-                chip.setEnabled(false);
-            }
+            chip.setChipBackgroundColor(bgStateList);
+            chip.setTextColor(textStateList);
+            if (currentSelection != null && currentSelection.contains(option)) chip.setEnabled(false);
             dialogChipGroup.addView(chip);
         }
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-                .setView(dialogView)
-                .create();
+                .setView(dialogView).create();
 
         okButton.setEnabled(false);
         dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) ->
@@ -463,10 +574,6 @@ public class GarmentFragment extends Fragment {
         dialog.show();
     }
 
-    // -------------------------------------------------------------------------
-    // Delete dialog
-    // -------------------------------------------------------------------------
-
     private void showDeleteConfirmationDialog() {
         View dialogView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.dialog_confirm_delete, null);
@@ -483,12 +590,10 @@ public class GarmentFragment extends Fragment {
 
         Button positiveButton = deleteConfirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (positiveButton != null) {
-            positiveButton.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.md_theme_error));
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_error));
             positiveButton.setOnClickListener(v -> {
                 positiveButton.setVisibility(View.GONE);
-                deleteConfirmationDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                        .setVisibility(View.GONE);
+                deleteConfirmationDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
                 dialogProgressBar.setVisibility(View.VISIBLE);
                 deleteConfirmationDialog.setCancelable(false);
                 viewModel.deleteGarment();

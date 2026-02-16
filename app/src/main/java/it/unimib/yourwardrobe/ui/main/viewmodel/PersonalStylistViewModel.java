@@ -254,7 +254,7 @@ public class PersonalStylistViewModel extends ViewModel {
         if (isWarmSeason(filterSeason)) {
             accessories = filterByCategoryAndSeason(allGarments, "Accessori", filterSeason);
         } else {
-            accessories = filterByCategory(allGarments, "Accessori");
+            accessories = filterByCategory(allGarments, "Accessorio");
         }
 
         android.util.Log.d("PersonalStylistVM", "Pool - Top: " + tops.size() + ", Bottom: " + bottoms.size() + ", Scarpe: " + shoes.size() + ", Accessori: " + accessories.size());
@@ -319,18 +319,25 @@ public class PersonalStylistViewModel extends ViewModel {
             shoesCombinations.add(singleShoe);
         }
 
+        // Accessory combinations (0 to 4) - PRIORITIZZA COMBINAZIONI CON ACCESSORI
         List<List<Garment>> accessoryCombinations = new ArrayList<>();
-        accessoryCombinations.add(new ArrayList<>());
+
+// PRIMA aggiungi combinazioni CON accessori
         for (int i = 0; i < accessories.size(); i++) {
+            // Singolo accessorio
             List<Garment> single = new ArrayList<>();
             single.add(accessories.get(i));
             accessoryCombinations.add(single);
+
+            // Coppie di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 4; j++) {
                 List<Garment> pair = new ArrayList<>();
                 pair.add(accessories.get(i));
                 pair.add(accessories.get(j));
                 accessoryCombinations.add(pair);
             }
+
+            // Triple di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 3; j++) {
                 for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
                     List<Garment> triple = new ArrayList<>();
@@ -340,6 +347,8 @@ public class PersonalStylistViewModel extends ViewModel {
                     accessoryCombinations.add(triple);
                 }
             }
+
+            // Quadruple di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 2; j++) {
                 for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
                     for (int l = k + 1; l < accessories.size() && l < k + 2; l++) {
@@ -353,6 +362,10 @@ public class PersonalStylistViewModel extends ViewModel {
                 }
             }
         }
+
+// SOLO ALLA FINE aggiungi la combinazione vuota (meno priorità)
+        accessoryCombinations.add(new ArrayList<>());
+
 
         for (List<Garment> topCombo : topCombinations) {
             if (topCombo.size() > 2) continue;

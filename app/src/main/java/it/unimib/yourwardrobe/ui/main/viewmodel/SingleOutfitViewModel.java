@@ -3,7 +3,8 @@ package it.unimib.yourwardrobe.ui.main.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import java.util.ArrayList;import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import it.unimib.yourwardrobe.core.functional.Callback;
@@ -13,6 +14,7 @@ import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 
 @HiltViewModel
 public class SingleOutfitViewModel extends ViewModel {
+
     private final OutfitRepository outfitRepository;
 
     private final MutableLiveData<Outfit> outfit = new MutableLiveData<>();
@@ -21,19 +23,38 @@ public class SingleOutfitViewModel extends ViewModel {
     private final MutableLiveData<Boolean> outfitUpdated = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
+    // Copia dell'outfit originale per il ripristino in caso di annulla
+    private Outfit originalOutfit;
+
     @Inject
     public SingleOutfitViewModel(OutfitRepository outfitRepository) {
         this.outfitRepository = outfitRepository;
     }
 
-    public void setOutfit(Outfit outfitData) { outfit.setValue(outfitData); }
+    public void setOutfit(Outfit outfitData) {
+        outfit.setValue(outfitData);
+        originalOutfit = deepCopyOutfit(outfitData); // salva copia originale
+    }
+
     public LiveData<Outfit> getOutfit() { return outfit; }
     public LiveData<Boolean> getIsEditMode() { return isEditMode; }
     public LiveData<Boolean> getOutfitDeleted() { return outfitDeleted; }
     public LiveData<Boolean> getOutfitUpdated() { return outfitUpdated; }
+    public LiveData<String> getErrorMessage() { return errorMessage; }
 
-    public void enterEditMode() { isEditMode.setValue(true); }
-    public void cancelEdit() { isEditMode.setValue(false); }
+    public void enterEditMode() {
+        // Aggiorna la copia originale ogni volta che si entra in edit mode
+        originalOutfit = deepCopyOutfit(outfit.getValue());
+        isEditMode.setValue(true);
+    }
+
+    public void cancelEdit() {
+        // Ripristina l'outfit originale e notifica la UI
+        if (originalOutfit != null) {
+            outfit.setValue(deepCopyOutfit(originalOutfit));
+        }
+        isEditMode.setValue(false);
+    }
 
     public void removeGarment(Garment garment) {
         Outfit current = outfit.getValue();
@@ -41,7 +62,6 @@ public class SingleOutfitViewModel extends ViewModel {
 
         List<Garment> list = new ArrayList<>(current.getGarments());
 
-        // 3. Vincolo Minimo (1 Top e 1 Bottom obbligatori)
         String cat = garment.getCategory().toLowerCase();
         int tops = 0, bottoms = 0;
         for (Garment g : list) {
@@ -67,11 +87,15 @@ public class SingleOutfitViewModel extends ViewModel {
             outfitRepository.updateOutfit(current, new Callback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
+                    // Aggiorna la copia originale con i nuovi dati salvati
+                    originalOutfit = deepCopyOutfit(current);
                     isEditMode.postValue(false);
                     outfitUpdated.postValue(true);
                 }
                 @Override
-                public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
+                public void onFailure(String error, Throwable t) {
+                    errorMessage.postValue(error);
+                }
             });
         }
     }
@@ -87,38 +111,28 @@ public class SingleOutfitViewModel extends ViewModel {
             });
         }
     }
-    // Aggiungi questi metodi in SingleOutfitViewModel.java
 
-    /**
-     * Aggiorna la stagione dell'outfit in memoria.
-     */
     public void updateSeason(String newSeason) {
         Outfit current = outfit.getValue();
         if (current != null) {
-            current.setSeason(newSeason); // Assumendo che 'style' sia il campo usato per la stagione
+            current.setSeason(newSeason);
             outfit.setValue(current);
         }
     }
 
-    /**
-     * Aggiunge un nuovo capo alla lista dei componenti dell'outfit.
-     */
     public void addGarment(Garment newGarment) {
         Outfit current = outfit.getValue();
         if (current == null) return;
 
         List<Garment> list = new ArrayList<>(current.getGarments());
 
-        // 1. Vincolo Totale Card
         if (list.size() >= 6) {
             errorMessage.setValue("La carta può mostrare massimo 6 capi.");
             return;
         }
 
-        // 2. Vincoli per Categoria
         String cat = newGarment.getCategory().toLowerCase();
         int tops = 0, bottoms = 0, shoes = 0, accessories = 0;
-
         for (Garment g : list) {
             String c = g.getCategory().toLowerCase();
             if (c.contains("superiore")) tops++;
@@ -142,9 +156,6 @@ public class SingleOutfitViewModel extends ViewModel {
         }
     }
 
-    /**
-     * Sostituisce un capo esistente (Logica per la funzione "Top")
-     */
     public void replaceGarment(Garment oldGarment, Garment newGarment) {
         Outfit current = outfit.getValue();
         if (current != null) {
@@ -164,9 +175,15 @@ public class SingleOutfitViewModel extends ViewModel {
         }
     }
 
-    public LiveData<String> getErrorMessage() {
-        return errorMessage;
+    // -------------------------------------------------------------------------
+    // Deep copy helper
+    // -------------------------------------------------------------------------
+
+    private Outfit deepCopyOutfit(Outfit source) {
+        if (source == null) return null;
+        List<Garment> garmentsCopy = new ArrayList<>(source.getGarments());
+        Outfit copy = new Outfit(source.getName(), source.getSeason(), garmentsCopy);
+        copy.setId(source.getId());
+        return copy;
     }
-
-
 }

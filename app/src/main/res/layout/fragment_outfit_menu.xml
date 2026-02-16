@@ -1,29 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.main.fragments.OutfitMenuFragment">
+    android:padding="16dp">
 
-    <com.google.android.material.button.MaterialButton
+    <!-- Header con titolo e bottoni -->
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="I tuoi Outfit"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/playfairdisplay_medium"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/filter_button" />
+
+    <!-- Bottone Filtri -->
+    <ImageView
+        android:id="@+id/filter_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_filter"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Filtri"
+        app:layout_constraintTop_toTopOf="@id/title_text"
+        app:layout_constraintBottom_toBottomOf="@id/title_text"
+        app:layout_constraintEnd_toStartOf="@id/order_button" />
+
+    <!-- Bottone Ordina -->
+    <ImageView
+        android:id="@+id/order_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_order"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Ordina"
+        app:layout_constraintTop_toTopOf="@id/title_text"
+        app:layout_constraintBottom_toBottomOf="@id/title_text"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Barra filtri attivi (nascosta di default) -->
+    <HorizontalScrollView
+        android:id="@+id/active_filters_scrollview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/title_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/active_filters_chipgroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:chipSpacing="8dp" />
+
+    </HorizontalScrollView>
+
+    <!-- RecyclerView Outfit -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/outfit_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintTop_toBottomOf="@id/active_filters_scrollview"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_outfit_grid"
+        tools:itemCount="6" />
+
+    <!-- Bottone Crea Outfit (floating) -->
+    <Button
         android:id="@+id/create_outfit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/md"
-        android:layout_marginEnd="30dp"
-        android:text="@string/compose_outfit"
+        android:layout_marginBottom="16dp"
+        android:text="Crea Outfit"
+        android:textAllCaps="false"
         app:icon="@drawable/ic_add"
-        app:iconGravity="textStart" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/outfit_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

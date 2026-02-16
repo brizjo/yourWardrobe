@@ -54,7 +54,18 @@
         <action
             android:id="@+id/action_clothesFragment_to_addGarmentFragment"
             app:destination="@id/addGarmentFragment" />
+        <!-- NUOVA AZIONE per importazione multipla -->
+        <action
+            android:id="@+id/action_clothesFragment_to_bulkImportFragment"
+            app:destination="@id/bulkImportFragment" />
     </fragment>
+
+    <!-- NUOVO FRAGMENT: Importazione multipla -->
+    <fragment
+        android:id="@+id/bulkImportFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.BulkImportFragment"
+        android:label="Importa capi dalla galleria"
+        tools:layout="@layout/fragment_bulk_import" />
 
     <!-- Schermata Outfit -->
     <fragment
@@ -104,16 +115,12 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.SingleOutfitFragment"
         android:label="Dettaglio Outfit"
         tools:layout="@layout/fragment_single_outfit">
-        <!-- Azione per andare al dettaglio del vestito -->
         <action
             android:id="@+id/action_singleOutfitFragment_to_garmentFragment"
             app:destination="@id/garmentFragment" />
-
-        <!-- Assicurati che l'outfit sia passato come argomento se non l'hai fatto -->
         <argument
             android:name="outfit"
             app:argType="it.unimib.yourwardrobe.domain.model.Outfit" />
     </fragment>
-
 
 </navigation>

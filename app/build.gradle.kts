@@ -81,5 +81,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.lottie)
+    implementation("androidx.palette:palette:1.0.0")
 
 }

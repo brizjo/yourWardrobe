@@ -208,26 +208,24 @@ public class SingleOutfitFragment extends Fragment {
      */
     private void openPickerForAddition() {
         String[] categories = {"Parte superiore", "Parte inferiore", "Scarpe", "Accessori"};
-        new MaterialAlertDialogBuilder(requireContext())            .setTitle("Cosa vuoi aggiungere?")
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cosa vuoi aggiungere?")
                 .setItems(categories, (dialog, which) -> {
-                    int type = which + 1; // Mappa i tipi 1,2,3,4 del tuo SelectClothesDialogFragment
-                    SelectClothesDialogFragment.newInstance(type, selected -> {
+                    int type = which + 1;
+                    SelectClothesDialogFragment.newInstance(type, false, selected -> {  // ← false
                         if (!selected.isEmpty()) viewModel.addGarment(selected.get(0));
                     }).show(getChildFragmentManager(), "add_garment");
                 }).show();
     }
 
-    /**
-     * Apre il dialog per sostituire un capo esistente mantenendo la stessa categoria
-     */
     private void openPickerForReplacement(Garment oldGarment) {
-        int type = 1; // Default
+        int type = 1;
         String cat = oldGarment.getCategory().toLowerCase();
         if (cat.contains("inferiore")) type = 2;
         else if (cat.contains("scarpe") || cat.contains("calzature")) type = 3;
         else if (cat.contains("accessorio")) type = 4;
 
-        SelectClothesDialogFragment.newInstance(type, selected -> {
+        SelectClothesDialogFragment.newInstance(type, true, selected -> {  // ← true
             if (!selected.isEmpty()) viewModel.replaceGarment(oldGarment, selected.get(0));
         }).show(getChildFragmentManager(), "replace_garment");
     }

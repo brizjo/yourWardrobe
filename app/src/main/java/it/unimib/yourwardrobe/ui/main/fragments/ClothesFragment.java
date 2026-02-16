@@ -24,6 +24,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.carousel.CarouselLayoutManager;
 import com.google.android.material.carousel.UncontainedCarouselStrategy;
 import com.google.android.material.chip.Chip;
@@ -42,7 +43,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ClothesFragment extends Fragment {
-
 
     private ClothesViewModel clothesViewModel;
     private ClothesAdapter.OnItemClickListener listener;
@@ -71,7 +71,6 @@ public class ClothesFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     public static ClothesFragment newInstance() {
         ClothesFragment fragment = new ClothesFragment();
         return fragment;
@@ -80,13 +79,11 @@ public class ClothesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_clothes, container, false);
     }
 
@@ -115,6 +112,7 @@ public class ClothesFragment extends Fragment {
         });
 
         orderButton.setOnClickListener(v -> showOrderDialog());
+
         Button addButton = view.findViewById(R.id.add_button);
         addButton.setOnClickListener(v -> {
             NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
@@ -123,9 +121,14 @@ public class ClothesFragment extends Fragment {
                 NavController navController = navHostFragment.getNavController();
                 navController.navigate(R.id.action_clothesFragment_to_addGarmentFragment);
             } else {
-                // Log di errore nel caso in cui il NavHostFragment non venga trovato
                 Log.e("ClothesFragment", "NavHostFragment non trovato. Impossibile navigare.");
             }
+        });
+
+        // NUOVO: Bottone Importa dalla galleria
+        MaterialButton importButton = view.findViewById(R.id.import_from_gallery_button);
+        importButton.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_clothesFragment_to_bulkImportFragment);
         });
 
         filterButton.setOnClickListener(v -> {
@@ -135,7 +138,6 @@ public class ClothesFragment extends Fragment {
         clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
 
         observeViewModel();
-
     }
 
     private void initViews(View view){
@@ -193,7 +195,7 @@ public class ClothesFragment extends Fragment {
         });
 
         clothesViewModel.getIsWardrobeEmpty().observe(getViewLifecycleOwner(), isEmpty -> {
-            if (isEmpty != null) { // Main check
+            if (isEmpty != null) {
                 if (isEmpty) {
                     emptyWardrobeView.setVisibility(View.VISIBLE);
                     topButtonsContainer.setVisibility(View.GONE);
@@ -223,7 +225,6 @@ public class ClothesFragment extends Fragment {
                 topAdapter.updateGarments(topGarments);
 
                 if (topGarments.isEmpty())
-                    //TODO; CORRETTA GESTIONE DI UN ARMADIO ANCORA VUOTO
                     Log.d("ClothesFragment", "L'utente non ha ancora caricato vestiti.");
             }
         });
@@ -247,10 +248,9 @@ public class ClothesFragment extends Fragment {
         });
 
         clothesViewModel.getActiveFilters().observe(getViewLifecycleOwner(), activeFiltersMap -> {
-            activeFiltersChipGroup.removeAllViews(); // Pulisce i filtri precedenti
+            activeFiltersChipGroup.removeAllViews();
             boolean hasActiveFilters = false;
 
-            // Recupera e aggiunge le chip per ogni categoria di filtro
             List<String> colors = activeFiltersMap.get("color");
             if (colors != null && !colors.isEmpty()) {
                 hasActiveFilters = true;
@@ -278,7 +278,6 @@ public class ClothesFragment extends Fragment {
                 }
             }
 
-            // Mostra o nasconde la barra dei filtri
             activeFiltersScrollView.setVisibility(hasActiveFilters ? View.VISIBLE : View.GONE);
         });
 
@@ -292,10 +291,6 @@ public class ClothesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Quando il fragment torna visibile (ad esempio, dopo essere tornati
-        // da GarmentFragment), chiedi al ViewModel di ricaricare i dati.
-        // Poiché il DataSource usa un listener in tempo reale, questo garantirà
-        // che la UI si aggiorni con gli ultimi cambiamenti da Firebase.
         if (clothesViewModel != null) {
             clothesViewModel.fetchGarments();
         }
@@ -317,13 +312,13 @@ public class ClothesFragment extends Fragment {
                 .setTitle("Ordina per")
                 .setItems(orderOptions, (dialog, which) -> {
                     switch (which) {
-                        case 0: // Alfabetico
+                        case 0:
                             clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.GRID_ALPHABETICAL);
                             break;
-                        case 1: // Data di inserimento
+                        case 1:
                             clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.GRID_BY_DATE);
                             break;
-                        case 2: // Categoria
+                        case 2:
                             clothesViewModel.setDisplayMode(ClothesViewModel.DisplayMode.BY_CATEGORY);
                             break;
                     }
@@ -332,16 +327,12 @@ public class ClothesFragment extends Fragment {
     }
 
     private void showFilterCategoryMenu() {
-        // Opzioni da mostrare nel menu
         final String[] filterCategories = {"Colore", "Stile", "Tessuto"};
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Filtra per...")
                 .setItems(filterCategories, (dialog, which) -> {
-                    // L'utente ha scelto una categoria, ora mostra il popup con le chip
                     switch (which) {
-                        case 0: // Colore
-                            // Avvia il dialog di selezione per i colori
-                            // Dobbiamo recuperare la lista di tutti i colori dal ViewModel
+                        case 0:
                             clothesViewModel.getAllColors().observe(getViewLifecycleOwner(), allColors -> {
                                 if (allColors != null && !allColors.isEmpty()) {
                                     showFilterValueDialog("Colore", allColors, selectedValues -> {
@@ -350,7 +341,7 @@ public class ClothesFragment extends Fragment {
                                 }
                             });
                             break;
-                        case 1: // Stile
+                        case 1:
                             clothesViewModel.getAllStyles().observe(getViewLifecycleOwner(), allStyles -> {
                                 if (allStyles != null && !allStyles.isEmpty()) {
                                     showFilterValueDialog("Stile", allStyles, selectedValues -> {
@@ -359,7 +350,7 @@ public class ClothesFragment extends Fragment {
                                 }
                             });
                             break;
-                        case 2: // Tessuto
+                        case 2:
                             clothesViewModel.getAllFabrics().observe(getViewLifecycleOwner(), allFabrics -> {
                                 if (allFabrics != null && !allFabrics.isEmpty()) {
                                     showFilterValueDialog("Tessuto", allFabrics, selectedValues -> {
@@ -372,9 +363,11 @@ public class ClothesFragment extends Fragment {
                 })
                 .show();
     }
+
     interface OnFilterValuesSelectedListener {
         void onSelected(List<String> selectedValues);
     }
+
     private void showFilterValueDialog(String title, List<String> allOptions, OnFilterValuesSelectedListener listener) {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.chip_selector, null);
 
@@ -387,8 +380,8 @@ public class ClothesFragment extends Fragment {
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
         int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
         int[][] states = new int[][]{
-                new int[]{android.R.attr.state_checked}, // Stato: selezionato (checked)
-                new int[]{-android.R.attr.state_checked}  // Stato: non selezionato
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
         };
         int[] colors = new int[]{
                 colorSelected,
@@ -396,8 +389,8 @@ public class ClothesFragment extends Fragment {
         };
         ColorStateList colorStateList = new ColorStateList(states, colors);
 
-        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary); // Bianco quando selezionato
-        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);   // Nero/scuro quando non selezionato
+        int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
 
         int[][] textStates = new int[][]{
                 new int[]{android.R.attr.state_checked},
@@ -409,7 +402,6 @@ public class ClothesFragment extends Fragment {
         };
         ColorStateList chipTextColorStateList = new ColorStateList(textStates, textColors);
 
-        // Popola il ChipGroup con tutte le opzioni
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
@@ -423,11 +415,10 @@ public class ClothesFragment extends Fragment {
                 .setView(dialogView)
                 .create();
 
-        // Abilita/disabilita il pulsante OK
         dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             okButton.setEnabled(!checkedIds.isEmpty());
         });
-        okButton.setEnabled(false); // Inizia disabilitato
+        okButton.setEnabled(false);
 
         okButton.setOnClickListener(v -> {
             List<String> selection = new ArrayList<>();
@@ -435,7 +426,6 @@ public class ClothesFragment extends Fragment {
                 Chip selectedChip = dialogChipGroup.findViewById(id);
                 selection.add(selectedChip.getText().toString());
             }
-            // Chiama il listener con i valori selezionati
             listener.onSelected(selection);
             dialog.dismiss();
         });
@@ -450,7 +440,6 @@ public class ClothesFragment extends Fragment {
         chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
         chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
         chip.setOnCloseIconClickListener(v -> {
-            // Notifica il ViewModel della rimozione del filtro
             switch (type) {
                 case "color":
                     List<String> currentColors = new ArrayList<>(clothesViewModel.getActiveFilters().getValue().get("color"));
@@ -462,7 +451,6 @@ public class ClothesFragment extends Fragment {
                     currentStyles.remove(text);
                     clothesViewModel.filterByStyle(currentStyles);
                     break;
-
                 case "fabric":
                     List<String> currentFabrics = new ArrayList<>(clothesViewModel.getActiveFilters().getValue().get("fabric"));
                     currentFabrics.remove(text);

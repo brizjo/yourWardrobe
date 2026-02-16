@@ -29,15 +29,17 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
     private OnGarmentSelectedListener listener;
     private SelectClothesAdapter adapter;
     private int categoryType;
+    private boolean isReplacement;  // ← NUOVO
     private TextView dialogTitle;
 
     public interface OnGarmentSelectedListener {
         void onGarmentsConfirmed(List<Garment> selected);
     }
 
-    public static SelectClothesDialogFragment newInstance(int categoryType, OnGarmentSelectedListener listener) {
+    public static SelectClothesDialogFragment newInstance(int categoryType, boolean isReplacement, OnGarmentSelectedListener listener) {
         SelectClothesDialogFragment fragment = new SelectClothesDialogFragment();
         fragment.categoryType = categoryType;
+        fragment.isReplacement = isReplacement;  // ← NUOVO
         fragment.listener = listener;
         return fragment;
     }
@@ -54,36 +56,35 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
         rv.setLayoutManager(new GridLayoutManager(getContext(), 3));
         CreateOutfitViewModel viewModel = new ViewModelProvider(requireParentFragment()).get(CreateOutfitViewModel.class);
 
-        // Determina il tipo di selezione in base alla categoria
         LiveData<List<Garment>> liveData;
         boolean isMultiSelect;
         int maxSelection;
         String title;
 
         switch (categoryType) {
-            case 1: // TOP
+            case 1:
                 liveData = viewModel.getTopGarments();
-                isMultiSelect = true;
-                maxSelection = CreateOutfitViewModel.MAX_TOPS; // 2
-                title = "Seleziona Top (max " + maxSelection + ")";
+                isMultiSelect = !isReplacement;           // ← se sostituzione, sempre singolo
+                maxSelection = isReplacement ? 1 : CreateOutfitViewModel.MAX_TOPS;
+                title = isReplacement ? "Sostituisci Top" : "Seleziona Top (max " + maxSelection + ")";
                 break;
-            case 2: // BOTTOM
+            case 2:
                 liveData = viewModel.getBottomGarments();
                 isMultiSelect = false;
                 maxSelection = 1;
-                title = "Seleziona Bottom (max " + maxSelection + ")";
+                title = isReplacement ? "Sostituisci Bottom" : "Seleziona Bottom (max " + maxSelection + ")";
                 break;
-            case 3: // SCARPE
+            case 3:
                 liveData = viewModel.getShoesGarments();
                 isMultiSelect = false;
                 maxSelection = 1;
-                title = "Seleziona Scarpe (max " + maxSelection + ")";
+                title = isReplacement ? "Sostituisci Scarpe" : "Seleziona Scarpe (max " + maxSelection + ")";
                 break;
-            case 4: // ACCESSORI
+            case 4:
                 liveData = viewModel.getAccessoryGarments();
-                isMultiSelect = true;
-                maxSelection = CreateOutfitViewModel.MAX_ACCESSORIES; // 4
-                title = "Seleziona Accessori (max " + maxSelection + ")";
+                isMultiSelect = !isReplacement;           // ← se sostituzione, sempre singolo
+                maxSelection = isReplacement ? 1 : CreateOutfitViewModel.MAX_ACCESSORIES;
+                title = isReplacement ? "Sostituisci Accessorio" : "Seleziona Accessori (max " + maxSelection + ")";
                 break;
             default:
                 liveData = viewModel.getTopGarments();
@@ -94,44 +95,31 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
 
         dialogTitle.setText(title);
 
+        // Il resto rimane identico...
+        final boolean finalIsMultiSelect = isMultiSelect;
+        final int finalMaxSelection = maxSelection;
+
         liveData.observe(getViewLifecycleOwner(), garments -> {
             if (garments != null && !garments.isEmpty()) {
-                android.util.Log.d("DIALOG_DEBUG", "Ricevuti " + garments.size() + " capi per categoria " + categoryType);
-
-                // Crea l'adapter con selezione multipla/singola
                 adapter = new SelectClothesAdapter(
                         garments,
-                        isMultiSelect,
-                        maxSelection,
-                        (garment, isSelected) -> {
-                            // Callback opzionale quando viene selezionato un capo
-                            android.util.Log.d("DIALOG_DEBUG", "Capo " + (isSelected ? "selezionato" : "deselezionato") + ": " + garment.getName());
-                        }
+                        finalIsMultiSelect,
+                        finalMaxSelection,
+                        (garment, isSelected) -> {}
                 );
 
-                // Imposta i capi già selezionati (se presenti)
                 List<Garment> alreadySelected = new ArrayList<>();
                 switch (categoryType) {
-                    case 1:
-                        alreadySelected = viewModel.getSelectedTops().getValue();
-                        break;
-                    case 2:
-                        alreadySelected = viewModel.getSelectedBottoms().getValue();
-                        break;
-                    case 3:
-                        alreadySelected = viewModel.getSelectedShoes().getValue();
-                        break;
-                    case 4:
-                        alreadySelected = viewModel.getSelectedAccessories().getValue();
-                        break;
+                    case 1: alreadySelected = viewModel.getSelectedTops().getValue(); break;
+                    case 2: alreadySelected = viewModel.getSelectedBottoms().getValue(); break;
+                    case 3: alreadySelected = viewModel.getSelectedShoes().getValue(); break;
+                    case 4: alreadySelected = viewModel.getSelectedAccessories().getValue(); break;
                 }
                 if (alreadySelected != null && !alreadySelected.isEmpty()) {
                     adapter.setSelectedGarments(alreadySelected);
                 }
 
                 rv.setAdapter(adapter);
-            } else {
-                android.util.Log.d("DIALOG_DEBUG", "Lista vuota o null per categoria " + categoryType);
             }
         });
 

@@ -342,9 +342,9 @@ public class HomeViewModel extends ViewModel {
 
         List<Garment> accessories;
         if (isWarmSeason) {
-            accessories = filterByCategoryAndSeason(allGarments, "Accessori", filterSeason);
+            accessories = filterByCategoryAndSeason(allGarments, "Accessorio", filterSeason);
         } else {
-            accessories = filterByCategory(allGarments, "Accessori");
+            accessories = filterByCategory(allGarments, "Accessorio");
         }
 
         if (tops.isEmpty() || bottoms.isEmpty()) {
@@ -428,20 +428,50 @@ public class HomeViewModel extends ViewModel {
 
     private List<List<Garment>> generateAccessoryCombinations(List<Garment> accessories) {
         List<List<Garment>> combinations = new ArrayList<>();
-        combinations.add(new ArrayList<>());
 
+        // PRIMA aggiungi combinazioni CON accessori (come in PersonalStylistViewModel)
         for (int i = 0; i < accessories.size(); i++) {
+            // Singolo accessorio
             List<Garment> single = new ArrayList<>();
             single.add(accessories.get(i));
             combinations.add(single);
 
-            for (int j = i + 1; j < Math.min(accessories.size(), i + 4); j++) {
+            // Coppie di accessori
+            for (int j = i + 1; j < accessories.size() && j < i + 4; j++) {
                 List<Garment> pair = new ArrayList<>();
                 pair.add(accessories.get(i));
                 pair.add(accessories.get(j));
                 combinations.add(pair);
             }
+
+            // Triple di accessori
+            for (int j = i + 1; j < accessories.size() && j < i + 3; j++) {
+                for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
+                    List<Garment> triple = new ArrayList<>();
+                    triple.add(accessories.get(i));
+                    triple.add(accessories.get(j));
+                    triple.add(accessories.get(k));
+                    combinations.add(triple);
+                }
+            }
+
+            // Quadruple di accessori
+            for (int j = i + 1; j < accessories.size() && j < i + 2; j++) {
+                for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
+                    for (int l = k + 1; l < accessories.size() && l < k + 2; l++) {
+                        List<Garment> quad = new ArrayList<>();
+                        quad.add(accessories.get(i));
+                        quad.add(accessories.get(j));
+                        quad.add(accessories.get(k));
+                        quad.add(accessories.get(l));
+                        combinations.add(quad);
+                    }
+                }
+            }
         }
+
+        // SOLO ALLA FINE aggiungi la combinazione vuota (meno priorità)
+        combinations.add(new ArrayList<>());
 
         return combinations;
     }

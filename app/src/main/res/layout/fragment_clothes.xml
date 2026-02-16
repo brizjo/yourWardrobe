@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".ui.main.fragments.ClothesFragment">
 
     <ProgressBar
@@ -26,45 +25,88 @@
             android:id="@+id/top_buttons_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="@dimen/md"
-            android:layout_marginEnd="30dp">
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp">
 
-            <ImageView
-                android:id="@+id/filter_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+            <!-- Filtro e Ordina sulla sinistra -->
+            <LinearLayout
+                android:id="@+id/left_buttons_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/filter_garments"
-                android:focusable="true"
-                android:padding="@dimen/sm"
-                android:src="@drawable/ic_filter" />
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/order_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/filter_button"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/filter_garments"
-                android:focusable="true"
-                android:padding="@dimen/sm"
-                android:src="@drawable/ic_order" />
+                <ImageView
+                    android:id="@+id/filter_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/filter_garments"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_filter"
+                    app:tint="?attr/colorOnSurface" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/add_button"
+                <ImageView
+                    android:id="@+id/order_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Ordina"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_order"
+                    app:tint="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <!-- Bottoni Importa e Aggiungi sulla destra -->
+            <LinearLayout
+                android:id="@+id/right_buttons_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="@dimen/md"
-                android:text="@string/add_garment"
-                app:icon="@drawable/ic_add"
-                app:iconGravity="textStart" />
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <!-- Bottone Importa - Stile outlined con icona -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/import_from_gallery_button"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Importa"
+                    android:textSize="13sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="16dp"
+                    app:icon="@drawable/ic_image"
+                    app:iconGravity="start"
+                    app:iconSize="20dp"
+                    app:iconPadding="4dp"
+                    app:strokeWidth="1dp" />
+
+                <!-- Bottone Aggiungi capo - Stile filled principale -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_button"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Aggiungi"
+                    android:textSize="13sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="16dp"
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="start"
+                    app:iconSize="20dp"
+                    app:iconPadding="4dp" />
+            </LinearLayout>
+
         </RelativeLayout>
 
         <HorizontalScrollView
@@ -94,7 +136,7 @@
                 android:layout_height="match_parent"
                 android:fillViewport="true"
                 android:visibility="gone"
-                tools:visibility="visible">>
+                tools:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -177,4 +177,6 @@
     <string name="welcome_home">Ciao,</string>
     <string name="guest">Guest</string>
     <string name="reload_outfit">Rigenera outfit</string>
+    <string name="importa_capi_dalla_galleria">Importa capi dalla galleria</string>
+    <string name="salva_tutti_i_capi">Salva tutti i capi</string>
 </resources>

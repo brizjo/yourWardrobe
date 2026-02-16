@@ -1,5 +1,6 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
@@ -24,6 +28,7 @@ import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 @HiltViewModel
 public class OutfitMenuViewModel extends ViewModel {
 
+    private final Context context;
     private static final String TAG = "OutfitMenuViewModel";
     private final OutfitRepository outfitRepository;
     private final GarmentRepository garmentRepository;
@@ -50,7 +55,8 @@ public class OutfitMenuViewModel extends ViewModel {
     private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.LOADING);
 
     @Inject
-    public OutfitMenuViewModel(OutfitRepository outfitRepository, GarmentRepository garmentRepository) {
+    public OutfitMenuViewModel(@ApplicationContext Context context, OutfitRepository outfitRepository, GarmentRepository garmentRepository) {
+        this.context = context;
         this.outfitRepository = outfitRepository;
         this.garmentRepository = garmentRepository;
         checkDataAndFetchOutfits();
@@ -279,16 +285,15 @@ public class OutfitMenuViewModel extends ViewModel {
     // =========================================================================
 
     public List<String> getAllStyles() {
-        return List.of("Casual", "Elegante", "Sportivo", "Formale", "Streetwear", "Business", "Boho", "Vintage");
+        //return List.of("Casual", "Elegante", "Sportivo", "Formale", "Streetwear", "Business", "Boho", "Vintage");
+        return Arrays.asList(context.getResources().getStringArray(R.array.garment_styles));
     }
 
     public List<String> getAllSeasons() {
-        return List.of("Tutte le stagioni", "Primavera", "Estate", "Autunno", "Inverno",
-                "Inverno - Autunno", "Primavera - Estate", "Primavera - Autunno");
+        return Arrays.asList(context.getResources().getStringArray(R.array.seasons));
     }
 
     public List<String> getAllColors() {
-        return List.of("Nero", "Bianco", "Grigio", "Blu", "Rosso", "Verde", "Beige", "Marrone", "Rosa",
-                "Giallo", "Arancione", "Viola", "Blu scuro");
+        return Arrays.asList(context.getResources().getStringArray(R.array.garment_color));
     }
 }

@@ -172,14 +172,14 @@ public class OutfitMenuFragment extends Fragment {
                     emptyOutfitView.setVisibility(View.VISIBLE);
                     emptyOutfitIcon.setImageResource(R.drawable.ic_hanger); // Icona che suggerisce di aggiungere vestiti
                     emptyOutfitMessage.setText("Aggiungi almeno un capo superiore e uno inferiore per creare un outfit.");
-                    emptyOutfitActionButton.setText(R.string.aggiungi_capo);
+                    emptyOutfitActionButton.setText(R.string.add_garment);
                     break;
 
                 case NO_OUTFITS:
                     emptyOutfitView.setVisibility(View.VISIBLE);
                     emptyOutfitIcon.setImageResource(R.drawable.ic_outfit);
                     emptyOutfitMessage.setText("Nessun outfit creato. Inizia a comporre il tuo primo look!");
-                    emptyOutfitActionButton.setText(R.string.componi_outfit);
+                    emptyOutfitActionButton.setText(R.string.compose_outfit);
                     break;
 
                 case HAS_OUTFITS:

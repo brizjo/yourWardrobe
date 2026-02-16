@@ -38,8 +38,12 @@
     <string name="ciao_guest">Ciao, ospite</string>
     <string name="username_signup">Username</string>
     <string name="season">Stagione</string>
+    <string name="all_seasons">Tutte le stagioni</string>
     <string name="winter">Inverno</string>
+    <string name="winter_autumn">Inverno - Autunno</string>
     <string name="spring">Primavera</string>
+    <string name="spring_summer">Primavera - Estate</string>
+    <string name="spring_autumn">Primavera - Autunno</string>
     <string name="summer">Estate</string>
     <string name="autumn">Autunno</string>
     <string name="seleziona_colori">Seleziona Colori</string>

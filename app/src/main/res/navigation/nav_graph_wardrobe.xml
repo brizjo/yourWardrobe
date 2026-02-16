@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_outfitFragment_to_createOutfitFragment"
             app:destination="@id/createOutfitFragment" />
+        <action
+            android:id="@+id/action_outfitFragment_to_clothesFragment"
+            app:destination="@id/clothesFragment" />
     </fragment>
 
     <fragment

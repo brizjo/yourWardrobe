@@ -7,23 +7,77 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.main.fragments.OutfitMenuFragment">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_outfit_button"
-        android:layout_width="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="@dimen/md"
-        app:icon="@drawable/ic_add"
-        app:iconGravity="textStart"
-        android:layout_height="wrap_content"
-        android:text="@string/componi_outfit" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/outfit_recycler_view"
+    <LinearLayout
+        android:id="@+id/main_outfit_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_outfit_button"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="@dimen/md"
+            app:icon="@drawable/ic_add"
+            app:iconGravity="textStart"
+            android:layout_height="wrap_content"
+            android:text="@string/componi_outfit" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/outfit_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/empty_outfit_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ImageView
+            android:id="@+id/empty_outfit_icon"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_outfit"
+            app:tint="?attr/colorPrimary"
+            android:contentDescription="@string/outfit" />
+
+        <TextView
+            android:id="@+id/empty_outfit_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            tools:text="Nessun outfit creato. Inizia a comporre il tuo primo look!" />
+
+        <Button
+            android:id="@+id/empty_outfit_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:icon="@drawable/ic_add"
+            tools:text="@string/componi_outfit" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </LinearLayout>

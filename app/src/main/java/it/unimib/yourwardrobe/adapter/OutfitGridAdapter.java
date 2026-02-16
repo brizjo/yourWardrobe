@@ -16,7 +16,7 @@ import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 
 public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.OutfitGridViewHolder> {
 
-    private final List<Outfit> outfits;
+    private List<Outfit> outfits;
     private final int layoutId;
     private final OnItemClickListener listener;
 
@@ -48,9 +48,15 @@ public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.Ou
         return outfits != null ? outfits.size() : 0;
     }
 
+    public void updateOutfits(List<Outfit> newOutfits) {
+        this.outfits.clear();
+        this.outfits.addAll(newOutfits);
+        notifyDataSetChanged(); // Notifica al RecyclerView che i dati sono cambiati e deve ridisegnarsi.
+    }
+
     public static class OutfitGridViewHolder extends RecyclerView.ViewHolder {
         private final CardOutfit cardOutfit;
-        private final TextView tvOutfitName; // Aggiungi questo riferimento
+        private final TextView tvOutfitName;
 
         public OutfitGridViewHolder(@NonNull View itemView) {
             super(itemView);

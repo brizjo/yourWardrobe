@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
             Set<Integer> topLevelDestinations = new HashSet<>();
             topLevelDestinations.add(R.id.homeFragment);
-            topLevelDestinations.add(R.id.wardrobeFragment);
+            topLevelDestinations.add(R.id.wardrobe_nav_graph);
             topLevelDestinations.add(R.id.personalStylistFragment);
             topLevelDestinations.add(R.id.profileFragment);
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();

@@ -34,7 +34,16 @@
         <action
             android:id="@+id/action_clothesFragment_to_addGarmentFragment"
             app:destination="@id/addGarmentFragment" />
+        <action
+            android:id="@+id/action_clothesFragment_to_bulkImportFragment"
+            app:destination="@id/bulkImportFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/bulkImportFragment"
+        android:name="it.unimib.yourwardrobe.ui.main.fragments.BulkImportFragment"
+        android:label="Importa capi dalla galleria"
+        tools:layout="@layout/fragment_bulk_import" />
 
     <!-- Schermata Outfit -->
     <fragment

@@ -19,9 +19,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
+import it.unimib.yourwardrobe.domain.model.UserPreferences;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
+import it.unimib.yourwardrobe.domain.repository.ProfileRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
@@ -29,10 +31,12 @@ import it.unimib.yourwardrobe.utils.WeatherUtil;
 public class PersonalStylistViewModel extends ViewModel {
 
     private static final String NOT_SELECTED = "Non selezionato";
+    private static final double PREFERENCE_BOOST = 2.5; // Moltiplicatore per outfit con preferenze
 
     private final GarmentRepository garmentRepository;
     private final OutfitRepository outfitRepository;
     private final WeatherRepository weatherRepository;
+    private final ProfileRepository profileRepository;
 
     private final MutableLiveData<WeatherInfo> currentWeather = new MutableLiveData<>();
     private final MutableLiveData<String> suggestedSeason = new MutableLiveData<>();
@@ -47,26 +51,90 @@ public class PersonalStylistViewModel extends ViewModel {
     private List<Garment> allGarments = new ArrayList<>();
     private double currentTemperature = 20.0;
 
+    // Preferenze utente
+    private List<String> userFavoriteColors = new ArrayList<>();
+    private List<String> userFavoriteStyles = new ArrayList<>();
+
     private final Map<String, Set<String>> colorHarmony = new HashMap<>();
     private final Map<String, Set<String>> styleCompatibility = new HashMap<>();
-
-    // Mappa: stagione filtro → set di season dei capi compatibili
     private final Map<String, Set<String>> seasonCompatibility = new HashMap<>();
 
     @Inject
     public PersonalStylistViewModel(
             GarmentRepository garmentRepository,
             OutfitRepository outfitRepository,
-            WeatherRepository weatherRepository) {
+            WeatherRepository weatherRepository,
+            ProfileRepository profileRepository) {
         this.garmentRepository = garmentRepository;
         this.outfitRepository = outfitRepository;
         this.weatherRepository = weatherRepository;
+        this.profileRepository = profileRepository;
 
         initializeColorHarmony();
         initializeStyleCompatibility();
         initializeSeasonCompatibility();
         loadFilters();
         loadGarments();
+        loadUserPreferences();
+    }
+
+    // -------------------------------------------------------------------------
+    // User Preferences
+    // -------------------------------------------------------------------------
+
+    private void loadUserPreferences() {
+        profileRepository.getUserPreferences().observeForever(prefs -> {
+            if (prefs != null) {
+                userFavoriteColors = prefs.getFavoriteColors() != null
+                        ? new ArrayList<>(prefs.getFavoriteColors())
+                        : new ArrayList<>();
+                userFavoriteStyles = prefs.getFavoriteStyles() != null
+                        ? new ArrayList<>(prefs.getFavoriteStyles())
+                        : new ArrayList<>();
+
+                android.util.Log.d("PersonalStylistVM",
+                        "Preferenze caricate - Colori: " + userFavoriteColors.size() +
+                                ", Stili: " + userFavoriteStyles.size());
+            }
+        });
+    }
+
+    /**
+     * Calcola un punteggio per l'outfit in base alle preferenze dell'utente.
+     * Più colori/stili preferiti sono presenti, più alto è il punteggio.
+     */
+    private double calculatePreferenceScore(List<Garment> outfit) {
+        double score = 1.0;
+        int matchingColors = 0;
+        int matchingStyles = 0;
+
+        // Conta quanti colori preferiti sono nell'outfit
+        for (Garment garment : outfit) {
+            if (garment.getColor() != null) {
+                for (String color : garment.getColor()) {
+                    if (userFavoriteColors.contains(color)) {
+                        matchingColors++;
+                    }
+                }
+            }
+            if (garment.getStyle() != null) {
+                for (String style : garment.getStyle()) {
+                    if (userFavoriteStyles.contains(style)) {
+                        matchingStyles++;
+                    }
+                }
+            }
+        }
+
+        // Boost del punteggio in base ai match
+        if (matchingColors > 0) {
+            score *= (1.0 + (matchingColors * 0.3)); // +30% per ogni colore preferito
+        }
+        if (matchingStyles > 0) {
+            score *= (1.0 + (matchingStyles * 0.4)); // +40% per ogni stile preferito
+        }
+
+        return score;
     }
 
     // -------------------------------------------------------------------------
@@ -96,41 +164,15 @@ public class PersonalStylistViewModel extends ViewModel {
         styleCompatibility.put("Vintage",    new HashSet<>(Arrays.asList("Vintage", "Casual", "Elegante")));
     }
 
-    /**
-     * Definisce quali valori di season su un Garment sono accettabili
-     * per ogni stagione selezionata nel filtro.
-     * "Tutte le stagioni" è sempre compatibile con qualsiasi filtro.
-     */
     private void initializeSeasonCompatibility() {
-        // Filtro Primavera → accetta capi Primavera, Primavera-Estate, Primavera-Autunno, Tutte le stagioni
         seasonCompatibility.put("Primavera", new HashSet<>(Arrays.asList(
-                "Primavera",
-                "Primavera - Estate",
-                "Primavera - Autunno",
-                "Tutte le stagioni"
-        )));
-
-        // Filtro Estate → accetta capi Estate, Primavera-Estate, Tutte le stagioni
+                "Primavera", "Primavera - Estate", "Primavera - Autunno", "Tutte le stagioni")));
         seasonCompatibility.put("Estate", new HashSet<>(Arrays.asList(
-                "Estate",
-                "Primavera - Estate",
-                "Tutte le stagioni"
-        )));
-
-        // Filtro Autunno → accetta capi Autunno, Inverno-Autunno, Primavera-Autunno, Tutte le stagioni
+                "Estate", "Primavera - Estate", "Tutte le stagioni")));
         seasonCompatibility.put("Autunno", new HashSet<>(Arrays.asList(
-                "Autunno",
-                "Inverno - Autunno",
-                "Primavera - Autunno",
-                "Tutte le stagioni"
-        )));
-
-        // Filtro Inverno → accetta capi Inverno, Inverno-Autunno, Tutte le stagioni
+                "Autunno", "Inverno - Autunno", "Primavera - Autunno", "Tutte le stagioni")));
         seasonCompatibility.put("Inverno", new HashSet<>(Arrays.asList(
-                "Inverno",
-                "Inverno - Autunno",
-                "Tutte le stagioni"
-        )));
+                "Inverno", "Inverno - Autunno", "Tutte le stagioni")));
     }
 
     private void loadFilters() {
@@ -194,10 +236,6 @@ public class PersonalStylistViewModel extends ViewModel {
     // Season helpers
     // -------------------------------------------------------------------------
 
-    /**
-     * Controlla se un capo è compatibile con la stagione filtro selezionata.
-     * Un capo senza season è sempre compatibile.
-     */
     private boolean garmentMatchesSeason(Garment garment, String filterSeason) {
         if (filterSeason == null || filterSeason.isEmpty()) return true;
         String garmentSeason = garment.getSeason();
@@ -209,10 +247,6 @@ public class PersonalStylistViewModel extends ViewModel {
         return compatible.contains(garmentSeason);
     }
 
-    /**
-     * Stagioni "calde": Estate e Primavera.
-     * Per queste stagioni escludiamo capi invernali/autunnali anche da scarpe e accessori.
-     */
     private boolean isWarmSeason(String season) {
         return "Estate".equals(season) || "Primavera".equals(season);
     }
@@ -224,8 +258,9 @@ public class PersonalStylistViewModel extends ViewModel {
     public void generateOutfit(String filterSeason, String filterColor, String filterStyle) {
         android.util.Log.d("PersonalStylistVM", "=== GENERAZIONE OUTFIT ===");
         android.util.Log.d("PersonalStylistVM", "Stagione: " + filterSeason);
-        android.util.Log.d("PersonalStylistVM", "Colore: "   + filterColor);
-        android.util.Log.d("PersonalStylistVM", "Stile: "    + filterStyle);
+        android.util.Log.d("PersonalStylistVM", "Colore: " + filterColor);
+        android.util.Log.d("PersonalStylistVM", "Stile: " + filterStyle);
+        android.util.Log.d("PersonalStylistVM", "Preferenze - Colori: " + userFavoriteColors + ", Stili: " + userFavoriteStyles);
 
         if (allGarments.isEmpty()) {
             errorMessage.setValue("Nessun capo disponibile nel guardaroba");
@@ -235,12 +270,9 @@ public class PersonalStylistViewModel extends ViewModel {
         String actualColor = NOT_SELECTED.equals(filterColor) ? null : filterColor;
         String actualStyle = NOT_SELECTED.equals(filterStyle) ? null : filterStyle;
 
-        // Top e bottom: SEMPRE filtrati per stagione, sono la base dell'outfit
-        List<Garment> tops    = filterByCategoryAndSeason(allGarments, "Parte superiore", filterSeason);
+        List<Garment> tops = filterByCategoryAndSeason(allGarments, "Parte superiore", filterSeason);
         List<Garment> bottoms = filterByCategoryAndSeason(allGarments, "Parte inferiore", filterSeason);
 
-        // Scarpe: filtrate per stagione solo in estate/primavera
-        // In autunno/inverno sono libere (stivali invernali con t-shirt sotto va bene)
         List<Garment> shoes;
         if (isWarmSeason(filterSeason)) {
             shoes = filterByCategoryAndSeason(allGarments, "Calzature", filterSeason);
@@ -248,8 +280,6 @@ public class PersonalStylistViewModel extends ViewModel {
             shoes = filterByCategory(allGarments, "Calzature");
         }
 
-        // Accessori: sempre liberi, una sciarpa invernale con outfit estivo non ha senso
-        // ma una borsa o cintura è sempre compatibile — gestiamo come le scarpe
         List<Garment> accessories;
         if (isWarmSeason(filterSeason)) {
             accessories = filterByCategoryAndSeason(allGarments, "Accessori", filterSeason);
@@ -257,7 +287,8 @@ public class PersonalStylistViewModel extends ViewModel {
             accessories = filterByCategory(allGarments, "Accessorio");
         }
 
-        android.util.Log.d("PersonalStylistVM", "Pool - Top: " + tops.size() + ", Bottom: " + bottoms.size() + ", Scarpe: " + shoes.size() + ", Accessori: " + accessories.size());
+        android.util.Log.d("PersonalStylistVM", "Pool - Top: " + tops.size() + ", Bottom: " + bottoms.size() +
+                ", Scarpe: " + shoes.size() + ", Accessori: " + accessories.size());
 
         if (tops.isEmpty() || bottoms.isEmpty()) {
             errorMessage.setValue("Non hai abbastanza capi per generare un outfit (servono almeno 1 top e 1 bottom)");
@@ -275,14 +306,80 @@ public class PersonalStylistViewModel extends ViewModel {
             return;
         }
 
-        Random random = new Random();
-        List<Garment> selectedOutfit = validOutfits.get(random.nextInt(validOutfits.size()));
+        // SELEZIONE OUTFIT CON PREFERENZE
+        List<Garment> selectedOutfit = selectOutfitWithPreferences(validOutfits, actualColor, actualStyle);
+
         android.util.Log.d("PersonalStylistVM", "Outfit selezionato con " + selectedOutfit.size() + " capi");
         generatedOutfitGarments.setValue(selectedOutfit);
     }
 
+    /**
+     * Seleziona un outfit dando priorità a quelli con colori/stili preferiti
+     * quando non ci sono filtri specifici.
+     */
+    private List<Garment> selectOutfitWithPreferences(List<List<Garment>> validOutfits,
+                                                      String filterColor, String filterStyle) {
+        // Se ci sono filtri espliciti, selezione casuale normale
+        if (filterColor != null || filterStyle != null) {
+            Random random = new Random();
+            return validOutfits.get(random.nextInt(validOutfits.size()));
+        }
+
+        // Nessun filtro → usa preferenze per pesare la selezione
+        if (userFavoriteColors.isEmpty() && userFavoriteStyles.isEmpty()) {
+            // Nessuna preferenza salvata, selezione casuale
+            Random random = new Random();
+            return validOutfits.get(random.nextInt(validOutfits.size()));
+        }
+
+        // Calcola punteggi per tutti gli outfit
+        List<OutfitScore> scoredOutfits = new ArrayList<>();
+        for (List<Garment> outfit : validOutfits) {
+            double score = calculatePreferenceScore(outfit);
+            scoredOutfits.add(new OutfitScore(outfit, score));
+        }
+
+        // Ordina per punteggio decrescente
+        scoredOutfits.sort((a, b) -> Double.compare(b.score, a.score));
+
+        // Log top 5 outfit
+        android.util.Log.d("PersonalStylistVM", "=== TOP 5 OUTFIT PER PUNTEGGIO PREFERENZE ===");
+        for (int i = 0; i < Math.min(5, scoredOutfits.size()); i++) {
+            android.util.Log.d("PersonalStylistVM", "#" + (i+1) + " Score: " + scoredOutfits.get(i).score);
+        }
+
+        // Selezione pesata: 70% top 20%, 30% resto
+        Random random = new Random();
+        int topCount = Math.max(1, (int)(validOutfits.size() * 0.2));
+
+        if (random.nextDouble() < 0.7) {
+            // Scegli da top 20%
+            int index = random.nextInt(Math.min(topCount, scoredOutfits.size()));
+            android.util.Log.d("PersonalStylistVM", "Selezionato outfit da TOP 20% (index " + index + ")");
+            return scoredOutfits.get(index).outfit;
+        } else {
+            // Scegli dal resto
+            int index = random.nextInt(scoredOutfits.size());
+            android.util.Log.d("PersonalStylistVM", "Selezionato outfit casuale (index " + index + ")");
+            return scoredOutfits.get(index).outfit;
+        }
+    }
+
+    /**
+     * Classe helper per associare outfit e punteggio
+     */
+    private static class OutfitScore {
+        List<Garment> outfit;
+        double score;
+
+        OutfitScore(List<Garment> outfit, double score) {
+            this.outfit = outfit;
+            this.score = score;
+        }
+    }
+
     // -------------------------------------------------------------------------
-    // Combinazioni outfit
+    // Combinazioni outfit (resto del codice invariato)
     // -------------------------------------------------------------------------
 
     private List<List<Garment>> generateAllPossibleOutfits(
@@ -319,17 +416,13 @@ public class PersonalStylistViewModel extends ViewModel {
             shoesCombinations.add(singleShoe);
         }
 
-        // Accessory combinations (0 to 4) - PRIORITIZZA COMBINAZIONI CON ACCESSORI
         List<List<Garment>> accessoryCombinations = new ArrayList<>();
 
-// PRIMA aggiungi combinazioni CON accessori
         for (int i = 0; i < accessories.size(); i++) {
-            // Singolo accessorio
             List<Garment> single = new ArrayList<>();
             single.add(accessories.get(i));
             accessoryCombinations.add(single);
 
-            // Coppie di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 4; j++) {
                 List<Garment> pair = new ArrayList<>();
                 pair.add(accessories.get(i));
@@ -337,7 +430,6 @@ public class PersonalStylistViewModel extends ViewModel {
                 accessoryCombinations.add(pair);
             }
 
-            // Triple di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 3; j++) {
                 for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
                     List<Garment> triple = new ArrayList<>();
@@ -348,7 +440,6 @@ public class PersonalStylistViewModel extends ViewModel {
                 }
             }
 
-            // Quadruple di accessori
             for (int j = i + 1; j < accessories.size() && j < i + 2; j++) {
                 for (int k = j + 1; k < accessories.size() && k < j + 2; k++) {
                     for (int l = k + 1; l < accessories.size() && l < k + 2; l++) {
@@ -363,9 +454,7 @@ public class PersonalStylistViewModel extends ViewModel {
             }
         }
 
-// SOLO ALLA FINE aggiungi la combinazione vuota (meno priorità)
         accessoryCombinations.add(new ArrayList<>());
-
 
         for (List<Garment> topCombo : topCombinations) {
             if (topCombo.size() > 2) continue;
@@ -386,13 +475,8 @@ public class PersonalStylistViewModel extends ViewModel {
             }
         }
 
-        android.util.Log.d("PersonalStylistVM", "Outfit totali generati: " + allOutfits.size());
         return allOutfits;
     }
-
-    // -------------------------------------------------------------------------
-    // Filtri
-    // -------------------------------------------------------------------------
 
     private List<List<Garment>> filterOutfitsByConstraints(
             List<List<Garment>> outfits, String filterColor, String filterStyle) {
@@ -401,7 +485,7 @@ public class PersonalStylistViewModel extends ViewModel {
         for (List<Garment> outfit : outfits) {
             if (!isColorHarmonious(outfit)) continue;
             if (!isStyleCompatible(outfit)) continue;
-            if (!hasUniqueSubCategories(outfit)) continue; // NUOVO CONTROLLO
+            if (!hasUniqueSubCategories(outfit)) continue;
 
             boolean meetsColor = filterColor == null || filterColor.isEmpty() || outfitHasColor(outfit, filterColor);
             boolean meetsStyle = filterStyle == null || filterStyle.isEmpty() || outfitHasStyle(outfit, filterStyle);
@@ -467,32 +551,14 @@ public class PersonalStylistViewModel extends ViewModel {
         return true;
     }
 
-    /**
-     * Verifica che nell'outfit non ci siano due capi con la stessa sottocategoria.
-     * Es: non vogliamo due T-shirt, due jeans, due scarpe da ginnastica nello stesso outfit.
-     * Capi senza sottocategoria (null o vuota) vengono ignorati.
-     */
     private boolean hasUniqueSubCategories(List<Garment> outfit) {
         Set<String> seenSubCategories = new HashSet<>();
-
         for (Garment garment : outfit) {
             String subCategory = garment.getSubCategory();
-
-            // Ignora capi senza sottocategoria
-            if (subCategory == null || subCategory.trim().isEmpty()) {
-                continue;
-            }
-
-            // Se la sottocategoria è già presente, l'outfit non è valido
-            if (seenSubCategories.contains(subCategory)) {
-                android.util.Log.d("PersonalStylistVM",
-                        "Outfit scartato: sottocategoria duplicata '" + subCategory + "'");
-                return false;
-            }
-
+            if (subCategory == null || subCategory.trim().isEmpty()) continue;
+            if (seenSubCategories.contains(subCategory)) return false;
             seenSubCategories.add(subCategory);
         }
-
         return true;
     }
 
@@ -509,10 +575,6 @@ public class PersonalStylistViewModel extends ViewModel {
         }
         return false;
     }
-
-    // -------------------------------------------------------------------------
-    // Save outfit
-    // -------------------------------------------------------------------------
 
     public void saveGeneratedOutfit(String outfitName) {
         List<Garment> garments = generatedOutfitGarments.getValue();
@@ -540,10 +602,6 @@ public class PersonalStylistViewModel extends ViewModel {
             }
         });
     }
-
-    // -------------------------------------------------------------------------
-    // LiveData getters
-    // -------------------------------------------------------------------------
 
     public LiveData<WeatherInfo> getCurrentWeather() { return currentWeather; }
     public LiveData<String> getSuggestedSeason() { return suggestedSeason; }

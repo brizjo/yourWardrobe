@@ -7,11 +7,13 @@ import dagger.hilt.components.SingletonComponent;
 import it.unimib.yourwardrobe.domain.repository.AuthRepository;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
+import it.unimib.yourwardrobe.domain.repository.ProfileRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.source.repository.AuthRepositoryImpl;
 import it.unimib.yourwardrobe.source.repository.OutfitRepositoryImpl;
 import it.unimib.yourwardrobe.source.repository.GarmentRepositoryImpl;
 import it.unimib.yourwardrobe.source.repository.WeatherRepositoryImpl;
+import it.unimib.yourwardrobe.source.repository.ProfileRepositoryImpl;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -28,4 +30,9 @@ public abstract class RepositoryModule {
 
     @Binds
     public abstract OutfitRepository bindOutfitRepository(OutfitRepositoryImpl impl);
+
+    @Binds
+    public abstract ProfileRepository bindProfileRepository(ProfileRepositoryImpl impl);
+
+
 }

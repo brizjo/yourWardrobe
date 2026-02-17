@@ -73,7 +73,7 @@
                 android:layout_gravity="end"
                 android:layout_alignParentEnd="true"
                 android:focusable="true"
-                app:maxImageSize="38dp"
+                app:maxImageSize="44dp"
                 app:srcCompat="@drawable/ic_outfit_add"
                 app:backgroundTint="@color/md_theme_primary"
                 app:tint="@color/md_theme_onPrimary">

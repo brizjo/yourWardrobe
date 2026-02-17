@@ -86,7 +86,6 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         public void bind(Garment garment, OnItemClickListener listener) {
             if (cardGarment != null && garment != null) {
                 GlideLoader.loadImage(itemView.getContext(), garment.getImageUrl(), targetImageView);
-                // Caricamento immagine tramite Glide nell'ImageView del componente custom
 
 
                 cardGarment.setOnCardClickListener(v -> {

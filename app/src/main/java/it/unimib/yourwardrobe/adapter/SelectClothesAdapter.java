@@ -17,6 +17,7 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdapter.ViewHolder> {
 
@@ -141,11 +142,8 @@ public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdap
 
         public void bind(Garment garment, boolean isSelected) {
             // Carica l'immagine con Glide
-            Glide.with(itemView.getContext())
-                    .load(garment.getImageUrl())
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .centerCrop()
-                    .into(ivGarment);
+            GlideLoader.loadImage(itemView.getContext(), garment.getImageUrl(), ivGarment);
+
 
             // Aggiorna l'UI in base allo stato di selezione
             updateSelectionUI(isSelected);

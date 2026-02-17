@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class OutfitComponentAdapter extends RecyclerView.Adapter<OutfitComponentAdapter.ViewHolder> {
 
@@ -35,11 +36,8 @@ public class OutfitComponentAdapter extends RecyclerView.Adapter<OutfitComponent
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Garment g = items.get(position);
-        Glide.with(holder.itemView.getContext())
-                .load(g.getImageUrl())
-                .centerCrop()
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(holder.image);
+        GlideLoader.loadImage(holder.itemView.getContext(), g.getImageUrl(), holder.image);
+
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(g));
     }

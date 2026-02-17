@@ -13,7 +13,9 @@
         tools:layout="@layout/fragment_wardrobe" >
         <action
             android:id="@+id/action_wardrobeFragment_to_clothesFragment"
-            app:destination="@id/clothesFragment" />
+            app:destination="@id/clothesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_wardrobeFragment_to_outfitFragment"
             app:destination="@id/outfitFragment" />

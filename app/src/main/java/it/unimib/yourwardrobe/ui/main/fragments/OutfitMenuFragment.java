@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class OutfitMenuFragment extends Fragment {
     private Button emptyOutfitActionButton;
     private ProgressBar loadingProgressBar;
     private RecyclerView recyclerViewOutfit;
-    private Button createOutfitButton;
+    private FloatingActionButton createOutfitButton;
     private ImageView filterButton;
     private ImageView orderButton;
     private HorizontalScrollView activeFiltersScrollView;
@@ -129,7 +130,7 @@ public class OutfitMenuFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        Button createOutfitButton = requireView().findViewById(R.id.create_outfit_button);
+        createOutfitButton = requireView().findViewById(R.id.create_outfit_button);
         createOutfitButton.setOnClickListener(v -> navigateToCreateOutfit());
         emptyOutfitActionButton.setOnClickListener(v -> {
             // L'azione del pulsante dipende dallo stato

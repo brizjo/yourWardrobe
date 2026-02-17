@@ -1,22 +1,12 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.os.Build;
 import android.os.Bundle;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -29,15 +19,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,10 +45,7 @@ import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import it.unimib.yourwardrobe.utils.ImageValidationState;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class AddGarmentFragment extends Fragment {
@@ -62,19 +58,6 @@ public class AddGarmentFragment extends Fragment {
     private ChipGroup seasonChipGroup;
     private ChipGroup subCategoryChipGroup;
     private AddGarmentViewModel viewModel;
-    private TextInputEditText garmentNameEditText;
-    private Button addGarmentButton;
-    private ProgressBar addGarmentProgressBar;
-
-    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    launchCamera();
-                } else {
-                    Toast.makeText(getContext(), "Permesso fotocamera necessario per scattare una foto", Toast.LENGTH_SHORT).show();
-                }
-            });
-
     private final ActivityResultLauncher<Void> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 if (bitmap != null) {
@@ -83,16 +66,14 @@ public class AddGarmentFragment extends Fragment {
                     viewModel.setGarmentImage(bitmap);
                 }
             });
-
-    private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
+    private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    launchGallery();
+                    launchCamera();
                 } else {
-                    Toast.makeText(getContext(), "Permesso galleria necessario per scegliere una foto", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(requireView(), "Permesso fotocamera necessario per scattare una foto", Snackbar.LENGTH_LONG).show();
                 }
             });
-
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
@@ -102,14 +83,26 @@ public class AddGarmentFragment extends Fragment {
                         Bitmap bitmap = ImageDecoder.decodeBitmap(source);
                         viewModel.setGarmentImage(bitmap);
                     } catch (IOException e) {
-                        ToastHelper.show(getContext(), "Errore nel caricare l'immagine", true);
+                        Snackbar.make(requireView(), "Errore nel caricare l'immagine", Snackbar.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.d("PhotoPicker", "Nessuna immagine selezionata");
                 }
             });
+    private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    launchGallery();
+                } else {
+                    Snackbar.make(requireView(), "Permesso galleria necessario per scegliere una foto", Snackbar.LENGTH_SHORT).show();
+                }
+            });
+    private TextInputEditText garmentNameEditText;
+    private Button addGarmentButton;
+    private ProgressBar addGarmentProgressBar;
 
-    public AddGarmentFragment() {}
+    public AddGarmentFragment() {
+    }
 
     public static AddGarmentFragment newInstance() {
         return new AddGarmentFragment();
@@ -144,8 +137,14 @@ public class AddGarmentFragment extends Fragment {
         addGarmentImageView.setOnClickListener(v -> showImagePickerDialog());
 
         garmentNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 viewModel.setGarmentName(s.toString());
@@ -169,16 +168,16 @@ public class AddGarmentFragment extends Fragment {
         observeViewModel(view);
     }
 
-    private void initViews(View view){
-        addGarmentImageView   = view.findViewById(R.id.addGarmentImage);
-        categoryTextView      = view.findViewById(R.id.category_text_view);
-        colorChipGroup        = view.findViewById(R.id.chip_group_color);
-        styleChipGroup        = view.findViewById(R.id.chip_group_style);
-        fabricChipGroup       = view.findViewById(R.id.chip_group_fabric);
-        seasonChipGroup       = view.findViewById(R.id.chip_group_season);
-        subCategoryChipGroup  = view.findViewById(R.id.chip_group_subcategory);
-        garmentNameEditText   = view.findViewById(R.id.garmentName);
-        addGarmentButton      = view.findViewById(R.id.add_garment_button);
+    private void initViews(View view) {
+        addGarmentImageView = view.findViewById(R.id.addGarmentImage);
+        categoryTextView = view.findViewById(R.id.category_text_view);
+        colorChipGroup = view.findViewById(R.id.chip_group_color);
+        styleChipGroup = view.findViewById(R.id.chip_group_style);
+        fabricChipGroup = view.findViewById(R.id.chip_group_fabric);
+        seasonChipGroup = view.findViewById(R.id.chip_group_season);
+        subCategoryChipGroup = view.findViewById(R.id.chip_group_subcategory);
+        garmentNameEditText = view.findViewById(R.id.garmentName);
+        addGarmentButton = view.findViewById(R.id.add_garment_button);
         addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
     }
 
@@ -240,13 +239,14 @@ public class AddGarmentFragment extends Fragment {
 
         viewModel.getGarmentAddedSuccessfully().observe(getViewLifecycleOwner(), success -> {
             if (success != null && success) {
-                ToastHelper.show(getContext(), "Capo aggiunto con successo!", false);
+                Snackbar.make(requireView(), "Capo aggiunto con successo!", Snackbar.LENGTH_SHORT).show();
                 Navigation.findNavController(view).popBackStack();
             }
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null) ToastHelper.show(getContext(), error, false);
+            if (error != null)
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_SHORT).show();
         });
 
         viewModel.isButtonEnabled().observe(getViewLifecycleOwner(), isEnabled ->
@@ -346,7 +346,7 @@ public class AddGarmentFragment extends Fragment {
         subCategoryChipGroup.setEnabled(false);
         addChip.setOnClickListener(v -> {
             if (viewModel.getSelectedCategory().getValue() == null) {
-                ToastHelper.show(getContext(), "Seleziona prima una categoria", false);
+                Snackbar.make(requireView(), "Seleziona prima una categoria", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             showSubCategorySelectionDialog();
@@ -364,9 +364,9 @@ public class AddGarmentFragment extends Fragment {
                     ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
             addChip.setTextColor(
                     ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
-            addChip.setOnClickListener(v ->{
+            addChip.setOnClickListener(v -> {
                 if (viewModel.getSelectedCategory().getValue() == null) {
-                    ToastHelper.show(getContext(), "Seleziona prima una categoria", false);
+                    Snackbar.make(requireView(), "Seleziona prima categoria", Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 showSubCategorySelectionDialog();
@@ -390,8 +390,8 @@ public class AddGarmentFragment extends Fragment {
     private void showSubCategorySelectionDialog() {
         List<String> subCategories = viewModel.getAvailableSubCategories().getValue();
         if (subCategories == null || subCategories.isEmpty()) {
-            ToastHelper.show(getContext(), "Nessuna sottocategoria disponibile per la categoria selezionata.", false);
-        return;
+            Snackbar.make(requireView(), "Nessuna sottocategoria disponibile per la categoria selezionata.", Snackbar.LENGTH_SHORT).show();
+            return;
         }
 
         String[] subCategoriesArray = subCategories.toArray(new String[0]);
@@ -454,17 +454,13 @@ public class AddGarmentFragment extends Fragment {
         chipGroup.addView(addChip, 0);
     }
 
-    interface OnSelectionConfirmedListener {
-        void onConfirmed(List<String> newSelection);
-    }
-
     private void showChipSelectionDialog(String title, List<String> allOptions,
                                          List<String> currentSelection,
                                          OnSelectionConfirmedListener listener) {
         View dialogView = requireActivity().getLayoutInflater().inflate(R.layout.chip_selector, null);
-        TextView dialogTitle      = dialogView.findViewById(R.id.dialog_title);
+        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
         ChipGroup dialogChipGroup = dialogView.findViewById(R.id.dialog_chip_group);
-        Button okButton           = dialogView.findViewById(R.id.dialog_ok_button);
+        Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
 
         dialogTitle.setText(title);
 
@@ -586,11 +582,17 @@ public class AddGarmentFragment extends Fragment {
         }
     }
 
-    private void launchCamera() { takePictureLauncher.launch(null); }
+    private void launchCamera() {
+        takePictureLauncher.launch(null);
+    }
 
     private void launchGallery() {
         pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 .build());
+    }
+
+    interface OnSelectionConfirmedListener {
+        void onConfirmed(List<String> newSelection);
     }
 }

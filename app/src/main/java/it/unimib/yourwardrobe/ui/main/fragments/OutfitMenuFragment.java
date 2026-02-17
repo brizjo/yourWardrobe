@@ -26,6 +26,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.OutfitGridAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.OutfitMenuViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class OutfitMenuFragment extends Fragment {
@@ -56,7 +56,8 @@ public class OutfitMenuFragment extends Fragment {
     private HorizontalScrollView activeFiltersScrollView;
     private ChipGroup activeFiltersChipGroup;
 
-    public OutfitMenuFragment() {}
+    public OutfitMenuFragment() {
+    }
 
     public static OutfitMenuFragment newInstance() {
         return new OutfitMenuFragment();
@@ -203,7 +204,7 @@ public class OutfitMenuFragment extends Fragment {
             if (outfits != null) {
                 if (outfits.isEmpty()) {
                     Log.w(TAG, "⚠️ Lista vuota - nessun outfit salvato");
-                    ToastHelper.show(getContext(), "Nessun outfit trovato con questi filtri", false);
+                    Snackbar.make(requireView(), "Nessun outfit trovato con questi filtri", Snackbar.LENGTH_LONG).show();
                 } else {
                     Log.d(TAG, "✅ Trovati " + outfits.size() + " outfit:");
                     for (int i = 0; i < outfits.size(); i++) {
@@ -226,7 +227,7 @@ public class OutfitMenuFragment extends Fragment {
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Log.e(TAG, "❌❌❌ ERRORE dal ViewModel: " + error);
-                ToastHelper.show(getContext(), "Errore: " + error, false);
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG).show();
             }
         });
 
@@ -339,13 +340,6 @@ public class OutfitMenuFragment extends Fragment {
                 .show();
     }
 
-    /**
-     * Mostra dialog con chip selezionabili per filtrare
-     */
-    interface OnFilterValuesSelectedListener {
-        void onSelected(List<String> selectedValues);
-    }
-
     private void showFilterValueDialog(String title, List<String> allOptions,
                                        OnFilterValuesSelectedListener listener) {
         View dialogView = LayoutInflater.from(requireContext())
@@ -451,5 +445,12 @@ public class OutfitMenuFragment extends Fragment {
         if (viewModel != null) {
             viewModel.fetchOutfits();
         }
+    }
+
+    /**
+     * Mostra dialog con chip selezionabili per filtrare
+     */
+    interface OnFilterValuesSelectedListener {
+        void onSelected(List<String> selectedValues);
     }
 }

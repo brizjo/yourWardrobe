@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
@@ -28,7 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.viewmodel.CreateOutfitViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class CreateOutfitFragment extends Fragment {
@@ -77,9 +77,17 @@ public class CreateOutfitFragment extends Fragment {
     private void setupListeners() {
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) { viewModel.setOutfitName(s.toString()); }
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void afterTextChanged(Editable s) {
+                viewModel.setOutfitName(s.toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
         seasonTextView.setOnItemClickListener((parent, view, position, id) -> {
@@ -141,7 +149,7 @@ public class CreateOutfitFragment extends Fragment {
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 android.util.Log.e("CreateOutfitFragment", "ERRORE: " + error);
-                ToastHelper.show(getContext(), "Errore: " + error, false);
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -151,7 +159,7 @@ public class CreateOutfitFragment extends Fragment {
 
         viewModel.getOutfitSavedSuccessfully().observe(getViewLifecycleOwner(), success -> {
             if (success) {
-                ToastHelper.show(getContext(), "Outfit salvato!", false);
+                Snackbar.make(requireView(), "Outfit salvato!", Snackbar.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).navigateUp();
             }
         });

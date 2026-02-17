@@ -27,20 +27,25 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.PersonalStylistViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class PersonalStylistFragment extends Fragment {
 
     private PersonalStylistViewModel viewModel;
     private FusedLocationProviderClient fusedLocationClient;
-
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    getCurrentLocation();
+                }
+            });
     private AutoCompleteTextView filterColor, filterSeason, filterStyle;
     private MaterialButton btnGenerate, btnSave, btnRegenerate;
     private MaterialCardView cardGeneratedOutfit;
@@ -48,13 +53,6 @@ public class PersonalStylistFragment extends Fragment {
     private TextInputEditText etOutfitName;
     private TextView tvTemperature, tvSuggestedSeason;
     private ImageView ivWeatherIcon;
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    getCurrentLocation();
-                }
-            });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,14 +151,15 @@ public class PersonalStylistFragment extends Fragment {
         viewModel.getGeneratedOutfitGarments().observe(getViewLifecycleOwner(), garments -> {
             if (garments != null && !garments.isEmpty()) {
                 cardGeneratedOutfit.setVisibility(View.VISIBLE);
-                ClothesAdapter adapter = new ClothesAdapter(garments, R.layout.item_clothes_grid, (v, garment) -> {});
+                ClothesAdapter adapter = new ClothesAdapter(garments, R.layout.item_clothes_grid, (v, garment) -> {
+                });
                 rvGeneratedGarments.setAdapter(adapter);
             }
         });
 
         viewModel.getOutfitSaved().observe(getViewLifecycleOwner(), saved -> {
             if (saved != null && saved) {
-                ToastHelper.show(getContext(), "Outfit salvato!", true);
+                Snackbar.make(requireView(), "Outfit salvato!", Snackbar.LENGTH_LONG).show();
                 cardGeneratedOutfit.setVisibility(View.GONE);
                 etOutfitName.setText("");
             }
@@ -168,7 +167,7 @@ public class PersonalStylistFragment extends Fragment {
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                ToastHelper.show(getContext(), error, false);
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG).show();
             }
         });
     }

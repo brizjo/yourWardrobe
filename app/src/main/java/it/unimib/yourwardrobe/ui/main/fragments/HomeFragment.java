@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -30,13 +29,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.snackbar.Snackbar;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
@@ -53,7 +52,7 @@ public class HomeFragment extends Fragment {
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) getCurrentLocation();
-                else Toast.makeText(requireContext(), "Permesso negato", Toast.LENGTH_SHORT).show();
+                else Snackbar.make(requireView(), "Permessi negati", Snackbar.LENGTH_LONG).show();
             });
 
     // -------------------------------------------------------------------------
@@ -137,7 +136,7 @@ public class HomeFragment extends Fragment {
                     break;
                 case ERROR:
                     pb.setVisibility(GONE);
-                    ToastHelper.show(getContext(), result.message, false);
+                    Snackbar.make(requireView(), result.message, Snackbar.LENGTH_LONG).show();
                     break;
             }
         });
@@ -183,7 +182,7 @@ public class HomeFragment extends Fragment {
 
     private void checkPermissionAndGetLocation() {
         if (!isLocationEnabled()) {
-            ToastHelper.show(getContext(), "Attiva i servizi di localizzazione", false);
+            Snackbar.make(requireView(), "Attiva i servizi di localizzazione", Snackbar.LENGTH_LONG).show();
             return;
         }
         boolean fine = ContextCompat.checkSelfPermission(requireContext(),

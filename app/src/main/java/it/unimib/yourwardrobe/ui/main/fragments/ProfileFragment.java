@@ -4,8 +4,6 @@ import android.Manifest;
 import android.animation.ValueAnimator;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,8 +29,8 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +40,6 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.UserPreferences;
 import it.unimib.yourwardrobe.ui.main.viewmodel.ProfileViewModel;
 import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class ProfileFragment extends Fragment {
@@ -62,11 +59,6 @@ public class ProfileFragment extends Fragment {
 
     private AuthViewModel authViewModel;
     private ProfileViewModel profileViewModel;
-    private boolean statsGenerated = false;
-
-    private List<String> selectedStyles = new ArrayList<>();
-    private List<String> selectedColors = new ArrayList<>();
-
     // Launcher per la galleria
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -74,16 +66,19 @@ public class ProfileFragment extends Fragment {
                     handleImageSelected(uri);
                 }
             });
-
     // Launcher per i permessi (Android 13+)
     private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     launchGallery();
                 } else {
-                    ToastHelper.show(getContext(), "Permesso galleria necessario", true);
+                    Snackbar.make(requireView(), "Permesso galleria necessario", Snackbar.LENGTH_SHORT).show();
                 }
             });
+    private boolean statsGenerated = false;
+    private List<String> selectedStyles = new ArrayList<>();
+    private List<String> selectedColors = new ArrayList<>();
+    private String currentAvatarUrl = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,8 +131,6 @@ public class ProfileFragment extends Fragment {
         avatarContainer.setOnClickListener(v -> checkGalleryPermissionAndLaunch());
     }
 
-    private String currentAvatarUrl = null;
-
     private void observeViewModels() {
         authViewModel.getAuthResult().observe(getViewLifecycleOwner(), result -> {
             switch (result.status) {
@@ -183,7 +176,7 @@ public class ProfileFragment extends Fragment {
                         .skipMemoryCache(true)
                         .error(R.drawable.profile_avatar_placeholder)
                         .into(ivAvatar);
-                ToastHelper.show(getContext(), "Avatar aggiornato!", false);
+                Snackbar.make(requireView(), "Avatar aggiornato!", Snackbar.LENGTH_SHORT).show();
             }
         });
 

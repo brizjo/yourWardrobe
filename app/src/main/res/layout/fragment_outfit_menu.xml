@@ -15,18 +15,17 @@
         android:visibility="gone"
         tools:visibility="visible"
         android:clipToPadding="false">
+
         <TextView
             android:id="@+id/title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/md"
             android:text="I tuoi Outfit"
-            android:textSize="24sp"
+            android:textSize="36sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:fontFamily="@font/playfairdisplay_medium"
-
-            />
+            android:fontFamily="@font/troglo" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -75,9 +74,8 @@
                 android:focusable="true"
                 app:maxImageSize="44dp"
                 app:srcCompat="@drawable/ic_outfit_add"
-                app:backgroundTint="@color/md_theme_primary"
-                app:tint="@color/md_theme_onPrimary">
-            </com.google.android.material.floatingactionbutton.FloatingActionButton>
+                app:backgroundTint="#000000"
+                app:tint="@null" />
 
         </RelativeLayout>
 
@@ -97,6 +95,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:chipSpacing="8dp" />
+
         </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -110,7 +109,7 @@
             android:clipToPadding="false"
             tools:listitem="@layout/item_outfit_grid"
             tools:itemCount="6"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
     </LinearLayout>
 
@@ -157,6 +156,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
 </LinearLayout>

@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageDecoder;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -61,17 +63,23 @@ public class GarmentFragment extends Fragment {
     private boolean isInitialGarmentLoad = true;
     private Bitmap pendingBitmap = null;
 
+    // ✅ font
+    private Typeface popstarTypeface;
+    private Typeface changoTypeface;
+
     private ImageView garmentImageView;
+
     private final ActivityResultLauncher<Void> takePictureLauncher =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 if (bitmap != null) handleNewImage(bitmap);
             });
+
     private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) launchCamera();
-                else
-                    Snackbar.make(requireView(), "Permesso fotocamera necessario!", Snackbar.LENGTH_LONG).show();
+                else Snackbar.make(requireView(), "Permesso fotocamera necessario!", Snackbar.LENGTH_LONG).show();
             });
+
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
@@ -81,16 +89,17 @@ public class GarmentFragment extends Fragment {
                         Bitmap bitmap = ImageDecoder.decodeBitmap(source);
                         handleNewImage(bitmap);
                     } catch (IOException e) {
-                        Snackbar.make(requireView(), "Errore nel caricare l'immaginer", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(requireView(), "Errore nel caricare l'immagine", Snackbar.LENGTH_LONG).show();
                     }
                 }
             });
+
     private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) launchGallery();
-                else
-                    Toast.makeText(getContext(), "Permesso galleria necessario", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(getContext(), "Permesso galleria necessario", Toast.LENGTH_SHORT).show();
             });
+
     private TextView nameTextView;
     private TextInputLayout nameGarmentInputLayout;
     private TextInputEditText nameGarmentEditText;
@@ -102,17 +111,12 @@ public class GarmentFragment extends Fragment {
     private View editButtonsContainer;
     private FloatingActionButton editFab;
     private FloatingActionButton deleteFab;
-
-    // -------------------------------------------------------------------------
-    // Launchers fotocamera / galleria
-    // -------------------------------------------------------------------------
     private Button cancelButton;
     private Button updateButton;
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
 
-    public GarmentFragment() {
-    }
+    public GarmentFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,7 +139,21 @@ public class GarmentFragment extends Fragment {
             return insets;
         });
 
+        // ✅ carica i font
+        popstarTypeface = androidx.core.content.res.ResourcesCompat
+                .getFont(requireContext(), R.font.popstar);
+        changoTypeface = androidx.core.content.res.ResourcesCompat
+                .getFont(requireContext(), R.font.chango);
+
         initViews(view);
+
+        // ✅ applica popstar ai bottoni da codice (per sicurezza oltre all'XML)
+        if (popstarTypeface != null) {
+            updateButton.setTypeface(popstarTypeface);
+            cancelButton.setTypeface(popstarTypeface);
+            nameTextView.setTypeface(popstarTypeface);
+            nameGarmentEditText.setTypeface(popstarTypeface);
+        }
 
         viewModel = new ViewModelProvider(this).get(GarmentViewModel.class);
 
@@ -145,14 +163,8 @@ public class GarmentFragment extends Fragment {
         }
 
         nameGarmentEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 viewModel.setGarmentName(s.toString());
@@ -195,7 +207,6 @@ public class GarmentFragment extends Fragment {
                 nameGarmentEditText.setText(garment.getName());
                 isInitialGarmentLoad = false;
             }
-            // Mostra la nuova immagine in anteprima se è in pending, altrimenti quella salvata
             if (pendingBitmap != null) {
                 garmentImageView.setImageBitmap(pendingBitmap);
             } else {
@@ -212,11 +223,9 @@ public class GarmentFragment extends Fragment {
             if (Boolean.TRUE.equals(isLoading)) {
                 editFab.hide();
                 deleteFab.hide();
-                // NON nascondere il container, disabilita solo i bottoni
                 updateButton.setEnabled(false);
                 cancelButton.setEnabled(false);
             } else {
-                // Riabilita i bottoni solo se sei in edit mode
                 Boolean isEditMode = viewModel.getIsEditMode().getValue();
                 if (Boolean.TRUE.equals(isEditMode)) {
                     updateButton.setEnabled(true);
@@ -227,15 +236,13 @@ public class GarmentFragment extends Fragment {
 
         viewModel.getIsDeleted().observe(getViewLifecycleOwner(), deleted -> {
             if (Boolean.TRUE.equals(deleted)) {
-                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
+                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing())
                     deleteConfirmationDialog.dismiss();
-                }
                 Snackbar.make(requireView(), "Capo eliminato", Snackbar.LENGTH_LONG).show();
                 Navigation.findNavController(requireView()).navigateUp();
             } else if (deleted != null) {
-                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing()) {
+                if (deleteConfirmationDialog != null && deleteConfirmationDialog.isShowing())
                     deleteConfirmationDialog.dismiss();
-                }
             }
         });
 
@@ -248,7 +255,6 @@ public class GarmentFragment extends Fragment {
                 deleteFab.setVisibility(View.GONE);
                 nameGarmentEditText.requestFocus();
                 showKeyboard(nameGarmentEditText);
-                // In edit mode l'immagine è cliccabile per cambiarla
                 garmentImageView.setOnClickListener(v -> showImagePickerDialog());
             } else {
                 nameTextView.setVisibility(View.VISIBLE);
@@ -258,14 +264,12 @@ public class GarmentFragment extends Fragment {
                 deleteFab.setVisibility(View.VISIBLE);
                 nameGarmentEditText.clearFocus();
                 hideKeyboard(nameGarmentEditText);
-                // In visualizzazione l'immagine non è cliccabile
                 garmentImageView.setOnClickListener(null);
                 pendingBitmap = null;
             }
             populateChips(viewModel.getGarment().getValue());
         });
 
-        // Gestione validazione immagine (stesso pattern di AddGarmentFragment)
         viewModel.getImageValidationState().observe(getViewLifecycleOwner(), state -> {
             if (state == ImageValidationState.VALID && pendingBitmap != null) {
                 garmentImageView.setImageBitmap(pendingBitmap);
@@ -293,9 +297,7 @@ public class GarmentFragment extends Fragment {
 
     private void handleNewImage(Bitmap bitmap) {
         pendingBitmap = bitmap;
-        // Mostra subito l'anteprima
         garmentImageView.setImageBitmap(bitmap);
-        // Manda al ViewModel per la validazione ML Kit
         viewModel.onNewImageSelected(bitmap);
     }
 
@@ -320,7 +322,6 @@ public class GarmentFragment extends Fragment {
                 .setNegativeButton("Annulla", (dialog, which) -> {
                     pendingBitmap = null;
                     viewModel.cancelImageChange();
-                    // Ripristina immagine originale
                     Garment current = viewModel.getGarment().getValue();
                     if (current != null) {
                         Glide.with(this)
@@ -335,29 +336,21 @@ public class GarmentFragment extends Fragment {
 
     private void checkCameraPermissionAndLaunch() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
-            launchCamera();
-        } else {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
+                == PackageManager.PERMISSION_GRANTED) launchCamera();
+        else requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA);
     }
 
     private void checkGalleryPermissionAndLaunch() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES)
-                    == PackageManager.PERMISSION_GRANTED) {
-                launchGallery();
-            } else {
-                requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
-            }
+                    == PackageManager.PERMISSION_GRANTED) launchGallery();
+            else requestGalleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
         } else {
             launchGallery();
         }
     }
 
-    private void launchCamera() {
-        takePictureLauncher.launch(null);
-    }
+    private void launchCamera() { takePictureLauncher.launch(null); }
 
     private void launchGallery() {
         pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
@@ -396,12 +389,11 @@ public class GarmentFragment extends Fragment {
                             viewModel.getAllFabrics(), garment.getFabric(),
                             newFabrics -> viewModel.addFabrics(newFabrics))));
 
+            // ✅ chip stagione edit mode — nero
             Chip seasonChip = new Chip(requireContext());
             seasonChip.setText(garment.getSeason() != null ? garment.getSeason() : "+");
-            seasonChip.setChipBackgroundColor(ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-            seasonChip.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            applyChangoToChip(seasonChip);
+            styleChipBlack(seasonChip);
             seasonChip.setOnClickListener(v -> showSeasonSelectionDialog(garment));
             if (garment.getSeason() != null) {
                 seasonChip.setCloseIconVisible(true);
@@ -409,12 +401,11 @@ public class GarmentFragment extends Fragment {
             }
             seasonChipGroup.addView(seasonChip);
 
+            // ✅ chip sottocategoria edit mode — nero
             Chip subCategoryChip = new Chip(requireContext());
             subCategoryChip.setText(garment.getSubCategory() != null ? garment.getSubCategory() : "+");
-            subCategoryChip.setChipBackgroundColor(ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-            subCategoryChip.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+            applyChangoToChip(subCategoryChip);
+            styleChipBlack(subCategoryChip);
             subCategoryChip.setOnClickListener(v -> showSubCategorySelectionDialog(garment));
             if (garment.getSubCategory() != null) {
                 subCategoryChip.setCloseIconVisible(true);
@@ -423,42 +414,37 @@ public class GarmentFragment extends Fragment {
             subCategoryChipGroup.addView(subCategoryChip);
 
         } else {
-            if (garment.getSeason() != null) {
+            if (garment.getSeason() != null)
                 seasonChipGroup.addView(createChip(requireContext(), garment.getSeason(), false, null));
-            }
-            if (garment.getSubCategory() != null) {
+            if (garment.getSubCategory() != null)
                 subCategoryChipGroup.addView(createChip(requireContext(), garment.getSubCategory(), false, null));
-            }
         }
 
         if (garment.getColor() != null) {
-            for (String color : garment.getColor()) {
+            for (String color : garment.getColor())
                 colorChipGroup.addView(createChip(requireContext(), color, isInEditMode,
                         () -> viewModel.removeColor(color)));
-            }
         }
 
         if (garment.getStyle() != null) {
-            for (String style : garment.getStyle()) {
+            for (String style : garment.getStyle())
                 styleChipGroup.addView(createChip(requireContext(), style, isInEditMode,
                         () -> viewModel.removeStyle(style)));
-            }
         }
 
         if (garment.getFabric() != null) {
-            for (String fabric : garment.getFabric()) {
+            for (String fabric : garment.getFabric())
                 fabricChipGroup.addView(createChip(requireContext(), fabric, isInEditMode,
                         () -> viewModel.removeFabric(fabric)));
-            }
         }
     }
 
+    // ✅ chip standard — nero con chango
     private Chip createChip(Context context, String text, boolean isRemovable, Runnable onRemove) {
         Chip chip = new Chip(context);
         chip.setText(text);
-        chip.setChipBackgroundColor(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        applyChangoToChip(chip);
+        styleChipBlack(chip);
         if (isRemovable) {
             chip.setCloseIconVisible(true);
             chip.setClickable(true);
@@ -473,14 +459,26 @@ public class GarmentFragment extends Fragment {
         return chip;
     }
 
+    // ✅ chip "+" — nero con chango
     private Chip createAddChip(Runnable onClickAction) {
         Chip chip = new Chip(requireContext());
         chip.setText(R.string.plus);
-        chip.setChipBackgroundColor(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.md_theme_primary)));
-        chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary));
+        applyChangoToChip(chip);
+        styleChipBlack(chip);
         chip.setOnClickListener(v -> onClickAction.run());
         return chip;
+    }
+
+    // ✅ helper — sfondo nero, testo e icona bianchi
+    private void styleChipBlack(Chip chip) {
+        chip.setChipBackgroundColor(ColorStateList.valueOf(Color.BLACK));
+        chip.setTextColor(Color.WHITE);
+        chip.setCloseIconTint(ColorStateList.valueOf(Color.WHITE));
+    }
+
+    // ✅ helper — font chango sui chip
+    private void applyChangoToChip(Chip chip) {
+        if (changoTypeface != null) chip.setTypeface(changoTypeface);
     }
 
     // -------------------------------------------------------------------------
@@ -509,7 +507,6 @@ public class GarmentFragment extends Fragment {
             return;
         }
         String[] subCategoriesArray = subCategories.toArray(new String[0]);
-
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Sottocategoria")
                 .setItems(subCategoriesArray, (dialog, which) -> {
@@ -534,26 +531,21 @@ public class GarmentFragment extends Fragment {
         Button okButton = dialogView.findViewById(R.id.dialog_ok_button);
 
         dialogTitle.setText(title);
+        // ✅ font popstar sul titolo del dialog
+        if (popstarTypeface != null) dialogTitle.setTypeface(popstarTypeface);
 
-        int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
-        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        ColorStateList bgStateList = new ColorStateList(
-                new int[][]{new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked}},
-                new int[]{colorSelected, colorDefault}
-        );
-        int textSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        int textDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
-        ColorStateList textStateList = new ColorStateList(
-                new int[][]{new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked}},
-                new int[]{textSelected, textDefault}
-        );
-
+        // ✅ chip del dialog — neri con chango
         for (String option : allOptions) {
             Chip chip = new Chip(requireContext());
             chip.setText(option);
             chip.setCheckable(true);
-            chip.setChipBackgroundColor(bgStateList);
-            chip.setTextColor(textStateList);
+            applyChangoToChip(chip);
+            chip.setChipBackgroundColor(new ColorStateList(
+                    new int[][]{{android.R.attr.state_checked}, {-android.R.attr.state_checked}},
+                    new int[]{Color.BLACK, Color.LTGRAY}));
+            chip.setTextColor(new ColorStateList(
+                    new int[][]{{android.R.attr.state_checked}, {-android.R.attr.state_checked}},
+                    new int[]{Color.WHITE, Color.BLACK}));
             if (currentSelection != null && currentSelection.contains(option))
                 chip.setEnabled(false);
             dialogChipGroup.addView(chip);
@@ -563,6 +555,9 @@ public class GarmentFragment extends Fragment {
                 .setView(dialogView).create();
 
         okButton.setEnabled(false);
+        // ✅ font popstar sul bottone OK del dialog
+        if (popstarTypeface != null) okButton.setTypeface(popstarTypeface);
+
         dialogChipGroup.setOnCheckedStateChangeListener((group, checkedIds) ->
                 okButton.setEnabled(!checkedIds.isEmpty()));
 
@@ -588,8 +583,7 @@ public class GarmentFragment extends Fragment {
                 .setTitle("Conferma Eliminazione")
                 .setView(dialogView)
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("Elimina", (dialog, which) -> {
-                })
+                .setPositiveButton("Elimina", (dialog, which) -> {})
                 .create();
 
         deleteConfirmationDialog.show();
@@ -614,10 +608,6 @@ public class GarmentFragment extends Fragment {
             if (imm != null) imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Keyboard helpers
-    // -------------------------------------------------------------------------
 
     private void hideKeyboard(@NonNull View view) {
         InputMethodManager imm = (InputMethodManager)

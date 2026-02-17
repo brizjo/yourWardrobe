@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginEnd="@dimen/md"
     android:layout_marginBottom="@dimen/md"
-    android:orientation="vertical"
-    android:background="@drawable/bg_item_outfit_border"
-    android:padding="@dimen/sm">
+    app:cardCornerRadius="24dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/md_theme_primary"
+    app:strokeWidth="2dp">
 
-    <!-- La tua CardOutfit custom -->
-    <it.unimib.yourwardrobe.ui.main.components.CardOutfit
-        android:id="@+id/card_outfit_component"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
-
-    <!-- Nome dell'Outfit sotto la carta -->
-    <TextView
-        android:id="@+id/tv_outfit_name_grid"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="@color/md_theme_primary"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="8dp">
 
-</LinearLayout>
+        <it.unimib.yourwardrobe.ui.main.components.CardOutfit
+            android:id="@+id/card_outfit_component"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:theme="@style/NoBorderCardTheme" />
+
+        <TextView
+            android:id="@+id/tv_outfit_name_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/gruppo" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -27,7 +28,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/playfairdisplay_medium"
+                    android:fontFamily="@font/popstar"
                     android:text="@string/welcome_home"
                     android:textAppearance="?attr/textAppearanceHeadline4" />
 
@@ -36,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/sm"
-                    android:fontFamily="@font/playfairdisplay_medium"
+                    android:fontFamily="@font/popstar"
                     android:textAppearance="?attr/textAppearanceHeadline4"
                     tools:text="@string/guest" />
 
@@ -46,7 +47,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/lg">
+                android:layout_marginTop="32dp">
 
                 <ProgressBar
                     android:id="@+id/pb_weather"
@@ -62,6 +63,7 @@
                     android:id="@+id/card_weather"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="120dp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -70,14 +72,12 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- FAB Row -->
-
             <!-- Outfit of the Day Header -->
             <LinearLayout
                 android:id="@+id/layout_outfit_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/xl"
+                android:layout_marginTop="40dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -86,7 +86,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="@font/playfairdisplay_medium"
+                    android:fontFamily="@font/troglo"
                     android:text="@string/daily_outfit"
                     android:textAppearance="?attr/textAppearanceHeadline5" />
 
@@ -100,16 +100,16 @@
 
             </LinearLayout>
 
-            <!-- Outfit RecyclerView + states -->
+            <!-- Outfit Card + states -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
 
                 <it.unimib.yourwardrobe.ui.main.components.CardOutfit
                     android:id="@+id/card_daily_outfit"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/lg"
+                    android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -129,24 +129,30 @@
                     android:id="@+id/layout_empty_state"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="75dp"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/lg"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:alpha="0.3"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_launcher_background" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/md"
-                        android:alpha="0.8"
-                        android:text="@string/not_available_garment"
-                        android:textSize="@dimen/text_xl" />
+                        android:alpha="0.6"
+                        android:text="@string/nessun_capo_disponibile"
+                        android:fontFamily="@font/popstar"
+                        android:textSize="@dimen/text_md" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -154,49 +160,30 @@
                         android:layout_marginTop="@dimen/xs"
                         android:alpha="0.5"
                         android:gravity="center"
-                        android:text="@string/add_garment_to_wardrobe"
+                        android:text="@string/aggiungi_capi_al_guardaroba_per_generare_outfit"
+                        android:fontFamily="@font/popstar"
                         android:textSize="@dimen/text_sm" />
-
-                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                        android:id="@+id/btn_got_to_add_garment"
-                        style="?attr/extendedFloatingActionButtonSmallStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:text="@string/add_garment"
-                        android:textColor="?attr/colorOnPrimary"
-                        app:backgroundTint="?attr/colorPrimary"
-                        app:icon="@drawable/ic_plus"
-                        app:iconTint="?attr/colorOnPrimary" />
 
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- FAB Pianifica -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_plan_outfit"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginVertical="@dimen/md"
-        android:orientation="vertical">
-
-        <!-- FAB Pianifica -->
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab_plan_outfit"
-            style="?attr/extendedFloatingActionButtonSmallStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:text="@string/plan"
-            android:textColor="?attr/colorOnPrimary"
-            app:backgroundTint="?attr/colorPrimary"
-            app:icon="@drawable/ic_calendar"
-            app:iconTint="?attr/colorOnPrimary" />
-    </LinearLayout>
-
+        android:layout_margin="16dp"
+        android:text="@string/pianifica"
+        android:fontFamily="@font/popstar"
+        android:textColor="?attr/colorOnPrimary"
+        app:backgroundTint="?attr/colorPrimary"
+        app:icon="@drawable/ic_calendar"
+        app:iconTint="?attr/colorOnPrimary" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

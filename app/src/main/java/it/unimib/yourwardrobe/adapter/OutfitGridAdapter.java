@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
@@ -51,7 +53,7 @@ public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.Ou
     public void updateOutfits(List<Outfit> newOutfits) {
         this.outfits.clear();
         this.outfits.addAll(newOutfits);
-        notifyDataSetChanged(); // Notifica al RecyclerView che i dati sono cambiati e deve ridisegnarsi.
+        notifyDataSetChanged();
     }
 
     public static class OutfitGridViewHolder extends RecyclerView.ViewHolder {
@@ -61,17 +63,24 @@ public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.Ou
         public OutfitGridViewHolder(@NonNull View itemView) {
             super(itemView);
             cardOutfit = itemView.findViewById(R.id.card_outfit_component);
-            tvOutfitName = itemView.findViewById(R.id.tv_outfit_name_grid); // Trova la TextView
+            tvOutfitName = itemView.findViewById(R.id.tv_outfit_name_grid);
         }
 
         public void bind(Outfit outfit, OnItemClickListener listener) {
             if (outfit != null) {
-                // Imposta i vestiti nella carta
                 if (cardOutfit != null && outfit.getGarments() != null) {
                     cardOutfit.setGarments(outfit.getGarments());
                 }
 
-                // Imposta il nome dell'outfit
+                // Rimuovi corner radius, bordo ed elevazione della card interna
+                if (cardOutfit != null) {
+                    MaterialCardView innerCard = cardOutfit.findViewById(R.id.card_outfit_root);
+                    if (innerCard != null) {
+                        innerCard.setStrokeWidth(0);
+                        innerCard.setCardElevation(0f);
+                    }
+                }
+
                 if (tvOutfitName != null) {
                     tvOutfitName.setText(outfit.getName());
                 }

@@ -22,6 +22,17 @@
                 android:padding="16dp"
                 android:paddingBottom="120dp">
 
+                <!-- Nome Outfit (spostato sopra la card) -->
+                <TextView
+                    android:id="@+id/tv_detail_outfit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/popstar"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
                 <it.unimib.yourwardrobe.ui.main.components.CardOutfit
                     android:id="@+id/detail_outfit_collage"
                     android:layout_width="match_parent"
@@ -29,16 +40,7 @@
                     android:layout_marginBottom="24dp"
                     app:cardElevation="0dp" />
 
-                <!-- Nome Outfit -->
-                <TextView
-                    android:id="@+id/tv_detail_outfit_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/md_theme_primary"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-
-                <!-- Campo Stagione (Aggiunto) -->
+                <!-- Stagione -->
                 <TextView
                     android:id="@+id/tv_detail_outfit_season"
                     android:layout_width="match_parent"
@@ -47,7 +49,9 @@
                     android:layout_marginBottom="16dp"
                     android:text="@string/season_2"
                     android:textColor="@color/md_theme_onSurfaceVariant"
-                    android:textSize="16sp" />
+                    android:fontFamily="@font/gruppo"
+                    android:textStyle="bold"
+                    android:textSize="24sp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -65,21 +69,27 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:letterSpacing="0.1"
-                        android:text="Composizione Outfit"
+                        android:text="@string/composizione_outfit"
                         android:textAllCaps="true"
                         android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:textSize="12sp"
+                        android:fontFamily="@font/gruppo"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <!-- Tasto Aggiungi (Aggiunto) -->
-                    <com.google.android.material.button.MaterialButton
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/btn_add_component"
-                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:text="@string/aggiungi"
-                        android:visibility="gone" />
+                        android:contentDescription="@string/aggiungi"
+                        android:visibility="gone"
+                        app:fabCustomSize="36dp"
+                        app:maxImageSize="18dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:backgroundTint="@color/md_theme_primary"
+                        app:srcCompat="@drawable/ic_add"
+                        app:tint="@android:color/white" />
+
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -112,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/popstar"
                 android:text="@string/save" />
 
             <com.google.android.material.button.MaterialButton
@@ -121,7 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Annulla"
+                android:fontFamily="@font/popstar"
+                android:text="@string/annulla"
                 android:textColor="@color/md_theme_error" />
         </LinearLayout>
     </RelativeLayout>

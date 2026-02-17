@@ -140,4 +140,5 @@
     <color name="md_theme_surfaceContainer_highContrast">#E1E4D9</color>
     <color name="md_theme_surfaceContainerHigh_highContrast">#D3D5CC</color>
     <color name="md_theme_surfaceContainerHighest_highContrast">#C5C8BE</color>
+    <color name="outfit_card_green">#A8D5B5</color>
 </resources>

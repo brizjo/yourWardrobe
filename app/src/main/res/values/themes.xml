@@ -51,21 +51,21 @@
     </style>
 
     <style name="AppLogo" parent="@style/TextAppearance.Material3.DisplayMedium">
-        <item name="fontFamily">@font/poppins_italic</item>
-        <item name="android:fontFamily">@font/poppins_italic</item>
+        <item name="fontFamily">@font/chango</item>
+        <item name="android:fontFamily">@font/troglo</item>
     </style>
 
     <style name="MyHeadlineLarge" parent="@style/TextAppearance.Material3.HeadlineLarge">
-        <item name="fontFamily">@font/playfairdisplay_bold</item>
-        <item name="android:fontFamily">@font/playfairdisplay_italic_variablefont_wght</item>
+        <item name="fontFamily">@font/troglo</item>
+        <item name="android:fontFamily">@font/troglo</item>
     </style>
 
     <style name="TextAppearance.YourWardrobe.Body" parent="@style/TextAppearance.Material3.BodyLarge">
-        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="fontFamily">@font/troglo</item>
     </style>
 
     <style name="activeTextStyle" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:fontFamily">@font/troglo</item>
     </style>
 
     <style name="Widget.App.BottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView">
@@ -84,4 +84,15 @@
         <item name="boxBackgroundColor">@color/md_theme_background</item>
 
     </style>
+
+    <style name="NoBorderCardTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="materialCardViewStyle">@style/NoBorderCardStyle</item>
+    </style>
+
+    <style name="NoBorderCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="strokeWidth">0dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
 </resources>

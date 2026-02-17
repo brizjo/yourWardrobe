@@ -1,6 +1,8 @@
 package it.unimib.yourwardrobe.adapter;
 
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -12,7 +14,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
@@ -51,6 +52,10 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
     private final OnColorChangeListener colorListener;
     private final OnRemoveListener removeListener;
 
+    // ✅ Typeface passati dal fragment
+    private Typeface popstarTypeface;
+    private Typeface changoTypeface;
+
     public BulkImportAdapter(OnItemChangeListener nameListener,
                              OnItemChangeListener categoryListener,
                              OnItemChangeListener seasonListener,
@@ -61,6 +66,12 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
         this.seasonListener = seasonListener;
         this.colorListener = colorListener;
         this.removeListener = removeListener;
+    }
+
+    // ✅ Metodo chiamato dal fragment per passare i font
+    public void setTypefaces(Typeface popstar, Typeface chango) {
+        this.popstarTypeface = popstar;
+        this.changoTypeface = chango;
     }
 
     public void submitList(List<GarmentImportItem> newItems) {
@@ -76,7 +87,7 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_bulk_import_garment, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, popstarTypeface, changoTypeface);
     }
 
     @Override
@@ -102,11 +113,18 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
         private final ChipGroup colorsChipGroup;
         private final MaterialButton removeButton;
 
-        private TextWatcher nameTextWatcher;
-        private boolean isUpdatingName = false;  // ← NUOVO FLAG
+        // ✅ font salvati nel ViewHolder
+        private final Typeface popstar;
+        private final Typeface chango;
 
-        public ViewHolder(@NonNull View itemView) {
+        private TextWatcher nameTextWatcher;
+        private boolean isUpdatingName = false;
+
+        public ViewHolder(@NonNull View itemView, Typeface popstar, Typeface chango) {
             super(itemView);
+            this.popstar = popstar;
+            this.chango = chango;
+
             garmentImage = itemView.findViewById(R.id.garment_image);
             nameInput = itemView.findViewById(R.id.name_input);
             categoryDropdown = itemView.findViewById(R.id.category_dropdown);
@@ -115,6 +133,15 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
             colorInputLayout = itemView.findViewById(R.id.color_input_layout);
             colorsChipGroup = itemView.findViewById(R.id.colors_chip_group);
             removeButton = itemView.findViewById(R.id.remove_button);
+
+            // ✅ applica popstar a tutti i campi testo
+            if (popstar != null) {
+                nameInput.setTypeface(popstar);
+                categoryDropdown.setTypeface(popstar);
+                seasonDropdown.setTypeface(popstar);
+                colorInput.setTypeface(popstar);
+                removeButton.setTypeface(popstar);
+            }
         }
 
         public void bind(GarmentImportItem item,
@@ -129,27 +156,20 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
 
             garmentImage.setImageBitmap(item.getBitmap());
 
-            // IMPORTANTE: Rimuovi il vecchio TextWatcher prima di modificare il testo
             if (nameTextWatcher != null) {
                 nameInput.removeTextChangedListener(nameTextWatcher);
             }
 
-            // Setup nome - usa flag per evitare loop
             isUpdatingName = true;
             nameInput.setText(item.getName());
             isUpdatingName = false;
 
-            // Crea e aggiungi il nuovo TextWatcher
             nameTextWatcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (!isUpdatingName) {  // ← USA IL FLAG
+                    if (!isUpdatingName) {
                         nameListener.onChange(item.getId(), s.toString());
                     }
                 }
@@ -179,17 +199,11 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
                 seasonListener.onChange(item.getId(), selected);
             });
 
-            // Setup colori
             updateColorsDisplay(item);
             updateColorsChips(item, colorListener);
 
-            // Click sul campo colori apre dialog
             colorInput.setOnClickListener(v -> showColorSelectionDialog(item, colorListener));
-
-            // Click sull'icona endIcon apre dialog
             colorInputLayout.setEndIconOnClickListener(v -> showColorSelectionDialog(item, colorListener));
-
-            // Bottone rimuovi
             removeButton.setOnClickListener(v -> removeListener.onRemove(item.getId()));
         }
 
@@ -197,14 +211,12 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
             if (item.getColors().isEmpty()) {
                 colorInput.setText("Nessun colore selezionato");
             } else {
-                String colorsText = String.join(", ", item.getColors());
-                colorInput.setText(colorsText);
+                colorInput.setText(String.join(", ", item.getColors()));
             }
         }
 
         private void updateColorsChips(GarmentImportItem item, OnColorChangeListener colorListener) {
             Log.d(TAG, "  updateColorsChips: " + item.getColors().size() + " colori");
-
             colorsChipGroup.removeAllViews();
 
             for (String color : item.getColors()) {
@@ -212,10 +224,14 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
 
                 Chip chip = new Chip(itemView.getContext());
                 chip.setText(color);
-                chip.setChipBackgroundColor(ColorStateList.valueOf(
-                        ContextCompat.getColor(itemView.getContext(), R.color.md_theme_primary)));
-                chip.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.md_theme_onPrimary));
+
+                // ✅ font chango + sfondo nero
+                if (chango != null) chip.setTypeface(chango);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(Color.BLACK));
+                chip.setTextColor(Color.WHITE);
+                chip.setCloseIconTint(ColorStateList.valueOf(Color.WHITE));
                 chip.setCloseIconVisible(true);
+
                 chip.setOnCloseIconClickListener(v -> {
                     List<String> updatedColors = new ArrayList<>(item.getColors());
                     updatedColors.remove(color);
@@ -241,9 +257,8 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
                     .setTitle("Seleziona colori")
                     .setMultiChoiceItems(allColors, checkedColors, (dialog, which, isChecked) -> {
                         if (isChecked) {
-                            if (!selectedColors.contains(allColors[which])) {
+                            if (!selectedColors.contains(allColors[which]))
                                 selectedColors.add(allColors[which]);
-                            }
                         } else {
                             selectedColors.remove(allColors[which]);
                         }

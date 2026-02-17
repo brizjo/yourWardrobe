@@ -29,8 +29,8 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/playfairdisplay_medium"
-                android:text="Pianifica il tuo outfit"
+                android:fontFamily="@font/popstar"
+                android:text="@string/pianifica_il_tuo_outfit"
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -38,7 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="28dp"
-                android:text="Scegli giorno, fascia oraria e occasione"
+                android:fontFamily="@font/popstar"
+                android:text="@string/scegli_giorno_fascia_oraria_e_occasione"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?attr/colorOutline" />
 
@@ -47,7 +48,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="Giorno"
+                android:fontFamily="@font/popstar"
+                android:text="@string/giorno"
                 android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <HorizontalScrollView
@@ -70,7 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="10dp"
-                android:text="Fascia oraria"
+                android:fontFamily="@font/popstar"
+                android:text="@string/fascia_oraria"
                 android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <com.google.android.material.chip.ChipGroup
@@ -86,21 +89,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="🌅 Mattina (09:00)" />
+                    android:fontFamily="@font/popstar"
+                    android:text="@string/mattina_09_00" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_afternoon"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="☀️ Pomeriggio (15:00)" />
+                    android:fontFamily="@font/popstar"
+                    android:text="@string/pomeriggio_15_00" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_evening"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🌙 Sera (21:00)" />
+                    android:fontFamily="@font/popstar"
+                    android:text="@string/sera_21_00" />
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -110,7 +116,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="10dp"
-                android:text="Occasione"
+                android:fontFamily="@font/popstar"
+                android:text="@string/occasione"
                 android:textAppearance="?attr/textAppearanceLabelLarge" />
 
             <com.google.android.material.chip.ChipGroup
@@ -126,13 +133,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="👕 Casual" />
+                    android:fontFamily="@font/popstar"
+                    android:text="@string/casual" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_business"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/popstar"
                     android:text="@string/lavoro" />
 
                 <com.google.android.material.chip.Chip
@@ -140,6 +149,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/popstar"
                     android:text="@string/serata" />
 
                 <com.google.android.material.chip.Chip
@@ -147,6 +157,7 @@
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/popstar"
                     android:text="@string/sport" />
 
             </com.google.android.material.chip.ChipGroup>
@@ -157,6 +168,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:fontFamily="@font/popstar"
                 android:paddingVertical="14dp"
                 android:text="@string/genera_outfit"
                 android:textColor="@android:color/white"
@@ -167,8 +179,7 @@
                 app:iconSize="24dp"
                 app:iconTint="@android:color/white"
                 app:strokeColor="@color/btn_primary_stroke"
-                app:strokeWidth="2dp"/>
-
+                app:strokeWidth="2dp" />
 
         </LinearLayout>
 
@@ -243,6 +254,7 @@
                                 android:id="@+id/tv_planned_temp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/popstar"
                                 android:textAppearance="?attr/textAppearanceTitleSmall"
                                 android:textStyle="bold" />
 
@@ -250,6 +262,7 @@
                                 android:id="@+id/tv_planned_condition"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/popstar"
                                 android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOutline" />
 
@@ -265,7 +278,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/playfairdisplay_medium"
+                    android:fontFamily="@font/popstar"
                     android:lineSpacingMultiplier="1.2"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
@@ -304,6 +317,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/popstar"
                     android:gravity="center"
                     android:text="@string/nessun_outfit_trovato_nprova_ad_aggiungere_pi_capi_al_guardaroba"
                     android:textAlignment="center"
@@ -330,6 +344,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/popstar"
                     android:text="@string/salva_questo_outfit"
                     android:textAppearance="?attr/textAppearanceLabelLarge" />
 
@@ -344,6 +359,7 @@
                         android:id="@+id/et_outfit_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/popstar"
                         android:imeOptions="actionDone"
                         android:inputType="textCapSentences"
                         android:maxLines="1" />
@@ -355,6 +371,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/popstar"
                     android:paddingVertical="14dp"
                     android:text="@string/salva_outfit"
                     android:textColor="@android:color/white"
@@ -365,9 +382,7 @@
                     app:iconSize="24dp"
                     app:iconTint="@android:color/white"
                     app:strokeColor="@color/btn_primary_stroke"
-                    app:strokeWidth="2dp"/>
-
-
+                    app:strokeWidth="2dp" />
 
             </LinearLayout>
 

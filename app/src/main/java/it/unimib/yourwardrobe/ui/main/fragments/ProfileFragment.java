@@ -336,6 +336,7 @@ public class ProfileFragment extends Fragment {
         chip.setText(text);
         chip.setCheckable(true);
         chip.setChecked(isChecked);
+        chip.setTypeface(androidx.core.content.res.ResourcesCompat.getFont(requireContext(), R.font.chango)); // ← aggiungi questa riga
 
         ColorStateList bgStateList = new ColorStateList(
                 new int[][]{

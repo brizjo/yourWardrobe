@@ -12,6 +12,18 @@
         android:orientation="vertical"
         android:padding="@dimen/md">
 
+        <!-- Titolo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crea il tuo outfit"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/troglo"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/md"
+            android:layout_marginBottom="@dimen/lg" />
+
         <!-- Campo Nome Outfit -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -26,20 +38,37 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Dropdown Stagione -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/season"
+            android:layout_marginBottom="40dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/season_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- ========== SEZIONE PARTE SUPERIORE (MULTIPLA) ========== -->
         <TextView
-            style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/parte_superiore"
-            android:textColor="@color/md_theme_primary" />
+            android:textColor="@color/md_theme_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/troglo"
+            android:layout_marginBottom="@dimen/sm" />
 
-        <!-- Lista orizzontale per TOP -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md"
+            android:layout_marginBottom="40dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -49,7 +78,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Il bottone + sarà sempre visibile a destra -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add_top"
                     style="@style/Widget.Material3.Button.OutlinedButton"
@@ -66,23 +94,28 @@
 
         <!-- ========== SEZIONE PARTE INFERIORE (SINGOLA) ========== -->
         <TextView
-            style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/parte_inferiore"
-            android:textColor="@color/md_theme_primary" />
+            android:textColor="@color/md_theme_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/troglo"
+            android:layout_marginBottom="@dimen/sm" />
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md">
+            android:layout_marginBottom="40dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_bottom"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 app:icon="@drawable/ic_plus"
                 app:iconSize="48dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
@@ -98,17 +131,20 @@
 
         <!-- ========== SEZIONE SCARPE (SINGOLA) ========== -->
         <TextView
-            style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Scarpe"
-            android:textColor="@color/md_theme_onSurfaceVariant" />
+            android:textColor="@color/md_theme_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/troglo"
+            android:layout_marginBottom="@dimen/sm" />
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md">
+            android:layout_marginBottom="40dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_shoes"
@@ -132,18 +168,20 @@
 
         <!-- ========== SEZIONE ACCESSORI (MULTIPLA) ========== -->
         <TextView
-            style="@style/TextAppearance.YourWardrobe.Body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/accessori"
-            android:textColor="@color/md_theme_primary" />
+            android:textColor="@color/md_theme_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/troglo"
+            android:layout_marginBottom="@dimen/sm" />
 
-        <!-- Lista orizzontale per ACCESSORI -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="@dimen/md"
+            android:layout_marginBottom="40dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -153,12 +191,13 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Il bottone + sarà sempre visibile a destra -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_add_accessory"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     app:icon="@drawable/ic_plus"
                     app:iconSize="48dp"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
@@ -166,27 +205,14 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- Dropdown Stagione -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/season"
-            android:layout_marginBottom="@dimen/lg">
-
-            <AutoCompleteTextView
-                android:id="@+id/season_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <!-- Bottone Salva -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_outfit"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Salva"
+            android:fontFamily="@font/popstar"
+            android:textSize="18sp"
             android:enabled="false" />
 
     </LinearLayout>

@@ -31,15 +31,17 @@
                 android:focusable="true"
                 android:scaleType="centerInside" />
 
+            <!-- ✅ font troglo, più grande, centrato -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginEnd="@dimen/md"
+                android:gravity="center"
+                android:fontFamily="@font/troglo"
                 android:text="@string/caratteristiche_principali"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
                 android:textColor="@color/md_theme_primary"
-                android:textSize="@dimen/text_lg" />
+                android:textSize="26sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -66,15 +68,16 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- CATEGORIA -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/lg"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="@dimen/md"
-                android:gravity="top"
+                android:fontFamily="@font/popstar"
                 android:text="@string/Category"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menu_category"
@@ -90,85 +93,109 @@
                     android:id="@+id/category_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    />
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- SOTTOCATEGORIA -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="@dimen/md"
+                android:fontFamily="@font/popstar"
                 android:text="@string/subcategory"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_subcategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/md"
+                android:layout_marginBottom="8dp" />
 
+            <!-- STAGIONE -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="@dimen/md"
+                android:fontFamily="@font/popstar"
                 android:text="@string/season"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/md"
+                android:layout_marginBottom="8dp" />
 
+            <!-- COLORE -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="@dimen/md"
+                android:fontFamily="@font/popstar"
                 android:text="@string/color"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/md"
+                android:layout_marginBottom="8dp" />
 
+            <!-- STILE -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="@dimen/md"
+                android:fontFamily="@font/popstar"
                 android:text="@string/style"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/md"
+                android:layout_marginBottom="8dp" />
 
+            <!-- TESSUTO -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginTop="@dimen/md"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="@dimen/md"
+                android:fontFamily="@font/popstar"
                 android:text="@string/tessuto"
-                android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                android:textSize="18sp" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_fabric"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/md"
-                android:layout_marginEnd="@dimen/md"></com.google.android.material.chip.ChipGroup>
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/md"
+                android:layout_marginBottom="24dp" />
 
         </LinearLayout>
 
@@ -195,6 +222,7 @@
             android:enabled="false"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
+            android:fontFamily="@font/popstar"
             app:cornerRadius="@dimen/lg"
             android:text="@string/add_garment" />
 

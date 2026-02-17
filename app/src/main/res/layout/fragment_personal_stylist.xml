@@ -17,31 +17,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="24dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_bot_outline"
+                app:tint="@android:color/black" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/playfairdisplay_bold"
+                android:fontFamily="@font/troglo"
                 android:text="@string/personal_stylist"
                 android:textAppearance="?attr/textAppearanceHeadline4" />
 
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_bot_outline"
-                app:tint="@android:color/black" />
         </LinearLayout>
 
         <!-- Info meteo -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="56dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp">
 
@@ -69,6 +70,7 @@
                         android:id="@+id/tv_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/popstar"
                         android:text="@string/default_temperature"
                         android:textSize="@dimen/text_md"
                         android:textStyle="bold" />
@@ -77,6 +79,7 @@
                         android:id="@+id/tv_suggested_season"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/popstar"
                         android:text="@string/suggested_spring"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -87,7 +90,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/popstar"
             android:text="@string/optional_filters"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -97,13 +101,14 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:hint="@string/color">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/popstar"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -112,13 +117,14 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:hint="@string/style">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/popstar"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,13 +133,14 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="28dp"
             android:hint="@string/season_personal_stylist">
 
             <AutoCompleteTextView
                 android:id="@+id/filter_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/popstar"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -143,8 +150,9 @@
             style="?attr/materialButtonElevatedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/xl"
+            android:layout_marginBottom="32dp"
             android:backgroundTint="?attr/colorPrimary"
+            android:fontFamily="@font/popstar"
             android:text="@string/generate_outfit"
             android:textColor="?attr/colorOnPrimary" />
 
@@ -189,6 +197,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/troglo"
                         android:text="@string/outfit_generated"
                         android:textSize="@dimen/text_lg"
                         android:textStyle="bold"
@@ -222,20 +231,21 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     android:hint="@string/outfit_name">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_outfit_name"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/popstar" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Bottoni Azioni -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/lg"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
@@ -245,6 +255,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/md"
                         android:layout_weight="1"
+                        android:fontFamily="@font/popstar"
                         android:text="@string/regen" />
 
                     <com.google.android.material.button.MaterialButton
@@ -253,6 +264,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/md"
                         android:layout_weight="1"
+                        android:fontFamily="@font/popstar"
                         android:text="@string/save" />
                 </LinearLayout>
 

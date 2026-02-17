@@ -1,6 +1,7 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -73,11 +74,35 @@ public class BulkImportFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(BulkImportViewModel.class);
 
+        // ✅ font popstar sul bottone salva
+        applyPopstar(saveButton);
+
         setupRecyclerView();
         setupObservers();
 
         saveButton.setOnClickListener(v -> viewModel.saveAllGarments());
     }
+
+    // -------------------------------------------------------------------------
+    // Font helpers
+    // -------------------------------------------------------------------------
+
+    // ✅ popstar per MaterialButton
+    private void applyPopstar(MaterialButton button) {
+        android.graphics.Typeface tf = androidx.core.content.res.ResourcesCompat
+                .getFont(requireContext(), R.font.popstar);
+        if (tf != null) button.setTypeface(tf);
+    }
+
+    // ✅ chango per Chip — da passare all'adapter
+    public android.graphics.Typeface getChangoTypeface() {
+        return androidx.core.content.res.ResourcesCompat
+                .getFont(requireContext(), R.font.chango);
+    }
+
+    // -------------------------------------------------------------------------
+    // Setup
+    // -------------------------------------------------------------------------
 
     private void setupRecyclerView() {
         adapter = new BulkImportAdapter(
@@ -87,6 +112,13 @@ public class BulkImportFragment extends Fragment {
                 viewModel::updateGarmentColor,
                 viewModel::removeGarment
         );
+
+        // ✅ passiamo i typeface all'adapter così può applicarli ai chip
+        adapter.setTypefaces(
+                androidx.core.content.res.ResourcesCompat.getFont(requireContext(), R.font.popstar),
+                androidx.core.content.res.ResourcesCompat.getFont(requireContext(), R.font.chango)
+        );
+
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
     }
@@ -97,23 +129,19 @@ public class BulkImportFragment extends Fragment {
             saveButton.setEnabled(items != null && !items.isEmpty());
         });
 
-        viewModel.getIsProcessing().observe(getViewLifecycleOwner(), isProcessing -> {
-            progressBar.setVisibility(isProcessing ? View.VISIBLE : View.GONE);
-        });
+        viewModel.getIsProcessing().observe(getViewLifecycleOwner(), isProcessing ->
+                progressBar.setVisibility(isProcessing ? View.VISIBLE : View.GONE));
 
         viewModel.getSaveSuccess().observe(getViewLifecycleOwner(), success -> {
             if (Boolean.TRUE.equals(success)) {
-                Snackbar.make(requireView(), "Capi salvati con successo!", Snackbar.LENGTH_SHORT)
-                        .show();
+                Snackbar.make(requireView(), "Capi salvati con successo!", Snackbar.LENGTH_SHORT).show();
                 Navigation.findNavController(requireView()).navigateUp();
             }
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null && !error.isEmpty()) {
-                Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG)
-                        .show();
-            }
+            if (error != null && !error.isEmpty())
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG).show();
         });
 
         viewModel.getRejectedCount().observe(getViewLifecycleOwner(), rejectedCount -> {
@@ -121,7 +149,6 @@ public class BulkImportFragment extends Fragment {
                 String message = rejectedCount == 1
                         ? "1 foto è stata scartata perché non sembra essere un capo di abbigliamento"
                         : rejectedCount + " foto sono state scartate perché non sembrano essere capi di abbigliamento";
-
                 Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
                         .setAction("OK", v -> {})
                         .show();
@@ -131,7 +158,6 @@ public class BulkImportFragment extends Fragment {
 
     private void processSelectedImages(List<Uri> uris) {
         List<Bitmap> bitmaps = new ArrayList<>();
-
         for (Uri uri : uris) {
             try {
                 ImageDecoder.Source source = ImageDecoder.createSource(
@@ -139,11 +165,9 @@ public class BulkImportFragment extends Fragment {
                 Bitmap bitmap = ImageDecoder.decodeBitmap(source);
                 bitmaps.add(bitmap);
             } catch (IOException e) {
-                Snackbar.make(requireView(), "Errore nel caricare alcune immagini", Snackbar.LENGTH_LONG)
-                        .show();
+                Snackbar.make(requireView(), "Errore nel caricare alcune immagini", Snackbar.LENGTH_LONG).show();
             }
         }
-
         if (!bitmaps.isEmpty()) {
             viewModel.processImages(bitmaps);
         } else {

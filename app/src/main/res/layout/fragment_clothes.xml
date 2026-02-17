@@ -26,8 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp">
 
             <!-- Filtro e Ordina sulla sinistra -->
             <LinearLayout
@@ -40,8 +41,8 @@
 
                 <ImageView
                     android:id="@+id/filter_button"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/filter_garments"
@@ -52,8 +53,8 @@
 
                 <ImageView
                     android:id="@+id/order_button"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
@@ -64,49 +65,33 @@
                     app:tint="?attr/colorOnSurface" />
             </LinearLayout>
 
-            <!-- Bottoni Importa e Aggiungi sulla destra -->
+            <!-- Solo bottone Importa sulla destra -->
             <LinearLayout
                 android:id="@+id/right_buttons_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
-                <!-- Bottone Importa - Stile outlined con icona -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/import_from_gallery_button"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Importa"
-                    android:textSize="13sp"
+                    android:fontFamily="@font/popstar"
                     android:paddingStart="12dp"
                     android:paddingEnd="16dp"
+                    android:text="Importa"
+                    android:textSize="13sp"
                     app:cornerRadius="@dimen/lg"
                     app:icon="@drawable/ic_image"
                     app:iconGravity="start"
-                    app:iconSize="20dp"
                     app:iconPadding="4dp"
+                    app:iconSize="20dp"
                     app:strokeWidth="1dp" />
 
-                <!-- Bottone Aggiungi capo - Stile filled principale -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/add_button"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Aggiungi"
-                    android:textSize="13sp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="16dp"
-                    app:cornerRadius="@dimen/lg"
-                    app:icon="@drawable/ic_add"
-                    app:iconGravity="start"
-                    app:iconSize="20dp"
-                    app:iconPadding="4dp" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -143,107 +128,125 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingTop="8dp">
 
+                    <!-- Parte Superiore -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/sm"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/troglo"
                         android:text="@string/parte_superiore"
-                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                        android:textColor="@color/md_theme_primary" />
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="24sp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginStart="@dimen/sm"
                         android:layout_marginEnd="@dimen/sm"
-                        android:layout_marginBottom="@dimen/md"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@color/md_theme_primary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/parte_superiore_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="196dp"
+                        android:layout_height="210dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
 
+                    <!-- Parte Inferiore -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/sm"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="@font/troglo"
                         android:text="@string/parte_inferiore"
-                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                        android:textColor="@color/md_theme_primary" />
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="24sp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginStart="@dimen/sm"
                         android:layout_marginEnd="@dimen/sm"
-                        android:layout_marginBottom="@dimen/md"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@color/md_theme_primary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/parte_inferiore_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="196dp"
+                        android:layout_height="210dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
 
+                    <!-- Calzature -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/sm"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="@font/troglo"
                         android:text="@string/footwear"
-                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                        android:textColor="@color/md_theme_primary" />
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="24sp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginStart="@dimen/sm"
                         android:layout_marginEnd="@dimen/sm"
-                        android:layout_marginBottom="@dimen/md"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@color/md_theme_primary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/calzature_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="196dp"
+                        android:layout_height="210dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
 
+                    <!-- Accessori -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/sm"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="@font/troglo"
                         android:text="@string/accessori"
-                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
-                        android:textColor="@color/md_theme_primary" />
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="24sp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginStart="@dimen/sm"
                         android:layout_marginEnd="@dimen/sm"
-                        android:layout_marginBottom="@dimen/md"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@color/md_theme_primary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/accessori_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="196dp"
+                        android:layout_height="210dp"
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager" />
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="24dp" />
+                        android:layout_height="32dp" />
+
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
@@ -256,6 +259,19 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
                 tools:listitem="@layout/item_clothes_grid" />
+
+            <!-- FAB Aggiungi -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:contentDescription="Aggiungi capo"
+                android:src="@drawable/ic_add"
+                app:backgroundTint="?attr/colorPrimary"
+                app:tint="?attr/colorOnPrimary" />
+
         </FrameLayout>
 
         <LinearLayout
@@ -279,6 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:fontFamily="@font/popstar"
                 android:text="@string/empty_wardrobe_message"
                 android:textAlignment="center"
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
@@ -288,10 +305,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/popstar"
                 android:text="@string/add_garment"
                 app:cornerRadius="@dimen/lg"
                 app:icon="@drawable/ic_add" />
+
         </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>

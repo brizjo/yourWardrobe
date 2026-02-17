@@ -15,7 +15,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/playfairdisplay_bold"
+            android:fontFamily="@font/troglo"
             android:text="@string/profile"
             android:textSize="36sp"
             android:letterSpacing="0.05"
@@ -49,7 +49,6 @@
                 app:strokeWidth="3dp"
                 tools:srcCompat="@tools:sample/avatars" />
 
-            <!-- Overlay semitrasparente più leggero -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/avatarOverlay"
                 android:layout_width="match_parent"
@@ -59,14 +58,13 @@
                 android:focusable="false"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
 
-            <!-- Icona camera più piccola -->
             <ImageView
                 android:id="@+id/cameraIcon"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_camera"
-                android:contentDescription="Cambia foto profilo"
+                android:contentDescription="@string/cambia_foto_profilo"
                 android:elevation="2dp"
                 app:tint="@android:color/white"
                 android:clickable="false"
@@ -79,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:fontFamily="@font/montserrat_bold"
+            android:fontFamily="@font/popstar"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:fontFamily="@font/montserrat_regular"
+            android:fontFamily="@font/popstar"
             android:textSize="16sp"
             android:textColor="?attr/colorOutline"
             app:layout_constraintEnd_toEndOf="parent"
@@ -113,7 +111,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:paddingVertical="16dp"
-            android:text="Genera Statistiche"
+            android:fontFamily="@font/popstar"
+            android:text="@string/genera_statistiche"
             android:textSize="16sp"
             app:icon="@drawable/ic_stats"
             app:iconGravity="textStart"
@@ -152,7 +151,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_clothing"
-                        android:contentDescription="Icona vestiti"
+                        android:contentDescription="@string/icona_vestiti"
                         app:tint="?attr/colorPrimary" />
 
                     <LinearLayout
@@ -166,6 +165,7 @@
                             android:id="@+id/tvGarmentsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/popstar"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             android:textColor="?attr/colorPrimary"
@@ -174,9 +174,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Capi totali"
+                            android:fontFamily="@font/popstar"
+                            android:text="@string/capi_totali"
                             android:textSize="14sp"
                             android:textColor="?attr/colorOnSurfaceVariant" />
+
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -199,7 +201,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_outfit"
-                        android:contentDescription="Icona outfit"
+                        android:contentDescription="@string/icona_outfit"
                         app:tint="?attr/colorSecondary" />
 
                     <LinearLayout
@@ -213,6 +215,7 @@
                             android:id="@+id/tvOutfitsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/popstar"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             android:textColor="?attr/colorSecondary"
@@ -221,9 +224,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Outfit creati"
+                            android:fontFamily="@font/popstar"
+                            android:text="@string/outfit_creati"
                             android:textSize="14sp"
                             android:textColor="?attr/colorOnSurfaceVariant" />
+
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -237,7 +242,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:paddingVertical="16dp"
-            android:text="Le Mie Preferenze"
+            android:fontFamily="@font/popstar"
+            android:text="@string/le_mie_preferenze"
             android:textSize="16sp"
             app:icon="@drawable/ic_preferences"
             app:iconGravity="textStart"
@@ -260,6 +266,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:paddingVertical="16dp"
+            android:fontFamily="@font/popstar"
             android:backgroundTint="?attr/colorErrorContainer"
             android:text="@string/sign_out"
             android:textSize="16sp"

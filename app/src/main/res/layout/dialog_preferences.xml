@@ -9,6 +9,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/popstar"
         android:text="Le Mie Preferenze"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -17,6 +18,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/popstar"
         android:text="Personalizza il tuo stile per influenzare il Personal Stylist"
         android:textSize="14sp"
         android:textColor="?attr/colorOnSurfaceVariant"
@@ -26,6 +28,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/popstar"
         android:text="Stili Preferiti"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -43,6 +46,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/popstar"
         android:text="Colori Preferiti"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -60,6 +64,7 @@
         android:id="@+id/btnSavePreferences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/popstar"
         android:text="Salva Preferenze"
         android:layout_marginTop="8dp" />
 

@@ -97,10 +97,6 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.fab_plan_outfit)
                 .setOnClickListener(v -> showPlannerSheet());
-
-        view.findViewById(R.id.btn_got_to_add_garment)
-                .setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_addGarmentFragment));
-
     }
 
     // -------------------------------------------------------------------------

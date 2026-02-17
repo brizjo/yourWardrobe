@@ -35,12 +35,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <!-- ✅ nome capo: font popstar, più grande -->
                     <TextView
                         android:id="@+id/nameGarmentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.YourWardrobe.Body"
+                        android:fontFamily="@font/popstar"
+                        android:textSize="26sp"
                         android:textColor="@color/md_theme_primary" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -57,6 +59,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text|textCapSentences"
+                            android:fontFamily="@font/popstar"
                             android:imeOptions="actionDone" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -69,35 +72,41 @@
                     android:layout_marginTop="@dimen/xs"
                     android:background="@color/md_theme_primary" />
 
+                <!-- ✅ titoli sezioni: font popstar, colore nero -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
                     android:layout_marginTop="@dimen/md"
-                    android:text="@string/subcategory"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                    android:fontFamily="@font/popstar"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:text="@string/subcategory" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_garment_subcategory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
-                    android:layout_marginEnd="@dimen/md">
-                </com.google.android.material.chip.ChipGroup>
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="@dimen/md" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
                     android:layout_marginTop="@dimen/md"
-                    android:text="@string/season"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                    android:fontFamily="@font/popstar"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:text="@string/season" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_garment_season"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="6dp"
                     android:layout_marginEnd="@dimen/md" />
 
                 <TextView
@@ -105,14 +114,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
                     android:layout_marginTop="@dimen/md"
-                    android:text="@string/color"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                    android:fontFamily="@font/popstar"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:text="@string/color" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_garment_color"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="6dp"
                     android:layout_marginEnd="@dimen/md" />
 
                 <TextView
@@ -120,31 +132,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
                     android:layout_marginTop="@dimen/md"
-                    android:text="@string/style"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                    android:fontFamily="@font/popstar"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:text="@string/style" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_garment_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
+                    android:layout_marginTop="6dp"
                     android:layout_marginEnd="@dimen/md" />
-
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
                     android:layout_marginTop="@dimen/md"
-                    android:text="@string/tessuto"
-                    android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
+                    android:fontFamily="@font/popstar"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:text="@string/tessuto" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_garment_fabric"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/md"
-                    android:layout_marginEnd="@dimen/md" />
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="@dimen/md"
+                    android:layout_marginBottom="@dimen/xl" />
 
             </LinearLayout>
         </ScrollView>
@@ -159,6 +177,7 @@
             android:visibility="gone"
             android:weightSum="2">
 
+            <!-- ✅ font popstar sui bottoni -->
             <Button
                 android:id="@+id/update_button"
                 style="@style/Widget.Material3.Button.TonalButton"
@@ -166,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/sm"
                 android:layout_weight="1"
+                android:fontFamily="@font/popstar"
                 android:text="@string/applica_modifiche" />
 
             <Button
@@ -175,6 +195,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sm"
                 android:layout_weight="1"
+                android:fontFamily="@font/popstar"
                 android:text="@string/annulla"
                 android:textColor="@color/md_theme_error" />
         </LinearLayout>

@@ -24,6 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Vestiario"
+            android:textStyle="bold"
             android:layout_weight="1"/>
 
         <ImageView

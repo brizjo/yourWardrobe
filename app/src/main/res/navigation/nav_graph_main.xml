@@ -13,11 +13,19 @@
 
         <action
             android:id="@+id/action_homeFragment_to_createOutfitFragment"
-            app:destination="@id/createOutfitFragment" />
+            app:destination="@id/createOutfitFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
 
         <action
             android:id="@+id/action_homeFragment_to_addGarmentFragment"
-            app:destination="@id/addGarmentFragment" />
+            app:destination="@id/addGarmentFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
 
     </fragment>
 
@@ -45,27 +53,7 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
         android:label="fragment_clothes"
         tools:layout="@layout/fragment_clothes">
-        <action
-            android:id="@+id/action_clothesFragment_to_wardrobeFragment"
-            app:destination="@id/wardrobeFragment" />
-        <action
-            android:id="@+id/action_clothesFragment_to_garmentFragment"
-            app:destination="@id/garmentFragment" />
-        <action
-            android:id="@+id/action_clothesFragment_to_addGarmentFragment"
-            app:destination="@id/addGarmentFragment" />
-        <!-- NUOVA AZIONE per importazione multipla -->
-        <action
-            android:id="@+id/action_clothesFragment_to_bulkImportFragment"
-            app:destination="@id/bulkImportFragment" />
     </fragment>
-
-    <!-- NUOVO FRAGMENT: Importazione multipla -->
-    <fragment
-        android:id="@+id/bulkImportFragment"
-        android:name="it.unimib.yourwardrobe.ui.main.fragments.BulkImportFragment"
-        android:label="Importa capi dalla galleria"
-        tools:layout="@layout/fragment_bulk_import" />
 
     <!-- Schermata Outfit -->
     <fragment
@@ -73,15 +61,6 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.OutfitMenuFragment"
         android:label="fragment_outfit_menu"
         tools:layout="@layout/fragment_outfit_menu">
-        <action
-            android:id="@+id/action_outfitFragment_to_wardrobeFragment"
-            app:destination="@id/wardrobeFragment" />
-        <action
-            android:id="@+id/action_outfitFragment_to_singleOutfitFragment"
-            app:destination="@id/singleOutfitFragment" />
-        <action
-            android:id="@+id/action_outfitFragment_to_createOutfitFragment"
-            app:destination="@id/createOutfitFragment" />
     </fragment>
 
     <fragment

@@ -180,9 +180,6 @@ public class AddGarmentFragment extends Fragment {
         garmentNameEditText   = view.findViewById(R.id.garmentName);
         addGarmentButton      = view.findViewById(R.id.add_garment_button);
         addGarmentProgressBar = view.findViewById(R.id.add_garment_progress_bar);
-
-        categoryTextView.setFocusable(false);
-        categoryTextView.setClickable(true);
     }
 
     // -------------------------------------------------------------------------
@@ -206,10 +203,9 @@ public class AddGarmentFragment extends Fragment {
 
         viewModel.getAllCategories().observe(getViewLifecycleOwner(), categories -> {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    requireContext(), R.layout.dropdown_item, categories);
+                    requireContext(), android.R.layout.simple_dropdown_item_1line, categories);
             categoryTextView.setAdapter(adapter);
         });
-
         viewModel.getSelectedColors().observe(getViewLifecycleOwner(), colors ->
                 updateMainChipGroup(colorChipGroup, colors,
                         selected -> viewModel.updateSelectedColors(selected)));

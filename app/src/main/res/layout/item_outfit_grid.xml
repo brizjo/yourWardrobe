@@ -2,8 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginEnd="@dimen/md"
+    android:layout_marginBottom="@dimen/md"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:background="@drawable/bg_item_outfit_border"
+    android:padding="@dimen/sm">
 
     <!-- La tua CardOutfit custom -->
     <it.unimib.yourwardrobe.ui.main.components.CardOutfit
@@ -18,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:gravity="start"
+        android:gravity="center"
         android:maxLines="1"
         android:textColor="@color/md_theme_primary"
         android:textSize="16sp"

@@ -78,11 +78,9 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menu_category"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/md_theme_primaryContainer_mediumContrast"
-                android:textColor="?attr/colorOnSurface"
                 android:hint="@string/Category"
                 android:layout_marginStart="@dimen/md"
                 android:layout_marginTop="@dimen/xs"

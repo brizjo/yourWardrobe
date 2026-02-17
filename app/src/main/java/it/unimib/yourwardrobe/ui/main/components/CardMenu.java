@@ -1,6 +1,7 @@
 package it.unimib.yourwardrobe.ui.main.components;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -59,6 +60,7 @@ public class CardMenu extends LinearLayout {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 34);
             textView.setTextAlignment(TEXT_ALIGNMENT_VIEW_START);
             textView.setTextColor(color);
+            textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         }
     }
     public void setCardStroke(int color, int width) {

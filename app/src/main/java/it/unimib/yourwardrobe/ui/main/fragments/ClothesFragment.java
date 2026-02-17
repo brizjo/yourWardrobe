@@ -23,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.internal.platform.ServiceLoaderWrapper;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.carousel.CarouselLayoutManager;
@@ -134,8 +135,9 @@ public class ClothesFragment extends Fragment {
             showFilterCategoryMenu();
         });
 
-        clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
-
+        if (clothesViewModel == null) {
+            clothesViewModel = new ViewModelProvider(this).get(ClothesViewModel.class);
+        }
         observeViewModel();
     }
 
@@ -454,6 +456,10 @@ public class ClothesFragment extends Fragment {
             }
         });
         return chip;
+    }
+
+    public void setViewModel(ClothesViewModel viewModel) {
+        this.clothesViewModel = viewModel;
     }
 
     interface OnFilterValuesSelectedListener {

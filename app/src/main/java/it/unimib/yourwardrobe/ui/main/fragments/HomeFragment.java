@@ -23,8 +23,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -33,11 +31,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
-import java.util.ArrayList;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.ClothesAdapter;
+import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.utils.ToastHelper;
@@ -49,9 +45,7 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FusedLocationProviderClient fusedLocationClient;
-
-    private ClothesAdapter clothesAdapter;
-    private RecyclerView recyclerView;
+    private CardOutfit dailyCardOutfit;
 
     private double lastLat = 0;
     private double lastLon = 0;
@@ -97,16 +91,7 @@ public class HomeFragment extends Fragment {
     // -------------------------------------------------------------------------
 
     private void bindViews(View view) {
-        recyclerView = view.findViewById(R.id.rv_outfit);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        recyclerView.setNestedScrollingEnabled(false);
-
-        clothesAdapter = new ClothesAdapter(
-                new ArrayList<>(),
-                R.layout.item_outfit_home,
-                (v, garment) -> Toast.makeText(getContext(),
-                        garment.getName(), Toast.LENGTH_SHORT).show());
-        recyclerView.setAdapter(clothesAdapter);
+        dailyCardOutfit = view.findViewById(R.id.card_daily_outfit);
 
         view.findViewById(R.id.btn_regenerate_outfit)
                 .setOnClickListener(v -> homeViewModel.regenerateOutfit());
@@ -114,13 +99,9 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.fab_plan_outfit)
                 .setOnClickListener(v -> showPlannerSheet());
 
-        view.findViewById(R.id.btn_go_to_compose_outfit)
-                .setOnClickListener(v -> Navigation.findNavController(v)
-                        .navigate(R.id.action_homeFragment_to_createOutfitFragment));
+        view.findViewById(R.id.btn_got_to_add_garment)
+                .setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_addGarmentFragment));
 
-        view.findViewById(R.id.btn_go_to_add_garment)
-                .setOnClickListener(v -> Navigation.findNavController(v)
-                        .navigate(R.id.action_homeFragment_to_addGarmentFragment));
     }
 
     // -------------------------------------------------------------------------
@@ -139,7 +120,7 @@ public class HomeFragment extends Fragment {
         });
 
         homeViewModel.currentWeatherResult.observe(getViewLifecycleOwner(), result -> {
-            ProgressBar pb   = root.findViewById(R.id.pb_weather);
+            ProgressBar pb = root.findViewById(R.id.pb_weather);
             CardWeather card = root.findViewById(R.id.card_weather);
             switch (result.status) {
                 case LOADING:
@@ -164,13 +145,12 @@ public class HomeFragment extends Fragment {
         homeViewModel.outfitOfTheDay.observe(getViewLifecycleOwner(), garments -> {
             LinearLayout emptyState = root.findViewById(R.id.layout_empty_state);
             if (garments != null && !garments.isEmpty()) {
-                recyclerView.setVisibility(VISIBLE);
+                dailyCardOutfit.setGarments(garments);
+                dailyCardOutfit.setVisibility(VISIBLE);
                 emptyState.setVisibility(GONE);
-                clothesAdapter.updateGarments(garments);
             } else {
-                recyclerView.setVisibility(GONE);
+                dailyCardOutfit.setVisibility(GONE);
                 emptyState.setVisibility(VISIBLE);
-                clothesAdapter.updateGarments(new ArrayList<>());
             }
         });
 
@@ -206,7 +186,7 @@ public class HomeFragment extends Fragment {
             ToastHelper.show(getContext(), "Attiva i servizi di localizzazione", false);
             return;
         }
-        boolean fine   = ContextCompat.checkSelfPermission(requireContext(),
+        boolean fine = ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean coarse = ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;

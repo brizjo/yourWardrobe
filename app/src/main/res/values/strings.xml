@@ -195,4 +195,7 @@
     <string name="sport">🏃 Sport</string>
     <string name="serata">✨ Serata</string>
     <string name="lavoro">💼 Lavoro</string>
+    <string name="plan">Pianifica</string>
+    <string name="not_available_garment">Nessun capo disponibile</string>
+    <string name="add_garment_to_wardrobe">Aggiungi capi al guardaroba per generare outfit</string>
 </resources>

@@ -16,6 +16,7 @@ import java.util.List;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.components.CardGarment;
+import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
@@ -84,12 +85,9 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
 
         public void bind(Garment garment, OnItemClickListener listener) {
             if (cardGarment != null && garment != null) {
+                GlideLoader.loadImage(itemView.getContext(), garment.getImageUrl(), targetImageView);
                 // Caricamento immagine tramite Glide nell'ImageView del componente custom
-                Glide.with(itemView.getContext())
-                        .load(garment.getImageUrl())
-                        .placeholder(R.drawable.ic_launcher_background)
-                        .centerCrop()
-                        .into(targetImageView);
+
 
                 cardGarment.setOnCardClickListener(v -> {
                     if (listener != null) {

@@ -15,10 +15,16 @@
             android:id="@+id/action_wardrobeFragment_to_clothesFragment"
             app:destination="@id/clothesFragment"
             app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_wardrobeFragment_to_outfitFragment"
-            app:destination="@id/outfitFragment" />
+            app:destination="@id/outfitFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <!-- Schermata Vestiario -->
@@ -29,16 +35,30 @@
         tools:layout="@layout/fragment_clothes" >
         <action
             android:id="@+id/action_clothesFragment_to_wardrobeFragment"
-            app:destination="@id/wardrobeFragment" />
+            app:destination="@id/wardrobeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_clothesFragment_to_garmentFragment"
-            app:destination="@id/garmentFragment" />
+            app:destination="@id/garmentFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_clothesFragment_to_addGarmentFragment"
-            app:destination="@id/addGarmentFragment" />
+            app:destination="@id/addGarmentFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_clothesFragment_to_bulkImportFragment"
-            app:destination="@id/bulkImportFragment" />
+            app:destination="@id/bulkImportFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -58,10 +78,18 @@
             app:destination="@id/wardrobeFragment" />
         <action
             android:id="@+id/action_outfitFragment_to_singleOutfitFragment"
-            app:destination="@id/singleOutfitFragment" />
+            app:destination="@id/singleOutfitFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_outfitFragment_to_createOutfitFragment"
-            app:destination="@id/createOutfitFragment" />
+            app:destination="@id/createOutfitFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_outfitFragment_to_clothesFragment"
             app:destination="@id/clothesFragment" />

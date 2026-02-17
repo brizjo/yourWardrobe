@@ -80,7 +80,6 @@ public class ClothesViewModelTest {
         fakeGarments = Arrays.asList(tShirt, jeans, camicia);
 
         doAnswer(invocation -> {
-            // 1. Usa il tuo Callback, non quello di Chromium
             Callback<List<Garment>> callback = invocation.getArgument(0);
             callback.onSuccess(new ArrayList<>(fakeGarments));
             return null;

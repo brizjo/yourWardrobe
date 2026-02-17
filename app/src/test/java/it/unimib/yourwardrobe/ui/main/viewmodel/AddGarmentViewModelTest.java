@@ -107,7 +107,6 @@ public class AddGarmentViewModelTest {
 
         //compila tutti i campi tranne uno
         addGarmentViewModel.setGarmentImage(mockBitmap);
-        // addGarmentViewModel.setGarmentName("Nome Mancante");
         addGarmentViewModel.setSelectedCategory("Parte superiore");
         addGarmentViewModel.updateSelectedColors(Collections.singletonList("Blu"));
         addGarmentViewModel.updateSelectedStyles(Collections.singletonList("Casual"));

@@ -67,16 +67,14 @@ public class OutfitMenuViewModelTest {
 
         MockitoAnnotations.openMocks(this);
 
-        // Ottieni un contesto reale di Application grazie a Robolectric
         application = ApplicationProvider.getApplicationContext();
 
-        // Inizializza il ViewModel con l'Application reale e i repository mock
         outfitMenuViewModel = new OutfitMenuViewModel(application, mockOutfitRepository, mockGarmentRepository);
     }
 
     @Test
     public void fetchAllData_whenNotEnoughGarments_setsUiStateToNotEnoughGarments() {
-        // Prepara i dati di test: un solo capo, insufficiente per creare un outfit
+        // un solo capo, insufficiente per creare un outfit
         Garment tShirt = new Garment();
         tShirt.setName("T-shirt");
         tShirt.setCategory("Parte superiore");
@@ -97,47 +95,35 @@ public class OutfitMenuViewModelTest {
 
         outfitMenuViewModel = new OutfitMenuViewModel(application, mockOutfitRepository, mockGarmentRepository);
 
-        // Osserva il LiveData dello stato UI
         outfitMenuViewModel.getUiState().observeForever(uiStateObserver);
 
-        // Verifica: cattura tutti i valori emessi da uiState
         verify(uiStateObserver, org.mockito.Mockito.atLeastOnce()).onChanged(uiStateCaptor.capture());
         List<OutfitMenuViewModel.UiState> capturedStates = uiStateCaptor.getAllValues();
-
-        // L'ultimo stato deve essere NOT_ENOUGH_GARMENTS
         assertEquals(OutfitMenuViewModel.UiState.NOT_ENOUGH_GARMENTS, capturedStates.get(capturedStates.size() - 1));
     }
 
     @Test
     public void fetchAllData_withEnoughGarmentsButNoOutfits_setsUiStateToNoOutfits() {
-        // Dati di test: capi sufficienti
         Garment tShirt = new Garment();
         tShirt.setCategory("Parte superiore");
         Garment jeans = new Garment();
         jeans.setCategory("Parte inferiore");
 
-        // Simula la risposta del GarmentRepository
         doAnswer(invocation -> {
             Callback<List<Garment>> callback = invocation.getArgument(0);
             callback.onSuccess(Arrays.asList(tShirt, jeans));
             return null;
         }).when(mockGarmentRepository).getGarments(any(Callback.class));
 
-        // Simula la risposta vuota dell'OutfitRepository
         doAnswer(invocation -> {
             Callback<List<Outfit>> callback = invocation.getArgument(0);
             callback.onSuccess(new ArrayList<>());
             return null;
         }).when(mockOutfitRepository).getOutfits(any(Callback.class));
 
-        // Osserva il LiveData
         outfitMenuViewModel.getUiState().observeForever(uiStateObserver);
-
-        // Azione
         outfitMenuViewModel.fetchOutfits();
 
-
-        // Verifica
         verify(uiStateObserver, org.mockito.Mockito.atLeastOnce()).onChanged(uiStateCaptor.capture());
         List<OutfitMenuViewModel.UiState> capturedStates = uiStateCaptor.getAllValues();
         assertEquals(OutfitMenuViewModel.UiState.NO_OUTFITS, capturedStates.get(capturedStates.size() - 1));
@@ -145,42 +131,34 @@ public class OutfitMenuViewModelTest {
 
     @Test
     public void fetchAllData_withExistingOutfits_setsUiStateToHasOutfits() {
-        // Dati di test: capi sufficienti
         Garment tShirt = new Garment();
         tShirt.setCategory("Parte superiore");
         Garment jeans = new Garment();
         jeans.setCategory("Parte inferiore");
 
-        // Dati di test: un outfit esistente
         Outfit summerOutfit = new Outfit("Outfit Estivo", "Primavera", Arrays.asList(tShirt, jeans) );
 
-        // Simula la risposta del GarmentRepository
         doAnswer(invocation -> {
             Callback<List<Garment>> callback = invocation.getArgument(0);
             callback.onSuccess(Arrays.asList(tShirt, jeans));
             return null;
         }).when(mockGarmentRepository).getGarments(any(Callback.class));
 
-        // Simula la risposta dell'OutfitRepository con un outfit
         doAnswer(invocation -> {
             Callback<List<Outfit>> callback = invocation.getArgument(0);
             callback.onSuccess(Collections.singletonList(summerOutfit));
             return null;
         }).when(mockOutfitRepository).getOutfits(any(Callback.class));
 
-        // Osserva i LiveData
         outfitMenuViewModel.getUiState().observeForever(uiStateObserver);
         outfitMenuViewModel.getOutfits().observeForever(outfitsObserver);
 
-        // Azione
         outfitMenuViewModel.fetchOutfits();
 
-        // Verifica lo stato UI
         verify(uiStateObserver, org.mockito.Mockito.atLeastOnce()).onChanged(uiStateCaptor.capture());
         List<OutfitMenuViewModel.UiState> capturedStates = uiStateCaptor.getAllValues();
         assertEquals(OutfitMenuViewModel.UiState.HAS_OUTFITS, capturedStates.get(capturedStates.size() - 1));
 
-        // Verifica la lista di outfit
         verify(outfitsObserver, org.mockito.Mockito.atLeastOnce()).onChanged(outfitListCaptor.capture());
         List<Outfit> capturedOutfits = outfitListCaptor.getValue();
         assertNotNull(capturedOutfits);

@@ -32,8 +32,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -46,19 +44,27 @@ import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
+
     private static final String TAG = HomeFragment.class.getSimpleName();
+
     private HomeViewModel homeViewModel;
     private FusedLocationProviderClient fusedLocationClient;
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    getCurrentLocation();
-                } else {
-                    Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-            });
+
     private ClothesAdapter clothesAdapter;
     private RecyclerView recyclerView;
+
+    private double lastLat = 0;
+    private double lastLon = 0;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) getCurrentLocation();
+                else Toast.makeText(requireContext(), "Permesso negato", Toast.LENGTH_SHORT).show();
+            });
+
+    // -------------------------------------------------------------------------
+    // Lifecycle
+    // -------------------------------------------------------------------------
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,144 +78,141 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ProgressBar pbWeather = view.findViewById(R.id.pb_weather);
-        TextView tvUsername = view.findViewById(R.id.tv_username);
-        CardWeather cardWeather = view.findViewById(R.id.card_weather);
-        MaterialButton btnRegenerateOutfit = view.findViewById(R.id.btn_regenerate_outfit);
-        ExtendedFloatingActionButton btnGoToAddGarment = view.findViewById(R.id.btn_go_to_add_garment);
-        ExtendedFloatingActionButton btnGoToComposeOutfit = view.findViewById(R.id.btn_go_to_compose_outfit);
-        ProgressBar pbOutfit = view.findViewById(R.id.pb_outfit);
-        LinearLayout lEmptyState = view.findViewById(R.id.layout_empty_state);
-
-        // Setup RecyclerView per l'outfit del giorno - GRID 2 COLONNE
-        recyclerView = view.findViewById(R.id.rv_outfit);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        recyclerView.setNestedScrollingEnabled(false);
-
-        // Usa il nuovo layout item_outfit_home
-        clothesAdapter = new ClothesAdapter(new ArrayList<>(),
-                R.layout.item_outfit_home,
-                (v, garment) -> {
-                    Toast.makeText(getContext(), "Clicked: " + garment.getName(), Toast.LENGTH_SHORT).show();
-                });
-        recyclerView.setAdapter(clothesAdapter);
-
-        // Bottone rigenerazione outfit
-        btnRegenerateOutfit.setOnClickListener(v -> {
-            homeViewModel.regenerateOutfit();
-        });
-
-        btnGoToComposeOutfit.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_createOutfitFragment);
-        });
-
-        btnGoToAddGarment.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_addGarmentFragment);
-        });
-
-
-        // Observe User
-        homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
-            switch (result.status) {
-                case LOADING:
-                    break;
-                case SUCCESS:
-                    tvUsername.setText(result.data.getDisplayName());
-                    break;
-                case ERROR:
-                    ToastHelper.show(getContext(), result.message, false);
-                    break;
-            }
-        });
-
-        // Observe Weather
-        homeViewModel.currentWeatherResult.observe(getViewLifecycleOwner(), result -> {
-            switch (result.status) {
-                case LOADING:
-                    cardWeather.setVisibility(GONE);
-                    pbWeather.setVisibility(VISIBLE);
-                    break;
-                case SUCCESS:
-                    pbWeather.setVisibility(GONE);
-                    cardWeather.setVisibility(VISIBLE);
-                    cardWeather.setTemperature(result.data.getTemperature());
-                    cardWeather.setCondition(result.data.getCondition());
-                    cardWeather.setConditionIcon(result.data.getIconUrl());
-                    cardWeather.setConditionBackground(result.data.getBackgroundResId());
-                    break;
-                case ERROR:
-                    pbWeather.setVisibility(GONE);
-                    ToastHelper.show(getContext(), result.message, false);
-                    break;
-            }
-        });
-
-        // Observe Outfit del giorno
-        homeViewModel.outfitOfTheDay.observe(getViewLifecycleOwner(), garments -> {
-            if (garments != null && !garments.isEmpty()) {
-                Log.d(TAG, "Outfit del giorno ricevuto con " + garments.size() + " capi");
-                recyclerView.setVisibility(VISIBLE);
-                lEmptyState.setVisibility(GONE);
-                clothesAdapter.updateGarments(garments);
-            } else {
-                Log.d(TAG, "Nessun outfit disponibile");
-                recyclerView.setVisibility(GONE);
-                lEmptyState.setVisibility(VISIBLE);
-                clothesAdapter.updateGarments(new ArrayList<>());
-            }
-        });
-
-        // Observe loading state per mostrare/nascondere bottone e progress bar
-        homeViewModel.isGeneratingOutfit.observe(getViewLifecycleOwner(), isGenerating -> {
-            if (Boolean.TRUE.equals(isGenerating)) {
-                Log.d(TAG, "Generazione outfit in corso...");
-                btnRegenerateOutfit.setVisibility(View.GONE);
-                pbOutfit.setVisibility(View.VISIBLE);
-            } else {
-                btnRegenerateOutfit.setVisibility(View.VISIBLE);
-                pbOutfit.setVisibility(View.GONE);
-            }
-        });
+        bindViews(view);
+        observeViewModel();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        checkPermissionAndGetLocation();
         homeViewModel.getCurrentUser();
+        checkPermissionAndGetLocation();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    // -------------------------------------------------------------------------
+    // Binding
+    // -------------------------------------------------------------------------
+
+    private void bindViews(View view) {
+        recyclerView = view.findViewById(R.id.rv_outfit);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setNestedScrollingEnabled(false);
+
+        clothesAdapter = new ClothesAdapter(
+                new ArrayList<>(),
+                R.layout.item_outfit_home,
+                (v, garment) -> Toast.makeText(getContext(),
+                        garment.getName(), Toast.LENGTH_SHORT).show());
+        recyclerView.setAdapter(clothesAdapter);
+
+        view.findViewById(R.id.btn_regenerate_outfit)
+                .setOnClickListener(v -> homeViewModel.regenerateOutfit());
+
+        view.findViewById(R.id.fab_plan_outfit)
+                .setOnClickListener(v -> showPlannerSheet());
+
+        view.findViewById(R.id.btn_go_to_compose_outfit)
+                .setOnClickListener(v -> Navigation.findNavController(v)
+                        .navigate(R.id.action_homeFragment_to_createOutfitFragment));
+
+        view.findViewById(R.id.btn_go_to_add_garment)
+                .setOnClickListener(v -> Navigation.findNavController(v)
+                        .navigate(R.id.action_homeFragment_to_addGarmentFragment));
     }
 
-    private boolean isLocationEnabled() {
-        android.location.LocationManager locationManager = (android.location.LocationManager)
-                requireContext().getSystemService(android.content.Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
+    // -------------------------------------------------------------------------
+    // Observers
+    // -------------------------------------------------------------------------
+
+    private void observeViewModel() {
+        View root = requireView();
+
+        homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
+            if (result.status == it.unimib.yourwardrobe.core.functional.Result.Status.SUCCESS
+                    && result.data != null) {
+                ((TextView) root.findViewById(R.id.tv_username))
+                        .setText(result.data.getDisplayName());
+            }
+        });
+
+        homeViewModel.currentWeatherResult.observe(getViewLifecycleOwner(), result -> {
+            ProgressBar pb   = root.findViewById(R.id.pb_weather);
+            CardWeather card = root.findViewById(R.id.card_weather);
+            switch (result.status) {
+                case LOADING:
+                    pb.setVisibility(VISIBLE);
+                    card.setVisibility(GONE);
+                    break;
+                case SUCCESS:
+                    pb.setVisibility(GONE);
+                    card.setVisibility(VISIBLE);
+                    card.setTemperature(result.data.getTemperature());
+                    card.setCondition(result.data.getCondition());
+                    card.setConditionIcon(result.data.getIconUrl());
+                    card.setConditionBackground(result.data.getBackgroundResId());
+                    break;
+                case ERROR:
+                    pb.setVisibility(GONE);
+                    ToastHelper.show(getContext(), result.message, false);
+                    break;
+            }
+        });
+
+        homeViewModel.outfitOfTheDay.observe(getViewLifecycleOwner(), garments -> {
+            LinearLayout emptyState = root.findViewById(R.id.layout_empty_state);
+            if (garments != null && !garments.isEmpty()) {
+                recyclerView.setVisibility(VISIBLE);
+                emptyState.setVisibility(GONE);
+                clothesAdapter.updateGarments(garments);
+            } else {
+                recyclerView.setVisibility(GONE);
+                emptyState.setVisibility(VISIBLE);
+                clothesAdapter.updateGarments(new ArrayList<>());
+            }
+        });
+
+        homeViewModel.isGeneratingOutfit.observe(getViewLifecycleOwner(), isGenerating -> {
+            root.findViewById(R.id.btn_regenerate_outfit)
+                    .setVisibility(Boolean.TRUE.equals(isGenerating) ? GONE : VISIBLE);
+            root.findViewById(R.id.pb_outfit)
+                    .setVisibility(Boolean.TRUE.equals(isGenerating) ? VISIBLE : GONE);
+        });
     }
+
+    // -------------------------------------------------------------------------
+    // Planner sheet
+    // -------------------------------------------------------------------------
+
+    private void showPlannerSheet() {
+        if (getChildFragmentManager()
+                .findFragmentByTag(PlannerDialogFragment.TAG) != null) return;
+
+        homeViewModel.resetPlannedOutfit();
+        homeViewModel.resetSaveOutfitResult();
+
+        PlannerDialogFragment.newInstance(lastLat, lastLon)
+                .show(getChildFragmentManager(), PlannerDialogFragment.TAG);
+    }
+
+    // -------------------------------------------------------------------------
+    // Location
+    // -------------------------------------------------------------------------
 
     private void checkPermissionAndGetLocation() {
         if (!isLocationEnabled()) {
-            ToastHelper.show(getContext(), "Please enable location services", false);
+            ToastHelper.show(getContext(), "Attiva i servizi di localizzazione", false);
             return;
         }
-
-        boolean hasFineLocationPermission = ContextCompat.checkSelfPermission(requireContext(),
+        boolean fine   = ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        boolean hasCoarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(),
+        boolean coarse = ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if (hasFineLocationPermission && hasCoarseLocationPermission) {
-            getCurrentLocation();
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
+        if (fine && coarse) getCurrentLocation();
+        else requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     private void getCurrentLocation() {
@@ -217,7 +220,9 @@ public class HomeFragment extends Fragment {
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(location -> {
                         if (location != null) {
-                            homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                            lastLat = location.getLatitude();
+                            lastLon = location.getLongitude();
+                            homeViewModel.getCurrentWeather(lastLat, lastLon);
                         } else {
                             fetchLastLocationFallback();
                         }
@@ -231,7 +236,9 @@ public class HomeFragment extends Fragment {
         try {
             fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
                 if (location != null) {
-                    homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                    lastLat = location.getLatitude();
+                    lastLon = location.getLongitude();
+                    homeViewModel.getCurrentWeather(lastLat, lastLon);
                 } else {
                     requestNewLocationData();
                 }
@@ -243,22 +250,30 @@ public class HomeFragment extends Fragment {
 
     private void requestNewLocationData() {
         try {
-            LocationRequest locationRequest = new LocationRequest.Builder(
+            LocationRequest req = new LocationRequest.Builder(
                     Priority.PRIORITY_HIGH_ACCURACY, 1000)
                     .setMaxUpdates(1)
                     .build();
-
-            fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+            fusedLocationClient.requestLocationUpdates(req, new LocationCallback() {
                 @Override
-                public void onLocationResult(@NonNull LocationResult locationResult) {
-                    var location = locationResult.getLastLocation();
-                    if (location != null) {
-                        homeViewModel.getCurrentWeather(location.getLatitude(), location.getLongitude());
+                public void onLocationResult(@NonNull LocationResult result) {
+                    var loc = result.getLastLocation();
+                    if (loc != null) {
+                        lastLat = loc.getLatitude();
+                        lastLon = loc.getLongitude();
+                        homeViewModel.getCurrentWeather(lastLat, lastLon);
                     }
                 }
             }, android.os.Looper.getMainLooper());
         } catch (SecurityException e) {
             Log.e(TAG, "Security Exception", e);
         }
+    }
+
+    private boolean isLocationEnabled() {
+        android.location.LocationManager lm = (android.location.LocationManager)
+                requireContext().getSystemService(android.content.Context.LOCATION_SERVICE);
+        return lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+                || lm.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
     }
 }

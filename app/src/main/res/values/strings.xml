@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YourWardrobe</string>
+    <string name="app_name">yourWardrobe</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sign_in">Accedi</string>
     <string name="sign_up">Registrati</string>
@@ -185,4 +185,14 @@
     <string name="salva_tutti_i_capi">Salva tutti i capi</string>
     <string name="example_email">mario@example.com</string>
     <string name="profile">Profilo</string>
+    <string name="genera_outfit">Genera outfit</string>
+    <string name="torna_alla_selezione">Torna alla selezione</string>
+    <string name="meteo">Meteo</string>
+    <string name="icon_stressed">😕</string>
+    <string name="nessun_outfit_trovato_nprova_ad_aggiungere_pi_capi_al_guardaroba">Nessun outfit trovato.\nProva ad aggiungere più capi al guardaroba.</string>
+    <string name="salva_questo_outfit">Salva questo outfit</string>
+    <string name="salva_outfit">Salva outfit</string>
+    <string name="sport">🏃 Sport</string>
+    <string name="serata">✨ Serata</string>
+    <string name="lavoro">💼 Lavoro</string>
 </resources>

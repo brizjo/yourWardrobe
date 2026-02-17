@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.source.dto.ForecastResponse;
 import it.unimib.yourwardrobe.source.dto.WeatherResponse;
 import it.unimib.yourwardrobe.source.remote.WeatherRemoteDataSource;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
@@ -21,14 +22,12 @@ public class WeatherRepositoryImpl implements WeatherRepository {
     }
 
     @Override
-    public void getCurrentWeather(
-            double lat, double lon,
-            Callback<WeatherInfo> callback
-    ) {
+    public void getCurrentWeather(double lat, double lon, Callback<WeatherInfo> callback) {
         remoteDataSource.getCurrentWeather(lat, lon, new Callback<>() {
+            @Override
             public void onSuccess(WeatherResponse data) {
                 var weather = data.weather.get(0);
-                var weatherInfo = new WeatherInfo(
+                callback.onSuccess(new WeatherInfo(
                         WeatherUtil.getFormattedTemperature(data.main.temp),
                         weather.main,
                         WeatherUtil.getWeatherIconUrl(weather.icon),
@@ -36,9 +35,33 @@ public class WeatherRepositoryImpl implements WeatherRepository {
                                 weather.id,
                                 data.sys.sunset,
                                 data.sys.sunrise)
+                ));
+            }
 
-                );
-                callback.onSuccess(weatherInfo);
+            @Override
+            public void onFailure(String errorMessage, Throwable t) {
+                Log.e(TAG, errorMessage, t);
+                callback.onFailure(errorMessage, t);
+            }
+        });
+    }
+
+    @Override
+    public void getForecastWeather(double lat, double lon, long dateMillis, Callback<WeatherInfo> callback) {
+        remoteDataSource.getForecastWeather(lat, lon, dateMillis, new Callback<>() {
+            @Override
+            public void onSuccess(ForecastResponse.ForecastItem item) {
+                var weather = item.weather.get(0);
+                boolean isDay = item.sys != null && "d".equals(item.sys.pod);
+                callback.onSuccess(new WeatherInfo(
+                        WeatherUtil.getFormattedTemperature(item.main.temp),
+                        weather.main,
+                        WeatherUtil.getWeatherIconUrl(weather.icon),
+                        WeatherUtil.getDrawableResourceForWeatherId(
+                                weather.id,
+                                isDay ? 1 : 0,
+                                isDay ? 0 : 1)
+                ));
             }
 
             @Override

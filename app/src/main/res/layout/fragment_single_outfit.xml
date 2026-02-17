@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,7 +27,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
-                    app:cardBackgroundColor="@android:color/white"
                     app:cardElevation="0dp" />
 
                 <!-- Nome Outfit -->
@@ -35,9 +34,9 @@
                     android:id="@+id/tv_detail_outfit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/md_theme_primary"
                     android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/md_theme_primary" />
+                    android:textStyle="bold" />
 
                 <!-- Campo Stagione (Aggiunto) -->
                 <TextView
@@ -46,15 +45,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="16dp"
-                    android:textSize="16sp"
+                    android:text="@string/season_2"
                     android:textColor="@color/md_theme_onSurfaceVariant"
-                    android:text="@string/season_2" />
+                    android:textSize="16sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#EEEEEE"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp"
+                    android:background="#EEEEEE" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -65,12 +64,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:letterSpacing="0.1"
                         android:text="Composizione Outfit"
                         android:textAllCaps="true"
-                        android:letterSpacing="0.1"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
                         android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_onSurfaceVariant" />
+                        android:textStyle="bold" />
 
                     <!-- Tasto Aggiungi (Aggiunto) -->
                     <com.google.android.material.button.MaterialButton
@@ -100,9 +99,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:background="@android:color/white"
             android:visibility="gone"
             android:weightSum="2">
 
@@ -140,16 +139,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@drawable/ic_edit"
             app:backgroundTint="@color/md_theme_primary"
+            app:srcCompat="@drawable/ic_edit"
             app:tint="@android:color/white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_delete_outfit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_delete"
             app:backgroundTint="@color/md_theme_error"
+            app:srcCompat="@drawable/ic_delete"
             app:tint="@android:color/white" />
     </LinearLayout>
 </FrameLayout>

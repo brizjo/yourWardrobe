@@ -31,16 +31,15 @@ import com.google.android.material.carousel.UncontainedCarouselStrategy;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
-
 import it.unimib.yourwardrobe.ui.main.viewmodel.ClothesViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
-import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ClothesFragment extends Fragment {
@@ -142,7 +141,7 @@ public class ClothesFragment extends Fragment {
         observeViewModel();
     }
 
-    private void initViews(View view){
+    private void initViews(View view) {
         categoriesScrollView = view.findViewById(R.id.categories_scroll_view);
         gridRecyclerView = view.findViewById(R.id.grid_recycler_view);
         emptyWardrobeView = view.findViewById(R.id.empty_wardrobe_view);
@@ -160,7 +159,7 @@ public class ClothesFragment extends Fragment {
         recyclerViewAccessories = view.findViewById(R.id.accessori_recycler_view);
     }
 
-    private void initAdapter(){
+    private void initAdapter() {
         topAdapter = new ClothesAdapter(new ArrayList<>(), listener);
         bottomAdapter = new ClothesAdapter(new ArrayList<>(), listener);
         footwearAdapter = new ClothesAdapter(new ArrayList<>(), listener);
@@ -175,7 +174,7 @@ public class ClothesFragment extends Fragment {
         recyclerViewAccessories.setLayoutManager(new CarouselLayoutManager(new UncontainedCarouselStrategy()));
     }
 
-    private void setAdapters(){
+    private void setAdapters() {
         recyclerViewTop.setAdapter(topAdapter);
         recyclerViewBottom.setAdapter(bottomAdapter);
         recyclerViewFootWear.setAdapter(footwearAdapter);
@@ -183,7 +182,7 @@ public class ClothesFragment extends Fragment {
         gridRecyclerView.setAdapter(gridAdapter);
     }
 
-    private void observeViewModel(){
+    private void observeViewModel() {
         clothesViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
                 if (isLoading) {
@@ -285,7 +284,7 @@ public class ClothesFragment extends Fragment {
 
         clothesViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                ToastHelper.show(getContext(), error, false);
+                Snackbar.make(requireView(), error, Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -364,10 +363,6 @@ public class ClothesFragment extends Fragment {
                     }
                 })
                 .show();
-    }
-
-    interface OnFilterValuesSelectedListener {
-        void onSelected(List<String> selectedValues);
     }
 
     private void showFilterValueDialog(String title, List<String> allOptions, OnFilterValuesSelectedListener listener) {
@@ -467,4 +462,7 @@ public class ClothesFragment extends Fragment {
         this.clothesViewModel = viewModel;
     }
 
+    interface OnFilterValuesSelectedListener {
+        void onSelected(List<String> selectedValues);
+    }
 }

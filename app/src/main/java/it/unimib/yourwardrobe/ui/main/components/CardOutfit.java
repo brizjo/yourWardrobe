@@ -3,20 +3,22 @@ package it.unimib.yourwardrobe.ui.main.components;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.bumptech.glide.Glide;
+
 import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
+
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class CardOutfit extends MaterialCardView {
-    private LinearLayout container;
+    private final LinearLayout container;
 
     public CardOutfit(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);

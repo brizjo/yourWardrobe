@@ -12,14 +12,6 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_createOutfitFragment"
-            app:destination="@id/createOutfitFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-
-        <action
             android:id="@+id/action_homeFragment_to_addGarmentFragment"
             app:destination="@id/addGarmentFragment"
             app:enterAnim="@android:anim/fade_in"
@@ -52,16 +44,14 @@
         android:id="@+id/clothesFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.ClothesFragment"
         android:label="fragment_clothes"
-        tools:layout="@layout/fragment_clothes">
-    </fragment>
+        tools:layout="@layout/fragment_clothes" />
 
     <!-- Schermata Outfit -->
     <fragment
         android:id="@+id/outfitFragment"
         android:name="it.unimib.yourwardrobe.ui.main.fragments.OutfitMenuFragment"
         android:label="fragment_outfit_menu"
-        tools:layout="@layout/fragment_outfit_menu">
-    </fragment>
+        tools:layout="@layout/fragment_outfit_menu" />
 
     <fragment
         android:id="@+id/addGarmentFragment"
@@ -107,5 +97,6 @@
         android:name="it.unimib.yourwardrobe.ui.main.fragments.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/fragment_profile" />
+
     <include app:graph="@navigation/nav_graph_wardrobe" />
 </navigation>

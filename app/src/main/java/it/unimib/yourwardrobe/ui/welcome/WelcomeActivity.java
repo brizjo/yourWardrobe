@@ -35,7 +35,6 @@ public class WelcomeActivity extends AppCompatActivity {
         });
 
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
-
         setUpObservers();
     }
 

@@ -46,6 +46,7 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
+import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.utils.ToastHelper;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
@@ -53,20 +54,18 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
 
     public static final String TAG = PlannerDialogFragment.class.getSimpleName();
 
-    private static final int DAY_COUNT  = 5;
+    private static final int DAY_COUNT = 5;
     private static final String ARG_LAT = "lat";
     private static final String ARG_LON = "lon";
-
-    private HomeViewModel homeViewModel;
-
     // Stato
-    private final long[] dayTimestamps    = new long[DAY_COUNT];
-    private final int[]  selectedDayIndex = {0};
+    private final long[] dayTimestamps = new long[DAY_COUNT];
+    private final int[] selectedDayIndex = {0};
+    private HomeViewModel homeViewModel;
     private List<Garment> lastPlannedGarments = null;
-    private String lastPlannedSeason  = "Primavera";
-    private String lastDayLabel       = "";
-    private String lastTimeLabel      = "";
-    private String lastOccasionLabel  = "";
+    private String lastPlannedSeason = "Primavera";
+    private String lastDayLabel = "";
+    private String lastTimeLabel = "";
+    private String lastOccasionLabel = "";
 
     private boolean isGenerationPending = false;
 
@@ -153,11 +152,11 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
     // -------------------------------------------------------------------------
 
     private void setupDaySelector(View view) {
-        LinearLayout llDays      = view.findViewById(R.id.ll_days);
-        SimpleDateFormat sdfDay  = new SimpleDateFormat("EEE", Locale.ITALIAN);
+        LinearLayout llDays = view.findViewById(R.id.ll_days);
+        SimpleDateFormat sdfDay = new SimpleDateFormat("EEE", Locale.ITALIAN);
         SimpleDateFormat sdfDate = new SimpleDateFormat("d MMM", Locale.ITALIAN);
 
-        Calendar cal     = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         List<Chip> chips = new ArrayList<>();
         selectedDayIndex[0] = 0;
 
@@ -200,33 +199,33 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void setupGenerateButton(View view) {
-        ChipGroup chipGroupTime     = view.findViewById(R.id.chip_group_time);
+        ChipGroup chipGroupTime = view.findViewById(R.id.chip_group_time);
         ChipGroup chipGroupOccasion = view.findViewById(R.id.chip_group_occasion);
-        MaterialButton btnGenerate  = view.findViewById(R.id.btn_generate_planned_outfit);
-        ProgressBar pbGenerate      = view.findViewById(R.id.pb_generate);
+        MaterialButton btnGenerate = view.findViewById(R.id.btn_generate_planned_outfit);
+        ProgressBar pbGenerate = view.findViewById(R.id.pb_generate);
         applyPopstar(btnGenerate);
 
         Map<Integer, Integer> chipToHour = new HashMap<>();
-        chipToHour.put(R.id.chip_morning,   9);
+        chipToHour.put(R.id.chip_morning, 9);
         chipToHour.put(R.id.chip_afternoon, 15);
-        chipToHour.put(R.id.chip_evening,   21);
+        chipToHour.put(R.id.chip_evening, 21);
 
         Map<Integer, String> chipToOccasion = new HashMap<>();
-        chipToOccasion.put(R.id.chip_casual,   "Casual");
+        chipToOccasion.put(R.id.chip_casual, "Casual");
         chipToOccasion.put(R.id.chip_business, "Business");
-        chipToOccasion.put(R.id.chip_elegant,  "Elegant");
-        chipToOccasion.put(R.id.chip_sport,    "Sport");
+        chipToOccasion.put(R.id.chip_elegant, "Elegant");
+        chipToOccasion.put(R.id.chip_sport, "Sport");
 
         Map<Integer, String> chipToOccasionLabel = new HashMap<>();
-        chipToOccasionLabel.put(R.id.chip_casual,   "casual");
+        chipToOccasionLabel.put(R.id.chip_casual, "casual");
         chipToOccasionLabel.put(R.id.chip_business, "lavoro");
-        chipToOccasionLabel.put(R.id.chip_elegant,  "serata");
-        chipToOccasionLabel.put(R.id.chip_sport,    "sport");
+        chipToOccasionLabel.put(R.id.chip_elegant, "serata");
+        chipToOccasionLabel.put(R.id.chip_sport, "sport");
 
         Map<Integer, String> chipToTimeLabel = new HashMap<>();
-        chipToTimeLabel.put(R.id.chip_morning,   "mattina");
+        chipToTimeLabel.put(R.id.chip_morning, "mattina");
         chipToTimeLabel.put(R.id.chip_afternoon, "pomeriggio");
-        chipToTimeLabel.put(R.id.chip_evening,   "sera");
+        chipToTimeLabel.put(R.id.chip_evening, "sera");
 
         btnGenerate.setOnClickListener(v -> {
             double lat = getArguments() != null ? getArguments().getDouble(ARG_LAT) : 0;
@@ -260,7 +259,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
             long selectedTs = dayTimestamps[selectedDayIndex[0]];
 
             Integer hourObj = chipToHour.get(chipGroupTime.getCheckedChipId());
-            int targetHour  = hourObj != null ? hourObj : 12;
+            int targetHour = hourObj != null ? hourObj : 12;
 
             String occasion = chipToOccasion.get(chipGroupOccasion.getCheckedChipId());
             if (occasion == null) occasion = "Casual";
@@ -296,11 +295,11 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
             if (behavior != null) behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
-        MaterialButton btnSave   = view.findViewById(R.id.btn_save_planned_outfit);
+        MaterialButton btnSave = view.findViewById(R.id.btn_save_planned_outfit);
         applyPopstar(btnSave);
 
         TextInputEditText etName = view.findViewById(R.id.et_outfit_name);
-        TextInputLayout tilName  = view.findViewById(R.id.til_outfit_name);
+        TextInputLayout tilName = view.findViewById(R.id.til_outfit_name);
 
         btnSave.setOnClickListener(v -> {
             String name = etName.getText() != null
@@ -326,7 +325,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
 
         homeViewModel.plannedWeather.observe(getViewLifecycleOwner(), result -> {
             if (result == null || !isGenerationPending) return;
-            if (result.status == it.unimib.yourwardrobe.core.functional.Result.Status.SUCCESS
+            if (result.status == Resource.Status.SUCCESS
                     && result.data != null) {
                 ((TextView) view.findViewById(R.id.tv_planned_temp))
                         .setText(result.data.getTemperature());
@@ -351,8 +350,8 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
 
         homeViewModel.isGeneratingPlanned.observe(getViewLifecycleOwner(), isGenerating -> {
             MaterialButton btn = view.findViewById(R.id.btn_generate_planned_outfit);
-            ProgressBar pb     = view.findViewById(R.id.pb_generate);
-            boolean loading    = Boolean.TRUE.equals(isGenerating);
+            ProgressBar pb = view.findViewById(R.id.pb_generate);
+            boolean loading = Boolean.TRUE.equals(isGenerating);
 
             btn.setEnabled(!loading);
 
@@ -412,8 +411,8 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
                         " — occasione " + lastOccasionLabel
         );
 
-        RecyclerView rvPlanned     = view.findViewById(R.id.rv_planned_outfit);
-        LinearLayout llEmpty       = view.findViewById(R.id.ll_planned_empty);
+        RecyclerView rvPlanned = view.findViewById(R.id.rv_planned_outfit);
+        LinearLayout llEmpty = view.findViewById(R.id.ll_planned_empty);
         LinearLayout llSaveSection = view.findViewById(R.id.ll_save_section);
 
         if (garments != null && !garments.isEmpty()) {
@@ -422,7 +421,8 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
             llSaveSection.setVisibility(VISIBLE);
             rvPlanned.setLayoutManager(new GridLayoutManager(getContext(), 2));
             rvPlanned.setAdapter(new ClothesAdapter(
-                    garments, R.layout.item_outfit_home, (itemView, g) -> {}));
+                    garments, R.layout.item_outfit_home, (itemView, g) -> {
+            }));
         } else {
             rvPlanned.setVisibility(GONE);
             llEmpty.setVisibility(VISIBLE);

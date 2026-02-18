@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModel;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.repository.AuthRepository;
 import it.unimib.yourwardrobe.utils.Callback;
+import it.unimib.yourwardrobe.utils.Resource;
 
 @HiltViewModel
 public class AuthViewModel extends ViewModel {
@@ -24,7 +24,7 @@ public class AuthViewModel extends ViewModel {
 
     private final AuthRepository authRepository;
     private final SharedPreferences sharedPreferences;
-    private final MutableLiveData<Result<User>> authResult = new MutableLiveData<>();
+    private final MutableLiveData<Resource<User>> authResult = new MutableLiveData<>();
 
     @Inject
     public AuthViewModel(AuthRepository authRepository, SharedPreferences sharedPreferences) {
@@ -35,43 +35,43 @@ public class AuthViewModel extends ViewModel {
 
     public void signInWithEmail(String email, String password) {
         if (!isEmailValid(email)) {
-            this.authResult.postValue(Result.error("Formato email non valido", null));
+            this.authResult.postValue(Resource.error("Formato email non valido", null));
             return;
         }
 
         if (!isPasswordValid(password)) {
-            this.authResult.postValue(Result.error("La password deve avere almeno 6 caratteri", null));
+            this.authResult.postValue(Resource.error("La password deve avere almeno 6 caratteri", null));
             return;
         }
 
-        this.authResult.postValue(Result.loading(null));
+        this.authResult.postValue(Resource.loading(null));
         this.authRepository.signInWithEmail(email, password, new Callback<>() {
 
             @Override
             public void onSuccess(User user) {
-                authResult.postValue(Result.success(user));
+                authResult.postValue(Resource.success(user));
             }
 
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.w(TAG, errorMessage, t);
-                authResult.setValue(Result.error(errorMessage, null));
+                authResult.setValue(Resource.error(errorMessage, null));
             }
         });
 
     }
 
     public void signInWithGoogle() {
-        authResult.postValue(Result.loading(null));
+        authResult.postValue(Resource.loading(null));
         authRepository.signInWithGoogle(new Callback<>() {
             @Override
             public void onSuccess(User data) {
-                authResult.setValue(Result.success(data));
+                authResult.setValue(Resource.success(data));
             }
 
             @Override
             public void onFailure(String errorMessage, Throwable t) {
-                authResult.setValue(Result.error(errorMessage, null));
+                authResult.setValue(Resource.error(errorMessage, null));
             }
         });
     }
@@ -79,17 +79,17 @@ public class AuthViewModel extends ViewModel {
     public void signUp(String username, String email, String password, String confirmPassword) {
 
         if (!isEmailValid(email)) {
-            authResult.postValue(Result.error("Formato email non valido", null));
+            authResult.postValue(Resource.error("Formato email non valido", null));
             return;
         }
 
         if (!isPasswordValid(password)) {
-            authResult.postValue(Result.error("La password deve avere almeno 6 caratteri", null));
+            authResult.postValue(Resource.error("La password deve avere almeno 6 caratteri", null));
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            authResult.postValue(Result.error("Le password non corrispondono", null));
+            authResult.postValue(Resource.error("Le password non corrispondono", null));
             return;
         }
 
@@ -97,12 +97,12 @@ public class AuthViewModel extends ViewModel {
 
             @Override
             public void onSuccess(User data) {
-                authResult.postValue(Result.success(data));
+                authResult.postValue(Resource.success(data));
             }
 
             @Override
             public void onFailure(String errorMessage, Throwable t) {
-                authResult.postValue(Result.error(errorMessage, null));
+                authResult.postValue(Resource.error(errorMessage, null));
             }
         });
     }
@@ -112,15 +112,15 @@ public class AuthViewModel extends ViewModel {
         clearSavedOutfit();
 
         authRepository.signOut();
-        authResult.setValue(Result.success(null));
+        authResult.setValue(Resource.success(null));
     }
 
     public void checkUserStatus() {
         var user = authRepository.getCurrentUser();
-        authResult.setValue(Result.success(user));
+        authResult.setValue(Resource.success(user));
     }
 
-    public LiveData<Result<User>> getAuthResult() {
+    public LiveData<Resource<User>> getAuthResult() {
         return authResult;
     }
 

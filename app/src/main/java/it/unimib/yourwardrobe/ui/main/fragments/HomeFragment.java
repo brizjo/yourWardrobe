@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -36,6 +35,7 @@ import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 import it.unimib.yourwardrobe.ui.main.components.CardWeather;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
+import it.unimib.yourwardrobe.utils.Resource;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment {
         View root = requireView();
 
         homeViewModel.currentUser.observe(getViewLifecycleOwner(), result -> {
-            if (result.status == it.unimib.yourwardrobe.core.functional.Result.Status.SUCCESS
+            if (result.status == Resource.Status.SUCCESS
                     && result.data != null) {
                 ((TextView) root.findViewById(R.id.tv_username))
                         .setText(result.data.getDisplayName());

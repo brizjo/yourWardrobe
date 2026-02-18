@@ -27,7 +27,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.model.User;
@@ -37,6 +36,7 @@ import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
 import it.unimib.yourwardrobe.utils.Callback;
+import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
 @HiltViewModel
@@ -53,11 +53,11 @@ public class HomeViewModel extends ViewModel {
     private final Gson gson;
 
     // --- LiveData pubblici ---
-    private final MutableLiveData<Result<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
-    public final LiveData<Result<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
+    private final MutableLiveData<Resource<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
+    public final LiveData<Resource<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
 
-    private final MutableLiveData<Result<User>> _currentUser = new MutableLiveData<>();
-    public final LiveData<Result<User>> currentUser = _currentUser;
+    private final MutableLiveData<Resource<User>> _currentUser = new MutableLiveData<>();
+    public final LiveData<Resource<User>> currentUser = _currentUser;
 
     private final MutableLiveData<List<Garment>> _outfitOfTheDay = new MutableLiveData<>();
     public final LiveData<List<Garment>> outfitOfTheDay = _outfitOfTheDay;
@@ -66,8 +66,8 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Boolean> isGeneratingOutfit = _isGeneratingOutfit;
 
     // Planned outfit
-    private final MutableLiveData<Result<WeatherInfo>> _plannedWeather = new MutableLiveData<>();
-    public final LiveData<Result<WeatherInfo>> plannedWeather = _plannedWeather;
+    private final MutableLiveData<Resource<WeatherInfo>> _plannedWeather = new MutableLiveData<>();
+    public final LiveData<Resource<WeatherInfo>> plannedWeather = _plannedWeather;
 
     private final MutableLiveData<List<Garment>> _plannedOutfit = new MutableLiveData<>();
     public final LiveData<List<Garment>> plannedOutfit = _plannedOutfit;
@@ -76,8 +76,8 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Boolean> isGeneratingPlanned = _isGeneratingPlanned;
 
     // Save outfit
-    private final MutableLiveData<Result<Boolean>> _saveOutfitResult = new MutableLiveData<>();
-    public final LiveData<Result<Boolean>> saveOutfitResult = _saveOutfitResult;
+    private final MutableLiveData<Resource<Boolean>> _saveOutfitResult = new MutableLiveData<>();
+    public final LiveData<Resource<Boolean>> saveOutfitResult = _saveOutfitResult;
     // Compatibility maps
     private final Map<String, Set<String>> colorHarmony = new HashMap<>();
     private final Map<String, Set<String>> styleCompatibility = new HashMap<>();
@@ -151,17 +151,17 @@ public class HomeViewModel extends ViewModel {
     // -------------------------------------------------------------------------
 
     public void getCurrentUser() {
-        _currentUser.setValue(Result.loading(null));
+        _currentUser.setValue(Resource.loading(null));
         var user = authRepository.getCurrentUser();
-        if (user != null) _currentUser.setValue(Result.success(user));
+        if (user != null) _currentUser.setValue(Resource.success(user));
     }
 
     public void getCurrentWeather(double lat, double lon) {
-        _currentWeatherResult.setValue(Result.loading(null));
+        _currentWeatherResult.setValue(Resource.loading(null));
         weatherRepository.getCurrentWeather(lat, lon, new Callback<>() {
             @Override
             public void onSuccess(WeatherInfo data) {
-                _currentWeatherResult.setValue(Result.success(data));
+                _currentWeatherResult.setValue(Resource.success(data));
                 cachedWeatherInfo = data;
                 loadOrGenerateOutfit(data);
             }
@@ -169,7 +169,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.e(TAG, errorMessage, t);
-                _currentWeatherResult.setValue(Result.error(errorMessage, null));
+                _currentWeatherResult.setValue(Resource.error(errorMessage, null));
                 loadOrGenerateOutfitFallback();
             }
         });
@@ -241,7 +241,7 @@ public class HomeViewModel extends ViewModel {
 
     public void generatePlannedOutfit(double lat, double lon, long dateMillis,
                                       int targetHour, String occasion) {
-        _plannedWeather.setValue(Result.loading(null));
+        _plannedWeather.setValue(Resource.loading(null));
         _isGeneratingPlanned.setValue(true);
 
         // Imposta l'ora selezionata nel timestamp
@@ -255,7 +255,7 @@ public class HomeViewModel extends ViewModel {
         weatherRepository.getForecastWeather(lat, lon, adjustedMillis, new Callback<>() {
             @Override
             public void onSuccess(WeatherInfo data) {
-                _plannedWeather.setValue(Result.success(data));
+                _plannedWeather.setValue(Resource.success(data));
                 String season = seasonFromWeatherInfo(data);
                 List<String> allowedStyles = occasionToStyles.getOrDefault(
                         occasion, Arrays.asList("Casual", "Streetwear"));
@@ -265,7 +265,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.e(TAG, errorMessage, t);
-                _plannedWeather.setValue(Result.error(errorMessage, null));
+                _plannedWeather.setValue(Resource.error(errorMessage, null));
                 _isGeneratingPlanned.setValue(false);
             }
         });
@@ -296,21 +296,21 @@ public class HomeViewModel extends ViewModel {
 
     public void savePlannedOutfit(String name, List<Garment> garments, String season) {
         if (name == null || name.trim().isEmpty()) {
-            _saveOutfitResult.setValue(Result.error("Inserisci un nome per l'outfit", null));
+            _saveOutfitResult.setValue(Resource.error("Inserisci un nome per l'outfit", null));
             return;
         }
-        _saveOutfitResult.setValue(Result.loading(null));
+        _saveOutfitResult.setValue(Resource.loading(null));
         Outfit outfit = new Outfit(name.trim(), season, garments);
         outfitRepository.saveOutfit(outfit, new Callback<>() {
             @Override
             public void onSuccess(Boolean result) {
-                _saveOutfitResult.postValue(Result.success(true));
+                _saveOutfitResult.postValue(Resource.success(true));
             }
 
             @Override
             public void onFailure(String error, Throwable t) {
                 Log.e(TAG, error, t);
-                _saveOutfitResult.postValue(Result.error(error, null));
+                _saveOutfitResult.postValue(Resource.error(error, null));
             }
         });
     }

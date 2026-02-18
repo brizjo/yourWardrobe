@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.data.di;
+package it.unimib.yourwardrobe.di;
 
 import dagger.Binds;
 import dagger.Module;

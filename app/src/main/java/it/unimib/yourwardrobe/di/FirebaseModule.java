@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.data.di;
+package it.unimib.yourwardrobe.di;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;

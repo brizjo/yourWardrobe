@@ -60,10 +60,8 @@ public class AddGarmentViewModelTest {
 
     @Before
     public void setUp() {
-
         when(mockContext.getResources()).thenReturn(mockResources);
-        when(mockResources.getStringArray(any(Integer.class))).thenReturn(new String[0]); // Restituisce array vuoti di default
-
+        when(mockResources.getStringArray(any(Integer.class))).thenReturn(new String[0]);
         addGarmentViewModel = new AddGarmentViewModel(mockContext, mockGarmentRepository);
 
         doAnswer(invocation -> {

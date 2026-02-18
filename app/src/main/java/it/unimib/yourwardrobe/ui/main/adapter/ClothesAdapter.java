@@ -13,8 +13,8 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.common.GlideLoader;
 import it.unimib.yourwardrobe.ui.main.components.CardGarment;
-import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 

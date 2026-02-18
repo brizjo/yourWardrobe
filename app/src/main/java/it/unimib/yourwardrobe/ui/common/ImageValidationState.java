@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.utils;
+package it.unimib.yourwardrobe.ui.common;
 
 public enum ImageValidationState {
     VALID,

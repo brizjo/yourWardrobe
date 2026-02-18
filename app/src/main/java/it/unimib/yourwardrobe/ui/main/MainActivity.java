@@ -32,9 +32,9 @@ import java.util.Set;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.common.NetworkBannerHelper;
 import it.unimib.yourwardrobe.ui.common.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.WelcomeActivity;
-import it.unimib.yourwardrobe.utils.NetworkBannerHelper;
 import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.workers.WeatherNotificationScheduler;
 

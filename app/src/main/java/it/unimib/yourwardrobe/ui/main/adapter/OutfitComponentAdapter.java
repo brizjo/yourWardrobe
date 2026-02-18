@@ -12,7 +12,7 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
-import it.unimib.yourwardrobe.utils.GlideLoader;
+import it.unimib.yourwardrobe.ui.common.GlideLoader;
 
 public class OutfitComponentAdapter extends RecyclerView.Adapter<OutfitComponentAdapter.ViewHolder> {
 

@@ -48,8 +48,8 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.common.ImageValidationState;
 import it.unimib.yourwardrobe.ui.main.viewmodel.AddGarmentViewModel;
-import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @AndroidEntryPoint
 public class AddGarmentFragment extends Fragment {
@@ -104,12 +104,17 @@ public class AddGarmentFragment extends Fragment {
     private Button addGarmentButton;
     private ProgressBar addGarmentProgressBar;
 
-    public AddGarmentFragment() {}
+    public AddGarmentFragment() {
+    }
 
-    public static AddGarmentFragment newInstance() { return new AddGarmentFragment(); }
+    public static AddGarmentFragment newInstance() {
+        return new AddGarmentFragment();
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -125,9 +130,18 @@ public class AddGarmentFragment extends Fragment {
         addGarmentImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_add_photo));
         addGarmentImageView.setOnClickListener(v -> showImagePickerDialog());
         garmentNameEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) { viewModel.setGarmentName(s.toString()); }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                viewModel.setGarmentName(s.toString());
+            }
         });
         categoryTextView.setOnItemClickListener((parent, view1, position, id) -> {
             String selectedItem = (String) parent.getItemAtPosition(position);
@@ -358,7 +372,10 @@ public class AddGarmentFragment extends Fragment {
         String[] seasonsArray = allSeasons.toArray(new String[0]);
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Seleziona Stagione")
-                .setItems(seasonsArray, (dialog, which) -> { viewModel.setSelectedSeason(seasonsArray[which]); dialog.dismiss(); })
+                .setItems(seasonsArray, (dialog, which) -> {
+                    viewModel.setSelectedSeason(seasonsArray[which]);
+                    dialog.dismiss();
+                })
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
                 .show();
     }
@@ -438,9 +455,19 @@ public class AddGarmentFragment extends Fragment {
             List<String> allOptions = null;
             List<String> currentSelection = null;
             String dialogTitle = "";
-            if ("color".equals(type)) { allOptions = viewModel.getAllColors().getValue(); currentSelection = viewModel.getSelectedColors().getValue(); dialogTitle = "Seleziona Colori"; }
-            else if ("style".equals(type)) { allOptions = viewModel.getAllStyles().getValue(); currentSelection = viewModel.getSelectedStyles().getValue(); dialogTitle = "Seleziona Stili"; }
-            else if ("fabric".equals(type)) { allOptions = viewModel.getAllFabrics().getValue(); currentSelection = viewModel.getSelectedFabrics().getValue(); dialogTitle = "Seleziona Tessuti"; }
+            if ("color".equals(type)) {
+                allOptions = viewModel.getAllColors().getValue();
+                currentSelection = viewModel.getSelectedColors().getValue();
+                dialogTitle = "Seleziona Colori";
+            } else if ("style".equals(type)) {
+                allOptions = viewModel.getAllStyles().getValue();
+                currentSelection = viewModel.getSelectedStyles().getValue();
+                dialogTitle = "Seleziona Stili";
+            } else if ("fabric".equals(type)) {
+                allOptions = viewModel.getAllFabrics().getValue();
+                currentSelection = viewModel.getSelectedFabrics().getValue();
+                dialogTitle = "Seleziona Tessuti";
+            }
             if (allOptions != null && currentSelection != null) {
                 showChipSelectionDialog(dialogTitle, allOptions, currentSelection, newSelection -> {
                     if ("color".equals(type)) viewModel.updateSelectedColors(newSelection);
@@ -540,7 +567,9 @@ public class AddGarmentFragment extends Fragment {
         }
     }
 
-    private void launchCamera() { takePictureLauncher.launch(null); }
+    private void launchCamera() {
+        takePictureLauncher.launch(null);
+    }
 
     private void launchGallery() {
         pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()

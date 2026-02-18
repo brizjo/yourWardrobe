@@ -53,8 +53,8 @@ import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.common.ImageValidationState;
 import it.unimib.yourwardrobe.ui.main.viewmodel.GarmentViewModel;
-import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @AndroidEntryPoint
 public class GarmentFragment extends Fragment {
@@ -77,7 +77,8 @@ public class GarmentFragment extends Fragment {
     private final ActivityResultLauncher<String> requestCameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) launchCamera();
-                else Snackbar.make(requireView(), "Permesso fotocamera necessario!", Snackbar.LENGTH_LONG).show();
+                else
+                    Snackbar.make(requireView(), "Permesso fotocamera necessario!", Snackbar.LENGTH_LONG).show();
             });
 
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher =
@@ -97,7 +98,8 @@ public class GarmentFragment extends Fragment {
     private final ActivityResultLauncher<String> requestGalleryPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) launchGallery();
-                else Toast.makeText(getContext(), "Permesso galleria necessario", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getContext(), "Permesso galleria necessario", Toast.LENGTH_SHORT).show();
             });
 
     private TextView nameTextView;
@@ -116,7 +118,8 @@ public class GarmentFragment extends Fragment {
     private ProgressBar deleteProgressBar;
     private AlertDialog deleteConfirmationDialog;
 
-    public GarmentFragment() {}
+    public GarmentFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,8 +166,14 @@ public class GarmentFragment extends Fragment {
         }
 
         nameGarmentEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 viewModel.setGarmentName(s.toString());
@@ -350,7 +359,9 @@ public class GarmentFragment extends Fragment {
         }
     }
 
-    private void launchCamera() { takePictureLauncher.launch(null); }
+    private void launchCamera() {
+        takePictureLauncher.launch(null);
+    }
 
     private void launchGallery() {
         pickMediaLauncher.launch(new PickVisualMediaRequest.Builder()
@@ -583,7 +594,8 @@ public class GarmentFragment extends Fragment {
                 .setTitle("Conferma Eliminazione")
                 .setView(dialogView)
                 .setNegativeButton("Annulla", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("Elimina", (dialog, which) -> {})
+                .setPositiveButton("Elimina", (dialog, which) -> {
+                })
                 .create();
 
         deleteConfirmationDialog.show();

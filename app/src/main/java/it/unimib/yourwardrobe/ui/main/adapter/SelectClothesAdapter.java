@@ -16,7 +16,7 @@ import java.util.List;
 
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
-import it.unimib.yourwardrobe.utils.GlideLoader;
+import it.unimib.yourwardrobe.ui.common.GlideLoader;
 
 public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdapter.ViewHolder> {
 

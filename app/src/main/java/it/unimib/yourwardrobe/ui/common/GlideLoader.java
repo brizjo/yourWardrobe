@@ -1,8 +1,10 @@
-package it.unimib.yourwardrobe.utils;
+package it.unimib.yourwardrobe.ui.common;
 
 import android.content.Context;
 import android.widget.ImageView;
+
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;

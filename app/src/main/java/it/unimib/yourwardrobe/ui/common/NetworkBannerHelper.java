@@ -1,7 +1,7 @@
-package it.unimib.yourwardrobe.utils;
+package it.unimib.yourwardrobe.ui.common;
 
-import android.animation.AnimatorListenerAdapter;
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 public class NetworkBannerHelper {
 
     private static final long BANNER_VISIBLE_MS = 15_000;
-    private static final long FADE_IN_MS        = 300;
-    private static final long FADE_OUT_MS       = 500;
+    private static final long FADE_IN_MS = 300;
+    private static final long FADE_OUT_MS = 500;
 
     // Runnable salvato per poterlo cancellare se la connessione torna prima dei 15s
     private static Runnable pendingHide;
@@ -30,7 +30,7 @@ public class NetworkBannerHelper {
         boolean connected = isConnected(cm);
         banner.post(() -> {
             if (connected) hideBanner(banner);
-            else           showBanner(banner);
+            else showBanner(banner);
         });
 
         NetworkRequest request = new NetworkRequest.Builder()

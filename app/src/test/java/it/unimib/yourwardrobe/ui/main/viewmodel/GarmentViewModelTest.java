@@ -37,8 +37,8 @@ import java.util.Collections;
 
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.ui.common.ImageValidationState;
 import it.unimib.yourwardrobe.utils.Callback;
-import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GarmentViewModelTest {

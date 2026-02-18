@@ -38,8 +38,8 @@ import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.UserPreferences;
+import it.unimib.yourwardrobe.ui.common.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.ui.main.viewmodel.ProfileViewModel;
-import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 
 @AndroidEntryPoint
 public class ProfileFragment extends Fragment {

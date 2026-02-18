@@ -1,13 +1,15 @@
-package it.unimib.yourwardrobe.adapter;
+package it.unimib.yourwardrobe.ui.main.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
+
 import java.util.List;
+
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.utils.GlideLoader;
@@ -16,10 +18,6 @@ public class OutfitComponentAdapter extends RecyclerView.Adapter<OutfitComponent
 
     private final List<Garment> items;
     private final OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(Garment garment);
-    }
 
     public OutfitComponentAdapter(List<Garment> items, OnItemClickListener listener) {
         this.items = items;
@@ -43,10 +41,17 @@ public class OutfitComponentAdapter extends RecyclerView.Adapter<OutfitComponent
     }
 
     @Override
-    public int getItemCount() { return items != null ? items.size() : 0; }
+    public int getItemCount() {
+        return items != null ? items.size() : 0;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Garment garment);
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
+
         ViewHolder(View v) {
             super(v);
             image = v.findViewById(R.id.iv_component_image);

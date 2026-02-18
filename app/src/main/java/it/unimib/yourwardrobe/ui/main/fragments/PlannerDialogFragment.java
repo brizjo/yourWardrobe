@@ -43,8 +43,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.main.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.utils.WeatherUtil;

@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.adapter;
+package it.unimib.yourwardrobe.ui.main.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +7,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +18,9 @@ import it.unimib.yourwardrobe.utils.GlideLoader;
 
 public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
 
-    private List<Garment> clothesList;
     private final int layoutId;
     private final OnItemClickListener onItemClickListener;
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, Garment garment);
-    }
+    private List<Garment> clothesList;
 
     public ClothesAdapter(List<Garment> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
         this.clothesList = clothesList != null ? clothesList : new ArrayList<>();
@@ -38,12 +32,6 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
         this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
     }
 
-    /*public void updateGarments(List<Garment> newGarments) {
-        this.clothesList.clear();
-        this.clothesList.addAll(newGarments);
-        notifyDataSetChanged(); // Notifica al RecyclerView di ridisegnare tutto
-    }*/
-
     @NonNull
     @Override
     public ClothesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,6 +39,12 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
                 .inflate(this.layoutId, parent, false);
         return new ClothesViewHolder(view);
     }
+
+    /*public void updateGarments(List<Garment> newGarments) {
+        this.clothesList.clear();
+        this.clothesList.addAll(newGarments);
+        notifyDataSetChanged(); // Notifica al RecyclerView di ridisegnare tutto
+    }*/
 
     @Override
     public void onBindViewHolder(@NonNull ClothesViewHolder holder, int position) {
@@ -69,6 +63,10 @@ public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesV
     public void updateGarments(List<Garment> newGarments) {
         this.clothesList = newGarments != null ? newGarments : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, Garment garment);
     }
 
     public static class ClothesViewHolder extends RecyclerView.ViewHolder {

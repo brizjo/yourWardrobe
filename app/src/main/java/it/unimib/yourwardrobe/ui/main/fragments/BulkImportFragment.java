@@ -1,7 +1,6 @@
 package it.unimib.yourwardrobe.ui.main.fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,18 +29,13 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.BulkImportAdapter;
+import it.unimib.yourwardrobe.ui.main.adapter.BulkImportAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.BulkImportViewModel;
 
 @AndroidEntryPoint
 public class BulkImportFragment extends Fragment {
 
     private BulkImportViewModel viewModel;
-    private RecyclerView recyclerView;
-    private BulkImportAdapter adapter;
-    private MaterialButton saveButton;
-    private ProgressBar progressBar;
-
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMediaLauncher =
             registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(10), uris -> {
                 if (uris != null && !uris.isEmpty()) {
@@ -50,6 +44,10 @@ public class BulkImportFragment extends Fragment {
                     Navigation.findNavController(requireView()).navigateUp();
                 }
             });
+    private RecyclerView recyclerView;
+    private BulkImportAdapter adapter;
+    private MaterialButton saveButton;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,7 +148,8 @@ public class BulkImportFragment extends Fragment {
                         ? "1 foto è stata scartata perché non sembra essere un capo di abbigliamento"
                         : rejectedCount + " foto sono state scartate perché non sembrano essere capi di abbigliamento";
                 Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
-                        .setAction("OK", v -> {})
+                        .setAction("OK", v -> {
+                        })
                         .show();
             }
         });

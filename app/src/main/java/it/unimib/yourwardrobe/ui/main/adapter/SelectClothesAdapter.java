@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.adapter;
+package it.unimib.yourwardrobe.ui.main.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
@@ -27,21 +26,24 @@ public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdap
     private final boolean isMultiSelect;  // ← NUOVO
     private final int maxSelection;       // ← NUOVO
 
-    public interface OnItemClickListener {
-        void onItemClick(Garment garment, boolean isSelected);
-    }
-
     /**
-     * @param items Lista di capi disponibili
+     * @param items         Lista di capi disponibili
      * @param isMultiSelect true per selezione multipla, false per singola
-     * @param maxSelection Numero massimo di selezioni (usato solo se isMultiSelect=true)
-     * @param listener Callback quando viene selezionato un capo
+     * @param maxSelection  Numero massimo di selezioni (usato solo se isMultiSelect=true)
+     * @param listener      Callback quando viene selezionato un capo
      */
     public SelectClothesAdapter(List<Garment> items, boolean isMultiSelect, int maxSelection, OnItemClickListener listener) {
         this.items = items;
         this.isMultiSelect = isMultiSelect;
         this.maxSelection = maxSelection;
         this.listener = listener;
+    }
+
+    /**
+     * Ottieni la lista dei capi selezionati
+     */
+    public List<Garment> getSelectedGarments() {
+        return new ArrayList<>(selectedGarments);
     }
 
     /**
@@ -53,13 +55,6 @@ public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdap
             selectedGarments.addAll(selected);
         }
         notifyDataSetChanged();
-    }
-
-    /**
-     * Ottieni la lista dei capi selezionati
-     */
-    public List<Garment> getSelectedGarments() {
-        return new ArrayList<>(selectedGarments);
     }
 
     @NonNull
@@ -123,6 +118,10 @@ public class SelectClothesAdapter extends RecyclerView.Adapter<SelectClothesAdap
     public void clearSelection() {
         selectedGarments.clear();
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Garment garment, boolean isSelected);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

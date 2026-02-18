@@ -19,9 +19,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.OutfitComponentAdapter;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
+import it.unimib.yourwardrobe.ui.main.adapter.OutfitComponentAdapter;
 import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 import it.unimib.yourwardrobe.ui.main.viewmodel.SingleOutfitViewModel;
 

@@ -7,6 +7,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import it.unimib.yourwardrobe.data.api.WeatherApiService;
+import it.unimib.yourwardrobe.utils.Constants;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -14,13 +15,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @InstallIn(SingletonComponent.class)
 public class NetworkModule {
 
-    private static final String OPENWEATHERMAP_BASE_URL = "https://api.openweathermap.org/";
-
     @Provides
     @Singleton
     public WeatherApiService provideWeatherApiService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(OPENWEATHERMAP_BASE_URL)
+                .baseUrl(Constants.WEATHER_API_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

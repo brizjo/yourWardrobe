@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.adapter;
+package it.unimib.yourwardrobe.ui.main.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +18,9 @@ import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 
 public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.OutfitGridViewHolder> {
 
-    private List<Outfit> outfits;
     private final int layoutId;
     private final OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, Outfit outfit);
-    }
+    private final List<Outfit> outfits;
 
     public OutfitGridAdapter(List<Outfit> outfits, int layoutId, OnItemClickListener listener) {
         this.outfits = outfits;
@@ -54,6 +50,10 @@ public class OutfitGridAdapter extends RecyclerView.Adapter<OutfitGridAdapter.Ou
         this.outfits.clear();
         this.outfits.addAll(newOutfits);
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, Outfit outfit);
     }
 
     public static class OutfitGridViewHolder extends RecyclerView.ViewHolder {

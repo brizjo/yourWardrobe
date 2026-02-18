@@ -32,7 +32,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.ClothesAdapter;
+import it.unimib.yourwardrobe.ui.main.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.PersonalStylistViewModel;
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.adapter;
+package it.unimib.yourwardrobe.ui.main.adapter;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -32,30 +32,15 @@ import it.unimib.yourwardrobe.ui.main.viewmodel.BulkImportViewModel.GarmentImpor
 public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.ViewHolder> {
 
     private static final String TAG = "BulkImportAdapter";
-
-    public interface OnItemChangeListener {
-        void onChange(int index, String value);
-    }
-
-    public interface OnColorChangeListener {
-        void onChange(int index, List<String> colors);
-    }
-
-    public interface OnRemoveListener {
-        void onRemove(int index);
-    }
-
-    private List<GarmentImportItem> items = new ArrayList<>();
     private final OnItemChangeListener nameListener;
     private final OnItemChangeListener categoryListener;
     private final OnItemChangeListener seasonListener;
     private final OnColorChangeListener colorListener;
     private final OnRemoveListener removeListener;
-
+    private List<GarmentImportItem> items = new ArrayList<>();
     // ✅ Typeface passati dal fragment
     private Typeface popstarTypeface;
     private Typeface changoTypeface;
-
     public BulkImportAdapter(OnItemChangeListener nameListener,
                              OnItemChangeListener categoryListener,
                              OnItemChangeListener seasonListener,
@@ -101,6 +86,18 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public interface OnItemChangeListener {
+        void onChange(int index, String value);
+    }
+
+    public interface OnColorChangeListener {
+        void onChange(int index, List<String> colors);
+    }
+
+    public interface OnRemoveListener {
+        void onRemove(int index);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -165,8 +162,14 @@ public class BulkImportAdapter extends RecyclerView.Adapter<BulkImportAdapter.Vi
             isUpdatingName = false;
 
             nameTextWatcher = new TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (!isUpdatingName) {

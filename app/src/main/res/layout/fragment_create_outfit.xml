@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".ui.main.fragments.CreateOutfitFragment">
 
     <ScrollView
@@ -210,7 +211,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp">
+        android:layout_marginBottom="26dp"
+        android:paddingBottom="8dp" >
+
+        <ProgressBar
+            android:id="@+id/pb_save_outfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_outfit"
@@ -220,11 +230,11 @@
             android:enabled="false"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
-            android:layout_marginBottom="40dp"
             android:fontFamily="@font/popstar"
             app:cornerRadius="@dimen/lg"
             android:text="@string/salva" />
 
     </RelativeLayout>
+
 
 </LinearLayout>

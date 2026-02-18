@@ -3,12 +3,16 @@ package it.unimib.yourwardrobe.ui.main.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
@@ -104,7 +109,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
         setupDaySelector(view);
         setupGenerateButton(view);
         setupBackAndSaveButtons(view);
-        applyPopstarToXmlChips(view); // ✅ font su chip XML
+        applyPopstarToXmlChips(view);
         observeViewModel(view);
     }
 
@@ -127,7 +132,6 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
         if (tf != null) chip.setTypeface(tf);
     }
 
-    // ✅ Applica il font a tutti i chip definiti nell'XML
     private void applyPopstarToXmlChips(View view) {
         int[] chipIds = {
                 R.id.chip_morning,
@@ -171,7 +175,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
             chip.setChecked(i == 0);
             chip.setChipCornerRadius(16f);
             chip.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            applyPopstarToChip(chip); // ✅ font sui chip dinamici
+            applyPopstarToChip(chip);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -199,7 +203,8 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
         ChipGroup chipGroupTime     = view.findViewById(R.id.chip_group_time);
         ChipGroup chipGroupOccasion = view.findViewById(R.id.chip_group_occasion);
         MaterialButton btnGenerate  = view.findViewById(R.id.btn_generate_planned_outfit);
-        applyPopstar(btnGenerate); // ✅ font sul bottone
+        ProgressBar pbGenerate      = view.findViewById(R.id.pb_generate);
+        applyPopstar(btnGenerate);
 
         Map<Integer, Integer> chipToHour = new HashMap<>();
         chipToHour.put(R.id.chip_morning,   9);
@@ -234,9 +239,26 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
                 return;
             }
 
+            // Check connessione: chiude il dialog e mostra snackbar sull'activity
+            if (!isNetworkAvailable()) {
+                View parentView = requireActivity().findViewById(android.R.id.content);
+                dismiss();
+                Snackbar.make(
+                        parentView,
+                        "Impossibile accedere al meteo, connessione assente",
+                        Snackbar.LENGTH_LONG
+                ).show();
+                return;
+            }
+
+            // Mostra progressbar al posto del bottone
+            btnGenerate.setText("");
+            btnGenerate.setIcon(null);
+            btnGenerate.setEnabled(false);
+            pbGenerate.setVisibility(VISIBLE);
+
             long selectedTs = dayTimestamps[selectedDayIndex[0]];
 
-            // ✅ FIX: get() + null-check invece di getOrDefault() (API 24+)
             Integer hourObj = chipToHour.get(chipGroupTime.getCheckedChipId());
             int targetHour  = hourObj != null ? hourObj : 12;
 
@@ -275,7 +297,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
         });
 
         MaterialButton btnSave   = view.findViewById(R.id.btn_save_planned_outfit);
-        applyPopstar(btnSave); // ✅ font sul bottone
+        applyPopstar(btnSave);
 
         TextInputEditText etName = view.findViewById(R.id.et_outfit_name);
         TextInputLayout tilName  = view.findViewById(R.id.til_outfit_name);
@@ -329,8 +351,22 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
 
         homeViewModel.isGeneratingPlanned.observe(getViewLifecycleOwner(), isGenerating -> {
             MaterialButton btn = view.findViewById(R.id.btn_generate_planned_outfit);
-            btn.setEnabled(!Boolean.TRUE.equals(isGenerating));
-            btn.setText(Boolean.TRUE.equals(isGenerating) ? "Generazione..." : "Genera outfit");
+            ProgressBar pb     = view.findViewById(R.id.pb_generate);
+            boolean loading    = Boolean.TRUE.equals(isGenerating);
+
+            btn.setEnabled(!loading);
+
+            if (loading) {
+                btn.setText("");
+                btn.setIcon(null);
+                pb.setVisibility(VISIBLE);
+            } else {
+                btn.setText(getString(R.string.genera_outfit));
+                btn.setIconResource(R.drawable.ic_stats);
+                btn.setIconTint(androidx.core.content.ContextCompat
+                        .getColorStateList(requireContext(), android.R.color.white));
+                pb.setVisibility(GONE);
+            }
         });
 
         homeViewModel.saveOutfitResult.observe(getViewLifecycleOwner(), result -> {
@@ -343,14 +379,14 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
                     break;
                 case SUCCESS:
                     btnSave.setEnabled(true);
-                    btnSave.setText("Salva outfit");
+                    btnSave.setText(getString(R.string.salva_outfit));
                     ToastHelper.show(getContext(), "Outfit salvato!", true);
                     homeViewModel.resetSaveOutfitResult();
                     dismiss();
                     break;
                 case ERROR:
                     btnSave.setEnabled(true);
-                    btnSave.setText("Salva outfit");
+                    btnSave.setText(getString(R.string.salva_outfit));
                     ToastHelper.show(getContext(), result.message, false);
                     homeViewModel.resetSaveOutfitResult();
                     break;
@@ -397,6 +433,17 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager)
+                requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        NetworkCapabilities caps = cm.getNetworkCapabilities(cm.getActiveNetwork());
+        return caps != null && (
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+    }
 
     @Nullable
     private BottomSheetBehavior<?> getBehavior() {

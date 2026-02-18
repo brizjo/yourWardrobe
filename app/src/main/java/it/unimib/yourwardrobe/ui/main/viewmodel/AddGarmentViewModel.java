@@ -2,6 +2,8 @@ package it.unimib.yourwardrobe.ui.main.viewmodel;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -27,6 +29,8 @@ import it.unimib.yourwardrobe.utils.ImageValidationState;
 @HiltViewModel
 public class AddGarmentViewModel extends ViewModel {
 
+    private static final int SAVE_TIMEOUT_MS = 7000;
+
     private final Context context;
     private final GarmentRepository garmentRepository;
     private final MutableLiveData<ImageValidationState> imageValidationState = new MutableLiveData<>(ImageValidationState.UNCHECKED);
@@ -34,6 +38,7 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> garmentAddedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> offlineSaveScheduled = new MutableLiveData<>();
 
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allCategories = new MutableLiveData<>();
@@ -50,8 +55,11 @@ public class AddGarmentViewModel extends ViewModel {
     private final MutableLiveData<List<String>> selectedStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> selectedFabrics = new MutableLiveData<>();
     private final MutableLiveData<String> selectedSeason = new MutableLiveData<>();
-    private final MutableLiveData<String> selectedSubCategory = new MutableLiveData<>(); // CAMBIATO: String invece di List
+    private final MutableLiveData<String> selectedSubCategory = new MutableLiveData<>();
     private final MediatorLiveData<Boolean> isButtonEnabled = new MediatorLiveData<>();
+
+    private final Handler timeoutHandler = new Handler(Looper.getMainLooper());
+    private Runnable timeoutRunnable;
 
     @Inject
     public AddGarmentViewModel(@ApplicationContext Context context, GarmentRepository garmentRepository) {
@@ -79,14 +87,8 @@ public class AddGarmentViewModel extends ViewModel {
         allStyles.setValue(Arrays.asList(context.getResources().getStringArray(R.array.garment_styles)));
         allFabrics.setValue(Arrays.asList(context.getResources().getStringArray(R.array.fabric_types)));
         allSeasons.setValue(Arrays.asList(
-                "Tutte le stagioni",
-                "Primavera",
-                "Estate",
-                "Autunno",
-                "Inverno",
-                "Inverno - Autunno",
-                "Primavera - Estate",
-                "Primavera - Autunno"
+                "Tutte le stagioni", "Primavera", "Estate", "Autunno", "Inverno",
+                "Inverno - Autunno", "Primavera - Estate", "Primavera - Autunno"
         ));
         subcategoryMap.put(context.getString(R.string.top_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_top)));
         subcategoryMap.put(context.getString(R.string.bottom_garment), Arrays.asList(context.getResources().getStringArray(R.array.subcategories_bottom)));
@@ -102,14 +104,11 @@ public class AddGarmentViewModel extends ViewModel {
         boolean hasColors = selectedColors.getValue() != null && !selectedColors.getValue().isEmpty();
         boolean hasStyles = selectedStyles.getValue() != null && !selectedStyles.getValue().isEmpty();
         boolean hasSeason = selectedSeason.getValue() != null && !selectedSeason.getValue().isEmpty();
-        boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty(); // CAMBIATO
-
+        boolean hasSubCategory = selectedSubCategory.getValue() != null && !selectedSubCategory.getValue().isEmpty();
         isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasSeason && hasSubCategory);
     }
 
-    private void validateForm(ImageValidationState state){
-        validateForm();
-    }
+    private void validateForm(ImageValidationState state) { validateForm(); }
 
     public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
 
@@ -118,34 +117,18 @@ public class AddGarmentViewModel extends ViewModel {
         garmentRepository.validateGarment(bitmap, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                //isImageValid.postValue(result);
-                if (result) {
-                    // L'immagine è valida
-                    imageValidationState.postValue(ImageValidationState.VALID);
-                } else {
-                    // L'immagine NON è valida, notifica il Fragment per mostrare il dialog
-                    imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
-                }
-                /*if (!result) {
-                    errorMessage.postValue("L'immagine non sembra un capo d'abbigliamento.");
-                } else {
-                    errorMessage.postValue(null);
-                }*/
-                //validateForm();
+                if (result) imageValidationState.postValue(ImageValidationState.VALID);
+                else imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
             }
             @Override
             public void onFailure(String error, Throwable t) {
-                //isImageValid.postValue(false);
                 imageValidationState.postValue(ImageValidationState.ERROR);
                 errorMessage.postValue("Errore durante il riconoscimento: " + error);
-                //validateForm();
             }
         });
     }
 
-    public void forceImageAsValid() {
-        imageValidationState.setValue(ImageValidationState.VALID);
-    }
+    public void forceImageAsValid() { imageValidationState.setValue(ImageValidationState.VALID); }
 
     public void resetImageSelection() {
         garmentImage.setValue(null);
@@ -160,11 +143,11 @@ public class AddGarmentViewModel extends ViewModel {
         List<String> styles = selectedStyles.getValue();
         List<String> fabrics = selectedFabrics.getValue();
         String season = selectedSeason.getValue();
-        String subCategory = selectedSubCategory.getValue(); // CAMBIATO
+        String subCategory = selectedSubCategory.getValue();
 
         if (image == null || name == null || name.isEmpty() || category == null
                 || colors == null || colors.isEmpty() || season == null
-                || subCategory == null || subCategory.isEmpty()) { // CAMBIATO
+                || subCategory == null || subCategory.isEmpty()) {
             errorMessage.postValue("Dati mancanti per creare il capo.");
             return;
         }
@@ -176,17 +159,29 @@ public class AddGarmentViewModel extends ViewModel {
         garment.setStyle(styles);
         garment.setFabric(fabrics);
         garment.setSeason(season);
-        garment.setSubCategory(subCategory); // CAMBIATO
+        garment.setSubCategory(subCategory);
 
         isLoading.postValue(true);
+
+        // Avvia timeout di 7 secondi
+        timeoutRunnable = () -> {
+            if (Boolean.TRUE.equals(isLoading.getValue())) {
+                isLoading.postValue(false);
+                offlineSaveScheduled.postValue(true);
+            }
+        };
+        timeoutHandler.postDelayed(timeoutRunnable, SAVE_TIMEOUT_MS);
+
         garmentRepository.addGarment(image, garment, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
+                cancelTimeout();
                 garmentAddedSuccessfully.postValue(true);
                 isLoading.postValue(false);
             }
             @Override
             public void onFailure(String error, Throwable t) {
+                cancelTimeout();
                 errorMessage.postValue("Errore durante il salvataggio: " + error);
                 garmentAddedSuccessfully.postValue(false);
                 isLoading.postValue(false);
@@ -194,7 +189,21 @@ public class AddGarmentViewModel extends ViewModel {
         });
     }
 
+    private void cancelTimeout() {
+        if (timeoutRunnable != null) {
+            timeoutHandler.removeCallbacks(timeoutRunnable);
+            timeoutRunnable = null;
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        cancelTimeout();
+    }
+
     public void setGarmentName(String name) { garmentName.setValue(name); }
+
     public void setSelectedCategory(String category) {
         if (this.selectedCategory.getValue() == null || !this.selectedCategory.getValue().equals(category)) {
             setSelectedSubCategory(null);
@@ -203,32 +212,28 @@ public class AddGarmentViewModel extends ViewModel {
         List<String> availableSubcategories = subcategoryMap.get(category);
         allSubCategories.setValue(availableSubcategories != null ? availableSubcategories : new ArrayList<>());
     }
-    public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
-    public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); } // NUOVO
 
-    public LiveData<ImageValidationState> getImageValidationState() {
-        return imageValidationState;
-    }
+    public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
+    public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); }
+
+    public LiveData<ImageValidationState> getImageValidationState() { return imageValidationState; }
     public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
+    public LiveData<Boolean> getOfflineSaveScheduled() { return offlineSaveScheduled; }
     public LiveData<List<String>> getAllColors() { return allColors; }
     public LiveData<List<String>> getAllCategories() { return allCategories; }
     public LiveData<List<String>> getAllStyles() { return allStyles; }
     public LiveData<List<String>> getAllFabrics() { return allFabrics; }
     public LiveData<List<String>> getAllSeasons() { return allSeasons; }
     public LiveData<List<String>> getAllSubCategories() { return allSubCategories; }
-    public LiveData<List<String>> getAvailableSubCategories() {
-        return allSubCategories;
-    }
+    public LiveData<List<String>> getAvailableSubCategories() { return allSubCategories; }
     public LiveData<List<String>> getSelectedColors() { return selectedColors; }
     public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
     public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
     public LiveData<String> getSelectedSeason() { return selectedSeason; }
     public LiveData<String> getSelectedCategory() { return selectedCategory; }
     public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; }
-
     public LiveData<String> getErrorMessage() { return errorMessage; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
-
     public void updateSelectedColors(List<String> newSelection) { selectedColors.setValue(newSelection); }
     public void updateSelectedStyles(List<String> newSelection) { selectedStyles.setValue(newSelection); }
     public void updateSelectedFabrics(List<String> newSelection) { selectedFabrics.setValue(newSelection); }

@@ -7,27 +7,6 @@
     android:orientation="vertical"
     tools:context=".ui.welcome.fragments.SignUpFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/app_name"
-        android:fontFamily="@font/troglo"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        android:textAppearance="@style/AppLogo" />
-
-    <ImageView
-        android:id="@+id/imageLogin"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:contentDescription="@string/dressinlogin"
-        android:scaleType="centerInside"
-        android:src="@drawable/dressing_login" />
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -38,6 +17,26 @@
             android:layout_marginHorizontal="@dimen/lg"
             android:orientation="vertical"
             android:paddingBottom="@dimen/lg">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/app_name"
+                android:fontFamily="@font/troglo"
+                android:textAlignment="center"
+                android:textSize="36sp"
+                android:textAppearance="@style/AppLogo" />
+
+            <ImageView
+                android:id="@+id/imageLogin"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:contentDescription="@string/dressinlogin"
+                android:scaleType="centerInside"
+                android:src="@drawable/dressing_login" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -126,7 +125,6 @@
                 android:layout_marginTop="@dimen/xl"
                 android:text="@string/sign_up" />
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -148,9 +146,5 @@
 
             </LinearLayout>
         </LinearLayout>
-
-
     </ScrollView>
-
-
 </LinearLayout>

@@ -7,33 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
-        app:layout_constraintTop_toBottomOf="@id/top_bar"
-        app:navGraph="@navigation/nav_graph_main" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:background="@drawable/bg_bottom_nav"
-        android:elevation="8dp"
-        app:itemActiveIndicatorStyle="@style/Widget.App.BottomNavActiveIndicator"
-        app:itemGravity="center"
-        app:itemIconSize="32dp"
-        app:itemIconTint="@color/nav_item_color"
-        app:itemTextAppearanceActive="@style/activeTextStyle"
-        app:itemTextColor="@color/nav_item_color"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/nav_menu_main" />
-
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
@@ -75,7 +48,40 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/tv_no_connection"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:navGraph="@navigation/nav_graph_main" />
+
+    <include
+        layout="@layout/view_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@drawable/bg_bottom_nav"
+        android:elevation="8dp"
+        app:itemActiveIndicatorStyle="@style/Widget.App.BottomNavActiveIndicator"
+        app:itemGravity="center"
+        app:itemIconSize="32dp"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextAppearanceActive="@style/activeTextStyle"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/nav_menu_main" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_no_connection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#B00020"
+    android:text="Connessione non rilevata, le funzionalità potrebbero essere ridotte"
+    android:textColor="@android:color/white"
+    android:textSize="12sp"
+    android:fontFamily="@font/popstar"
+    android:gravity="center"
+    android:padding="6dp"
+    android:visibility="gone" />

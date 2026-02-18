@@ -2,6 +2,7 @@ package it.unimib.yourwardrobe.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
+import it.unimib.yourwardrobe.utils.NetworkBannerHelper;
 import it.unimib.yourwardrobe.ui.welcome.WelcomeActivity;
 
 @AndroidEntryPoint
@@ -37,11 +39,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.top_bar), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -49,21 +53,20 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        TextView banner = findViewById(R.id.tv_no_connection);
+        NetworkBannerHelper.observe(this, banner);
 
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         setUpObservers();
         setupNavigation();
     }
 
     public void setUpObservers() {
-        authViewModel.getAuthResult()
-                .observe(this, result -> {
-                    if (result.status == Result.Status.SUCCESS && result.data == null) {
-                        // user signed out so redirect to WelcomeActivity.class
-                        navigateToWelcomeActivity();
-                    }
-                });
-
+        authViewModel.getAuthResult().observe(this, result -> {
+            if (result.status == Result.Status.SUCCESS && result.data == null) {
+                navigateToWelcomeActivity();
+            }
+        });
     }
 
     @Override
@@ -77,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().
-                findFragmentById(R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
@@ -93,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             topLevelDestinations.add(R.id.wardrobeFragment);
             topLevelDestinations.add(R.id.personalStylistFragment);
             topLevelDestinations.add(R.id.profileFragment);
+
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).build();
             setSupportActionBar(toolbar);
             NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
@@ -100,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayShowTitleEnabled(false);
             }
-
 
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 toolbar.setTitle(null);
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
                 }
             });
+
             bottomNav.setOnItemReselectedListener(item -> {
                 NavOptions navOptions = new NavOptions.Builder()
                         .setPopUpTo(item.getItemId(), true)
@@ -126,15 +130,11 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 navController.navigate(item.getItemId(), null, navOptions);
             });
-
         }
     }
 
-
     private void navigateToWelcomeActivity() {
-        var intent = new Intent(this, WelcomeActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, WelcomeActivity.class));
         finish();
     }
-
 }

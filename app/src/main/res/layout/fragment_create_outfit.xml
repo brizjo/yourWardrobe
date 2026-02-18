@@ -1,85 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.main.fragments.CreateOutfitFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/md">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <!-- Titolo -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Crea il tuo outfit"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/troglo"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/md"
-            android:layout_marginBottom="@dimen/lg" />
+            android:orientation="vertical"
+            android:padding="@dimen/md">
 
-        <!-- Campo Nome Outfit -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/nome_outfit"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="@dimen/md">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/outfit_name_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Dropdown Stagione -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/season"
-            android:layout_marginBottom="40dp">
-
-            <AutoCompleteTextView
-                android:id="@+id/season_text_view"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="Crea il tuo outfit"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/troglo"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/md"
+                android:layout_marginBottom="@dimen/lg" />
 
-        <!-- ========== SEZIONE PARTE SUPERIORE (MULTIPLA) ========== -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/parte_superiore"
-            android:textColor="@color/md_theme_primary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/troglo"
-            android:layout_marginBottom="@dimen/sm" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nome_outfit"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="@dimen/md">
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="40dp"
-            android:scrollbars="none">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/outfit_name_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
-                android:id="@+id/container_tops"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/season"
+                android:layout_marginBottom="40dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/season_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:text="@string/parte_superiore"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/troglo"
+                android:layout_marginBottom="@dimen/sm" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sm"
+                android:layout_marginBottom="40dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/container_tops"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_add_top"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:icon="@drawable/ic_plus"
+                        app:iconSize="48dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/parte_inferiore"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/troglo"
+                android:layout_marginBottom="@dimen/sm" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sm"
+                android:layout_marginBottom="40dp">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_top"
+                    android:id="@+id/btn_add_bottom"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -89,110 +121,33 @@
                     app:iconSize="48dp"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
 
-            </LinearLayout>
-        </HorizontalScrollView>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/img_bottom_slot"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+            </FrameLayout>
 
-        <!-- ========== SEZIONE PARTE INFERIORE (SINGOLA) ========== -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/parte_inferiore"
-            android:textColor="@color/md_theme_primary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/troglo"
-            android:layout_marginBottom="@dimen/sm" />
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="40dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_bottom"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/ic_plus"
-                app:iconSize="48dp"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_bottom_slot"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-        </FrameLayout>
-
-        <!-- ========== SEZIONE SCARPE (SINGOLA) ========== -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Scarpe"
-            android:textColor="@color/md_theme_primary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/troglo"
-            android:layout_marginBottom="@dimen/sm" />
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="40dp">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_shoes"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/ic_plus"
-                app:iconSize="48dp"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_shoes_slot"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
-        </FrameLayout>
-
-        <!-- ========== SEZIONE ACCESSORI (MULTIPLA) ========== -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/accessori"
-            android:textColor="@color/md_theme_primary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/troglo"
-            android:layout_marginBottom="@dimen/sm" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sm"
-            android:layout_marginBottom="40dp"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:id="@+id/container_accessories"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:text="Scarpe"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/troglo"
+                android:layout_marginBottom="@dimen/sm" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sm"
+                android:layout_marginBottom="40dp">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_add_accessory"
+                    android:id="@+id/btn_add_shoes"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -202,18 +157,68 @@
                     app:iconSize="48dp"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
 
-            </LinearLayout>
-        </HorizontalScrollView>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/img_shoes_slot"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+            </FrameLayout>
 
-        <!-- Bottone Salva -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_save_outfit"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Salva"
-            android:fontFamily="@font/popstar"
-            android:textSize="18sp"
-            android:enabled="false" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/accessori"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/troglo"
+                android:layout_marginBottom="@dimen/sm" />
 
-    </LinearLayout>
-</ScrollView>
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sm"
+                android:layout_marginBottom="40dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/container_accessories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_add_accessory"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:icon="@drawable/ic_plus"
+                        app:iconSize="48dp"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottone fisso in basso -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_outfit"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="@dimen/md"
+        android:layout_marginEnd="@dimen/md"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="12dp"
+        android:text="Salva"
+        android:fontFamily="@font/popstar"
+        android:textSize="18sp"
+        android:enabled="false" />
+
+</LinearLayout>

@@ -45,7 +45,6 @@ public class GarmentRemoteDataSource {
             "Jewelry", "Necklace", "Ring", "Bracelet", "Earrings", "Pendant", "Gemstone", "Bling"
     ));
 
-    // Keywords per riconoscere categorie
     private static final Map<String, Set<String>> CATEGORY_KEYWORDS = new HashMap<>();
     static {
         CATEGORY_KEYWORDS.put("Parte superiore", new HashSet<>(Arrays.asList(
@@ -63,7 +62,6 @@ public class GarmentRemoteDataSource {
         )));
     }
 
-    // Keywords per riconoscere colori
     private static final Map<String, Set<String>> COLOR_KEYWORDS = new HashMap<>();
     static {
         COLOR_KEYWORDS.put("Rosso", new HashSet<>(Arrays.asList("Red", "Crimson", "Scarlet")));
@@ -80,7 +78,6 @@ public class GarmentRemoteDataSource {
         COLOR_KEYWORDS.put("Viola", new HashSet<>(Arrays.asList("Purple", "Violet")));
     }
 
-    // Keywords per riconoscere stagioni (basate su materiali e tipo)
     private static final Map<String, Set<String>> SEASON_KEYWORDS = new HashMap<>();
     static {
         SEASON_KEYWORDS.put("Estate", new HashSet<>(Arrays.asList(
@@ -126,24 +123,18 @@ public class GarmentRemoteDataSource {
         }).addOnFailureListener(e -> callback.onFailure(e.getMessage(), e));
     }
 
-    /**
-     * Rileva attributi del capo: categoria, stagione, colori usando ML Kit
-     */
     public void detectGarmentAttributes(Bitmap bitmap, Callback<GarmentRepository.GarmentAttributes> callback) {
         InputImage image = InputImage.fromBitmap(bitmap, 0);
 
         classifier.process(image).addOnSuccessListener(labels -> {
-            String detectedCategory = "Parte superiore"; // Default
-            String detectedSeason = "Tutte le stagioni"; // Default
+            String detectedCategory = "Parte superiore";
+            String detectedSeason = "Tutte le stagioni";
             List<String> detectedColors = new ArrayList<>();
 
-            List<String> allLabels = new ArrayList<>();
             for (ImageLabel label : labels) {
-                allLabels.add(label.getText());
                 Log.d("MLKit", "Label: " + label.getText() + " - Confidence: " + label.getConfidence());
             }
 
-            // Rileva categoria
             for (Map.Entry<String, Set<String>> entry : CATEGORY_KEYWORDS.entrySet()) {
                 for (ImageLabel label : labels) {
                     if (entry.getValue().contains(label.getText())) {
@@ -153,7 +144,6 @@ public class GarmentRemoteDataSource {
                 }
             }
 
-            // Rileva colori
             for (Map.Entry<String, Set<String>> entry : COLOR_KEYWORDS.entrySet()) {
                 for (ImageLabel label : labels) {
                     if (entry.getValue().contains(label.getText())) {
@@ -165,22 +155,16 @@ public class GarmentRemoteDataSource {
                 }
             }
 
-            // Rileva stagione
             int summerScore = 0, winterScore = 0, springScore = 0, autumnScore = 0;
-
             for (ImageLabel label : labels) {
                 String labelText = label.getText();
-
                 if (SEASON_KEYWORDS.get("Estate").contains(labelText)) summerScore++;
                 if (SEASON_KEYWORDS.get("Inverno").contains(labelText)) winterScore++;
                 if (SEASON_KEYWORDS.get("Primavera").contains(labelText)) springScore++;
                 if (SEASON_KEYWORDS.get("Autunno").contains(labelText)) autumnScore++;
             }
 
-            // Determina la stagione con punteggio più alto
-            int maxScore = Math.max(Math.max(summerScore, winterScore),
-                    Math.max(springScore, autumnScore));
-
+            int maxScore = Math.max(Math.max(summerScore, winterScore), Math.max(springScore, autumnScore));
             if (maxScore > 0) {
                 if (maxScore == summerScore) detectedSeason = "Estate";
                 else if (maxScore == winterScore) detectedSeason = "Inverno";
@@ -188,68 +172,56 @@ public class GarmentRemoteDataSource {
                 else if (maxScore == autumnScore) detectedSeason = "Autunno";
             }
 
-            Log.d("MLKit", "Categoria rilevata: " + detectedCategory);
-            Log.d("MLKit", "Stagione rilevata: " + detectedSeason);
-            Log.d("MLKit", "Colori rilevati: " + detectedColors);
-
-            GarmentRepository.GarmentAttributes attributes =
-                    new GarmentRepository.GarmentAttributes(detectedCategory, detectedSeason, detectedColors);
-
-            callback.onSuccess(attributes);
+            Log.d("MLKit", "Categoria: " + detectedCategory + ", Stagione: " + detectedSeason + ", Colori: " + detectedColors);
+            callback.onSuccess(new GarmentRepository.GarmentAttributes(detectedCategory, detectedSeason, detectedColors));
 
         }).addOnFailureListener(e -> {
             Log.e("MLKit", "Errore nel rilevamento attributi", e);
-            // Ritorna valori di default in caso di errore
-            GarmentRepository.GarmentAttributes defaultAttributes =
-                    new GarmentRepository.GarmentAttributes("Parte superiore", "Tutte le stagioni", new ArrayList<>());
-            callback.onSuccess(defaultAttributes);
+            callback.onSuccess(new GarmentRepository.GarmentAttributes("Parte superiore", "Tutte le stagioni", new ArrayList<>()));
         });
     }
 
     public void uploadImage(Bitmap image, Callback<String> callback) {
         User currentUser = auth.getCurrentUser();
-        String uid = currentUser.getUid();
-        if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        if (currentUser == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
+        String uid = currentUser.getUid();
 
-        String fileName = currentUser.getUid() + "_" + System.currentTimeMillis() + ".jpg";
+        String fileName = uid + "_" + System.currentTimeMillis() + ".jpg";
         StorageReference storageRef = storage.getReference()
-                .child("users")
-                .child(uid)
-                .child("garments")
-                .child(fileName);
+                .child("users").child(uid).child("garments").child(fileName);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 95, baos);
         byte[] byteFoto = baos.toByteArray();
 
-        storageRef.putBytes(byteFoto).addOnSuccessListener(taskSnapshot -> {
-            storageRef.getDownloadUrl()
-                    .addOnFailureListener(e -> callback.onFailure("errore nella creazione url foto", e))
-                    .addOnSuccessListener(uri -> callback.onSuccess(uri.toString()));
-        }).addOnFailureListener(e -> callback.onFailure("errore durante l'upload della foto", e));
+        storageRef.putBytes(byteFoto)
+                .addOnSuccessListener(taskSnapshot ->
+                        storageRef.getDownloadUrl()
+                                .addOnFailureListener(e -> callback.onFailure("Errore nella creazione url foto", e))
+                                .addOnSuccessListener(uri -> callback.onSuccess(uri.toString()))
+                )
+                .addOnFailureListener(e -> callback.onFailure("Errore durante l'upload della foto", e));
     }
 
     public void saveGarmentDocument(Garment garment, Callback<Boolean> callback) {
         User currentUser = auth.getCurrentUser();
-        String uid = currentUser.getUid();
-        if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        if (currentUser == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
+        String uid = currentUser.getUid();
 
         DocumentReference newDoc = firestore.collection("user")
-                .document(uid)
-                .collection("garments")
-                .document();
+                .document(uid).collection("garments").document();
 
         garment.setId(newDoc.getId());
         garment.setCreatedAt(new Date());
         newDoc.set(garment)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("FIRESTORE_SUCCESS", "Documento scritto correttamente su Firestore");
+                    Log.d("FIRESTORE_SUCCESS", "Documento scritto correttamente");
                     callback.onSuccess(true);
                 })
                 .addOnFailureListener(e -> {
@@ -261,53 +233,52 @@ public class GarmentRemoteDataSource {
     public void deleteGarment(Garment garment, Callback<Boolean> callback) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
+            return;
         }
         if (garment.getId() == null) {
             callback.onFailure("Vestito non trovato: dati mancanti", new IllegalStateException("ID non valido"));
+            return;
         }
 
-        firestore.collection("user")
-                .document(uid)
-                .collection("garments")
+        firestore.collection("user").document(uid).collection("garments")
                 .document(garment.getId())
                 .delete()
                 .addOnSuccessListener(x -> callback.onSuccess(true))
-                .addOnFailureListener(e -> callback.onFailure("errore durante la cancellazione del documento", e));
+                .addOnFailureListener(e -> callback.onFailure("Errore durante la cancellazione del documento", e));
     }
 
     public void updateGarment(Garment garment, Callback<Boolean> callback) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
-            callback.onFailure("Utente non autenticato.", new IllegalStateException("Utente non autenticato"));
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
         if (garment == null || garment.getId() == null) {
-            callback.onFailure("Dati del capo non validi.", new IllegalArgumentException("Garment o Garment ID è null"));
+            callback.onFailure("Dati del capo non validi", new IllegalArgumentException("Garment o ID è null"));
             return;
         }
 
-        Log.d("GarmentDataSource", "Aggiornamento del capo con ID: " + garment.getId());
-        firestore.collection("user").document(uid)
-                .collection("garments").document(garment.getId())
+        firestore.collection("user").document(uid).collection("garments").document(garment.getId())
                 .set(garment)
                 .addOnSuccessListener(aVoid -> {
-                    Log.i("GarmentDataSource", "Capo aggiornato con successo su Firestore.");
+                    Log.i("GarmentDataSource", "Capo aggiornato con successo.");
                     callback.onSuccess(true);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("GarmentDataSource", "Errore durante l'aggiornamento del capo.", e);
-                    callback.onFailure("Errore durante l'aggiornamento.", e);
+                    Log.e("GarmentDataSource", "Errore durante l'aggiornamento.", e);
+                    callback.onFailure("Errore durante l'aggiornamento", e);
                 });
     }
 
     public void getGarments(Callback<List<Garment>> callback) {
-        User currentuser = auth.getCurrentUser();
-        String uid = currentuser.getUid();
-        if (uid == null) {
-            callback.onFailure("Problemi con autenticazione", new IllegalStateException("Utente non autenticato"));
+        User currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
+        String uid = currentUser.getUid();
+
         firestore.collection("user").document(uid).collection("garments")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
@@ -315,19 +286,18 @@ public class GarmentRemoteDataSource {
                         return;
                     }
                     if (value != null) {
-                        List<Garment> garments = value.toObjects(Garment.class);
-                        callback.onSuccess(garments);
+                        callback.onSuccess(value.toObjects(Garment.class));
                     }
                 });
     }
 
     public void getGarmentsByCategory(String category, Callback<List<Garment>> callback) {
-        User currentuser = auth.getCurrentUser();
-        String uid = currentuser.getUid();
-        if (uid == null) {
-            callback.onFailure("Utente non autenticato", new IllegalStateException());
+        User currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            callback.onFailure("Utente non autenticato", new IllegalStateException("User null"));
             return;
         }
+        String uid = currentUser.getUid();
 
         firestore.collection("user").document(uid).collection("garments")
                 .whereEqualTo("category", category)
@@ -336,10 +306,8 @@ public class GarmentRemoteDataSource {
                         callback.onFailure(error.getMessage(), error);
                         return;
                     }
-
                     if (value != null) {
-                        List<Garment> garments = value.toObjects(Garment.class);
-                        callback.onSuccess(garments);
+                        callback.onSuccess(value.toObjects(Garment.class));
                     }
                 });
     }

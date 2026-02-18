@@ -47,7 +47,6 @@ import it.unimib.yourwardrobe.adapter.ClothesAdapter;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.ui.main.viewmodel.HomeViewModel;
 import it.unimib.yourwardrobe.utils.Resource;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
 public class PlannerDialogFragment extends BottomSheetDialogFragment {
@@ -310,7 +309,7 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
             }
             tilName.setError(null);
             if (lastPlannedGarments == null || lastPlannedGarments.isEmpty()) {
-                ToastHelper.show(getContext(), "Genera prima un outfit", false);
+                Snackbar.make(requireView(), "Genera prima un outfit", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             homeViewModel.savePlannedOutfit(name, lastPlannedGarments, lastPlannedSeason);
@@ -379,14 +378,14 @@ public class PlannerDialogFragment extends BottomSheetDialogFragment {
                 case SUCCESS:
                     btnSave.setEnabled(true);
                     btnSave.setText(getString(R.string.salva_outfit));
-                    ToastHelper.show(getContext(), "Outfit salvato!", true);
+                    Snackbar.make(requireView(), "Outfit salvato!", Snackbar.LENGTH_SHORT).show();
                     homeViewModel.resetSaveOutfitResult();
                     dismiss();
                     break;
                 case ERROR:
                     btnSave.setEnabled(true);
                     btnSave.setText(getString(R.string.salva_outfit));
-                    ToastHelper.show(getContext(), result.message, false);
+                    Snackbar.make(requireView(), result.message, Snackbar.LENGTH_SHORT).show();
                     homeViewModel.resetSaveOutfitResult();
                     break;
             }

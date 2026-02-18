@@ -1,4 +1,6 @@
-package it.unimib.yourwardrobe.ui.main.fragments;import android.os.Bundle;
+package it.unimib.yourwardrobe.ui.main.fragments;
+
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,6 @@ import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.ui.main.components.CardOutfit;
 import it.unimib.yourwardrobe.ui.main.viewmodel.SingleOutfitViewModel;
-import it.unimib.yourwardrobe.utils.ToastHelper;
 
 @AndroidEntryPoint
 public class SingleOutfitFragment extends Fragment {
@@ -155,8 +156,10 @@ public class SingleOutfitFragment extends Fragment {
 
             if (editFab != null) editFab.setVisibility(isEdit ? View.GONE : View.VISIBLE);
             if (btnDelete != null) btnDelete.setVisibility(isEdit ? View.GONE : View.VISIBLE);
-            if (btnAddGarment != null) btnAddGarment.setVisibility(isEdit ? View.VISIBLE : View.GONE);
-            if (saveCancelContainer != null) saveCancelContainer.setVisibility(isEdit ? View.VISIBLE : View.GONE);
+            if (btnAddGarment != null)
+                btnAddGarment.setVisibility(isEdit ? View.VISIBLE : View.GONE);
+            if (saveCancelContainer != null)
+                saveCancelContainer.setVisibility(isEdit ? View.VISIBLE : View.GONE);
             if (tvSeason != null) {
                 tvSeason.setClickable(isEdit);
                 tvSeason.setAlpha(isEdit ? 0.7f : 1.0f); // Feedback visivo se è cliccabile

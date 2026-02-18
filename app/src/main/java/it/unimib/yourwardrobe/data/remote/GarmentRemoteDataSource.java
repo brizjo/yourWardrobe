@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.remote;
+package it.unimib.yourwardrobe.data.remote;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -46,6 +46,9 @@ public class GarmentRemoteDataSource {
     ));
 
     private static final Map<String, Set<String>> CATEGORY_KEYWORDS = new HashMap<>();
+    private static final Map<String, Set<String>> COLOR_KEYWORDS = new HashMap<>();
+    private static final Map<String, Set<String>> SEASON_KEYWORDS = new HashMap<>();
+
     static {
         CATEGORY_KEYWORDS.put("Parte superiore", new HashSet<>(Arrays.asList(
                 "Shirt", "T-shirt", "Blouse", "Top", "Sweater", "Cardigan", "Hoodie", "Jacket", "Coat", "Vest"
@@ -62,23 +65,21 @@ public class GarmentRemoteDataSource {
         )));
     }
 
-    private static final Map<String, Set<String>> COLOR_KEYWORDS = new HashMap<>();
     static {
         COLOR_KEYWORDS.put("Rosso", new HashSet<>(Arrays.asList("Red", "Crimson", "Scarlet")));
         COLOR_KEYWORDS.put("Blu", new HashSet<>(Arrays.asList("Blue", "Navy", "Azure")));
         COLOR_KEYWORDS.put("Verde", new HashSet<>(Arrays.asList("Green", "Olive")));
-        COLOR_KEYWORDS.put("Nero", new HashSet<>(Arrays.asList("Black")));
-        COLOR_KEYWORDS.put("Bianco", new HashSet<>(Arrays.asList("White")));
+        COLOR_KEYWORDS.put("Nero", new HashSet<>(List.of("Black")));
+        COLOR_KEYWORDS.put("Bianco", new HashSet<>(List.of("White")));
         COLOR_KEYWORDS.put("Grigio", new HashSet<>(Arrays.asList("Gray", "Grey", "Silver")));
         COLOR_KEYWORDS.put("Marrone", new HashSet<>(Arrays.asList("Brown", "Tan", "Beige")));
         COLOR_KEYWORDS.put("Beige", new HashSet<>(Arrays.asList("Beige", "Cream", "Tan")));
         COLOR_KEYWORDS.put("Rosa", new HashSet<>(Arrays.asList("Pink", "Rose")));
         COLOR_KEYWORDS.put("Giallo", new HashSet<>(Arrays.asList("Yellow", "Gold")));
-        COLOR_KEYWORDS.put("Arancione", new HashSet<>(Arrays.asList("Orange")));
+        COLOR_KEYWORDS.put("Arancione", new HashSet<>(List.of("Orange")));
         COLOR_KEYWORDS.put("Viola", new HashSet<>(Arrays.asList("Purple", "Violet")));
     }
 
-    private static final Map<String, Set<String>> SEASON_KEYWORDS = new HashMap<>();
     static {
         SEASON_KEYWORDS.put("Estate", new HashSet<>(Arrays.asList(
                 "T-shirt", "Shorts", "Sandal", "Tank top", "Swimwear", "Light"

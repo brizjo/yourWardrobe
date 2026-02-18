@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.repository;
+package it.unimib.yourwardrobe.data.repository;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -12,9 +12,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import it.unimib.yourwardrobe.core.functional.Callback;
+import it.unimib.yourwardrobe.data.remote.GarmentRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.source.remote.GarmentRemoteDataSource;
 
 public class GarmentRepositoryImpl implements GarmentRepository {
 
@@ -43,12 +43,14 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                         Log.d(TAG, "Documento salvato con successo.");
                         callback.onSuccess(true);
                     }
+
                     @Override
                     public void onFailure(String errorMessage, Throwable t) {
                         callback.onFailure("Errore salvataggio dati: " + errorMessage, t);
                     }
                 });
             }
+
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 callback.onFailure("Errore caricamento immagine: " + errorMessage, t);
@@ -68,12 +70,14 @@ public class GarmentRepositoryImpl implements GarmentRepository {
                         Log.d(TAG, "Immagine aggiornata con successo.");
                         callback.onSuccess(true);
                     }
+
                     @Override
                     public void onFailure(String errorMessage, Throwable t) {
                         callback.onFailure("Errore aggiornamento documento: " + errorMessage, t);
                     }
                 });
             }
+
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 callback.onFailure("Errore caricamento nuova immagine: " + errorMessage, t);

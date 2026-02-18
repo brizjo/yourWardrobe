@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.di;
+package it.unimib.yourwardrobe.data.di;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.dto;
+package it.unimib.yourwardrobe.data.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.repository;
+package it.unimib.yourwardrobe.data.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,9 +14,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
+import it.unimib.yourwardrobe.data.remote.ProfileRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.UserPreferences;
 import it.unimib.yourwardrobe.domain.repository.ProfileRepository;
-import it.unimib.yourwardrobe.source.remote.ProfileRemoteDataSource;
 
 @Singleton
 public class ProfileRepositoryImpl implements ProfileRepository {

@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.di;
+package it.unimib.yourwardrobe.data.di;
 
 import javax.inject.Singleton;
 
@@ -6,7 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
-import it.unimib.yourwardrobe.source.api.WeatherApiService;
+import it.unimib.yourwardrobe.data.api.WeatherApiService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

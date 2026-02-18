@@ -1,11 +1,15 @@
-package it.unimib.yourwardrobe.source.remote;
+package it.unimib.yourwardrobe.data.remote;
 
 import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 
@@ -111,7 +115,8 @@ public class OutfitRemoteDataSource {
     }
 
 
-    public void updateOutfit(Outfit outfit, Callback<Boolean> callback) {    String uid = FirebaseAuth.getInstance().getUid();
+    public void updateOutfit(Outfit outfit, Callback<Boolean> callback) {
+        String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null || outfit.getId() == null) return;
 
         firestore.collection("user").document(uid)

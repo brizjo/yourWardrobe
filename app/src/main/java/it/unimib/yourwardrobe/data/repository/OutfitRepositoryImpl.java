@@ -1,11 +1,13 @@
-package it.unimib.yourwardrobe.source.repository;
+package it.unimib.yourwardrobe.data.repository;
 
 import java.util.List;
+
 import javax.inject.Inject;
+
 import it.unimib.yourwardrobe.core.functional.Callback;
+import it.unimib.yourwardrobe.data.remote.OutfitRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
-import it.unimib.yourwardrobe.source.remote.OutfitRemoteDataSource;
 
 public class OutfitRepositoryImpl implements OutfitRepository {
 

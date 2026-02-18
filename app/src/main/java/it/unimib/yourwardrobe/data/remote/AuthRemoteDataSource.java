@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.remote;
+package it.unimib.yourwardrobe.data.remote;
 
 import android.content.Context;
 import android.os.CancellationSignal;

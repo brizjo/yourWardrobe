@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.remote;
+package it.unimib.yourwardrobe.data.remote;
 
 import it.unimib.yourwardrobe.domain.model.User;
 

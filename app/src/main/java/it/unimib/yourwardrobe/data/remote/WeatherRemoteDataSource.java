@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.remote;
+package it.unimib.yourwardrobe.data.remote;
 
 import static it.unimib.yourwardrobe.utils.Constants.API_APPID_ERROR;
 
@@ -10,9 +10,9 @@ import javax.inject.Inject;
 
 import it.unimib.yourwardrobe.BuildConfig;
 import it.unimib.yourwardrobe.core.functional.Callback;
-import it.unimib.yourwardrobe.source.api.WeatherApiService;
-import it.unimib.yourwardrobe.source.dto.ForecastResponse;
-import it.unimib.yourwardrobe.source.dto.WeatherResponse;
+import it.unimib.yourwardrobe.data.api.WeatherApiService;
+import it.unimib.yourwardrobe.data.dto.ForecastResponse;
+import it.unimib.yourwardrobe.data.dto.WeatherResponse;
 import retrofit2.Call;
 import retrofit2.Response;
 

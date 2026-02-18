@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.source.api;
+package it.unimib.yourwardrobe.data.api;
 
 import static it.unimib.yourwardrobe.utils.Constants.WEATHER_APPID_PARAMETER;
 import static it.unimib.yourwardrobe.utils.Constants.WEATHER_CURRENT_ENDPOINT;
@@ -8,8 +8,8 @@ import static it.unimib.yourwardrobe.utils.Constants.WEATHER_LAT_PARAMETER;
 import static it.unimib.yourwardrobe.utils.Constants.WEATHER_LON_PARAMETER;
 import static it.unimib.yourwardrobe.utils.Constants.WEATHER_UNITS_PARAMETER;
 
-import it.unimib.yourwardrobe.source.dto.ForecastResponse;
-import it.unimib.yourwardrobe.source.dto.WeatherResponse;
+import it.unimib.yourwardrobe.data.dto.ForecastResponse;
+import it.unimib.yourwardrobe.data.dto.WeatherResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

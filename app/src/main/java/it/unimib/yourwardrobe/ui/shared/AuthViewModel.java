@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModel;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.repository.AuthRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class AuthViewModel extends ViewModel {

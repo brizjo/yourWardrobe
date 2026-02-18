@@ -28,9 +28,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
-import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddGarmentViewModelTest {

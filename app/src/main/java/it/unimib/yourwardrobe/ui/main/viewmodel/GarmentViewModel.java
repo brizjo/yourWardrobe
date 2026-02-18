@@ -9,9 +9,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import javax.inject.Inject;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,19 +16,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.utils.Callback;
 import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @HiltViewModel
 public class GarmentViewModel extends AndroidViewModel {
 
     private final GarmentRepository garmentRepository;
-    private Garment originalGarment;
     private final Map<String, List<String>> subcategoryMap = new HashMap<>();
-
     private final MutableLiveData<Garment> garment = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isDeleted = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -39,6 +37,7 @@ public class GarmentViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> garmentUpdatedSuccessfully = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<ImageValidationState> imageValidationState = new MutableLiveData<>(ImageValidationState.UNCHECKED);
+    private Garment originalGarment;
     private Bitmap pendingNewImage = null;
 
     @Inject
@@ -50,25 +49,47 @@ public class GarmentViewModel extends AndroidViewModel {
 
     private void loadSubcategoryOptions() {
         Application app = getApplication();
-        subcategoryMap.put(app.getString(R.string.top_garment),    Arrays.asList(app.getResources().getStringArray(R.array.subcategories_top)));
+        subcategoryMap.put(app.getString(R.string.top_garment), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_top)));
         subcategoryMap.put(app.getString(R.string.bottom_garment), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_bottom)));
-        subcategoryMap.put(app.getString(R.string.footwear),       Arrays.asList(app.getResources().getStringArray(R.array.subcategories_footwear)));
-        subcategoryMap.put(app.getString(R.string.accessory),      Arrays.asList(app.getResources().getStringArray(R.array.subcategories_accessories)));
+        subcategoryMap.put(app.getString(R.string.footwear), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_footwear)));
+        subcategoryMap.put(app.getString(R.string.accessory), Arrays.asList(app.getResources().getStringArray(R.array.subcategories_accessories)));
     }
 
-    public LiveData<Garment> getGarment() { return garment; }
-    public LiveData<Boolean> getIsDeleted() { return isDeleted; }
-    public LiveData<Boolean> getIsEditMode() { return isEditMode; }
-    public LiveData<Boolean> getIsLoading() { return isLoading; }
-    public LiveData<Boolean> getGarmentUpdatedSuccessfully() { return garmentUpdatedSuccessfully; }
-    public LiveData<ImageValidationState> getImageValidationState() { return imageValidationState; }
-
-    public void enterEditMode() { isEditMode.setValue(true); }
-    public void exitEditMode() { isEditMode.setValue(false); }
+    public LiveData<Garment> getGarment() {
+        return garment;
+    }
 
     public void setGarment(Garment garment) {
         this.garment.postValue(garment);
         this.originalGarment = new Garment(garment);
+    }
+
+    public LiveData<Boolean> getIsDeleted() {
+        return isDeleted;
+    }
+
+    public LiveData<Boolean> getIsEditMode() {
+        return isEditMode;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<Boolean> getGarmentUpdatedSuccessfully() {
+        return garmentUpdatedSuccessfully;
+    }
+
+    public LiveData<ImageValidationState> getImageValidationState() {
+        return imageValidationState;
+    }
+
+    public void enterEditMode() {
+        isEditMode.setValue(true);
+    }
+
+    public void exitEditMode() {
+        isEditMode.setValue(false);
     }
 
     // -------------------------------------------------------------------------
@@ -101,6 +122,7 @@ public class GarmentViewModel extends AndroidViewModel {
                     imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
                 }
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 isLoading.postValue(false);
@@ -136,7 +158,10 @@ public class GarmentViewModel extends AndroidViewModel {
         if (currentGarment != null) {
             garmentRepository.deleteGarment(currentGarment, new Callback<Boolean>() {
                 @Override
-                public void onSuccess(Boolean result) { isDeleted.postValue(true); }
+                public void onSuccess(Boolean result) {
+                    isDeleted.postValue(true);
+                }
+
                 @Override
                 public void onFailure(String error, Throwable t) {
                     isDeleted.postValue(false);
@@ -170,6 +195,7 @@ public class GarmentViewModel extends AndroidViewModel {
                     // Dopo aver aggiornato l'immagine, aggiorna anche i dati testuali
                     updateGarmentData(currentGarment);
                 }
+
                 @Override
                 public void onFailure(String error, Throwable t) {
                     isLoading.postValue(false);
@@ -199,6 +225,7 @@ public class GarmentViewModel extends AndroidViewModel {
                 garmentUpdatedSuccessfully.postValue(true);
                 exitEditMode();
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 Log.e("GarmentViewModel", "Errore update: " + error, t);
@@ -212,12 +239,12 @@ public class GarmentViewModel extends AndroidViewModel {
         if (original == null) return true;
         if (current == null) return false;
 
-        boolean nameChanged        = !Objects.equals(current.getName(),        original.getName());
-        boolean seasonChanged      = !Objects.equals(current.getSeason(),      original.getSeason());
+        boolean nameChanged = !Objects.equals(current.getName(), original.getName());
+        boolean seasonChanged = !Objects.equals(current.getSeason(), original.getSeason());
         boolean subCategoryChanged = !Objects.equals(current.getSubCategory(), original.getSubCategory());
-        boolean colorsChanged      = !Objects.equals(current.getColor(),       original.getColor());
-        boolean stylesChanged      = !Objects.equals(current.getStyle(),       original.getStyle());
-        boolean fabricsChanged     = !Objects.equals(current.getFabric(),      original.getFabric());
+        boolean colorsChanged = !Objects.equals(current.getColor(), original.getColor());
+        boolean stylesChanged = !Objects.equals(current.getStyle(), original.getStyle());
+        boolean fabricsChanged = !Objects.equals(current.getFabric(), original.getFabric());
 
         return nameChanged || seasonChanged || subCategoryChanged ||
                 colorsChanged || stylesChanged || fabricsChanged;

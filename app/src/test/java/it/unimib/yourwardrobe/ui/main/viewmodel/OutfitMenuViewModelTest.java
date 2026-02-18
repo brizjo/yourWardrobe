@@ -20,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -29,11 +28,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = {28})
@@ -136,7 +135,7 @@ public class OutfitMenuViewModelTest {
         Garment jeans = new Garment();
         jeans.setCategory("Parte inferiore");
 
-        Outfit summerOutfit = new Outfit("Outfit Estivo", "Primavera", Arrays.asList(tShirt, jeans) );
+        Outfit summerOutfit = new Outfit("Outfit Estivo", "Primavera", Arrays.asList(tShirt, jeans));
 
         doAnswer(invocation -> {
             Callback<List<Garment>> callback = invocation.getArgument(0);

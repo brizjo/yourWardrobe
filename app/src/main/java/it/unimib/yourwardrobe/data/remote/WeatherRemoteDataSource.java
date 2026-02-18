@@ -9,10 +9,10 @@ import java.util.Calendar;
 import javax.inject.Inject;
 
 import it.unimib.yourwardrobe.BuildConfig;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.data.api.WeatherApiService;
 import it.unimib.yourwardrobe.data.dto.ForecastResponse;
 import it.unimib.yourwardrobe.data.dto.WeatherResponse;
+import it.unimib.yourwardrobe.utils.Callback;
 import retrofit2.Call;
 import retrofit2.Response;
 

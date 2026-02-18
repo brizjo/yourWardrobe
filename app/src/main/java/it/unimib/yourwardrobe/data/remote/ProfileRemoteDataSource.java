@@ -14,8 +14,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.UserPreferences;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @Singleton
 public class ProfileRemoteDataSource {

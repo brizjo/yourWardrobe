@@ -4,12 +4,12 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.data.dto.ForecastResponse;
 import it.unimib.yourwardrobe.data.dto.WeatherResponse;
 import it.unimib.yourwardrobe.data.remote.WeatherRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
 public class WeatherRepositoryImpl implements WeatherRepository {

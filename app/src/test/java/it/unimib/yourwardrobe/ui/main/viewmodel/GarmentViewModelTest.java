@@ -1,7 +1,18 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.app.Application;
 import android.content.res.Resources;
@@ -24,9 +35,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 import it.unimib.yourwardrobe.utils.ImageValidationState;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class BulkImportViewModel extends ViewModel {
@@ -290,16 +290,44 @@ public class BulkImportViewModel extends ViewModel {
             this.colors = new ArrayList<>(colors);  // Crea copia
         }
 
-        public int getId() { return id; }
-        public Bitmap getBitmap() { return bitmap; }
-        public String getName() { return name; }
-        public String getCategory() { return category; }
-        public String getSeason() { return season; }
-        public List<String> getColors() { return new ArrayList<>(colors); }  // Ritorna copia
+        public int getId() {
+            return id;
+        }
 
-        public void setName(String name) { this.name = name; }
-        public void setCategory(String category) { this.category = category; }
-        public void setSeason(String season) { this.season = season; }
-        public void setColors(List<String> colors) { this.colors = new ArrayList<>(colors); }
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getSeason() {
+            return season;
+        }
+
+        public void setSeason(String season) {
+            this.season = season;
+        }
+
+        public List<String> getColors() {
+            return new ArrayList<>(colors);
+        }  // Ritorna copia
+
+        public void setColors(List<String> colors) {
+            this.colors = new ArrayList<>(colors);
+        }
     }
 }

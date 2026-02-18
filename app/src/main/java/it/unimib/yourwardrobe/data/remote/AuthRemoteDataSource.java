@@ -24,8 +24,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import javax.inject.Inject;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.User;
+import it.unimib.yourwardrobe.utils.Callback;
 
 public class AuthRemoteDataSource {
     private final FirebaseAuth auth;

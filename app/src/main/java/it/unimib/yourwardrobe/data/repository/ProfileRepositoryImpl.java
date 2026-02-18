@@ -17,6 +17,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 import it.unimib.yourwardrobe.data.remote.ProfileRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.UserPreferences;
 import it.unimib.yourwardrobe.domain.repository.ProfileRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @Singleton
 public class ProfileRepositoryImpl implements ProfileRepository {
@@ -47,7 +48,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     @Override
     public void loadPreferences() {
-        dataSource.loadPreferences(new it.unimib.yourwardrobe.core.functional.Callback<UserPreferences>() {
+        dataSource.loadPreferences(new Callback<UserPreferences>() {
             @Override
             public void onSuccess(UserPreferences prefs) {
                 userPreferencesLiveData.setValue(prefs);
@@ -67,7 +68,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
         UserPreferences currentPrefs = userPreferencesLiveData.getValue();
         String avatarUrl = currentPrefs != null ? currentPrefs.getAvatarUrl() : "";
 
-        dataSource.savePreferences(styles, colors, avatarUrl, new it.unimib.yourwardrobe.core.functional.Callback<Boolean>() {
+        dataSource.savePreferences(styles, colors, avatarUrl, new Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 UserPreferences newPrefs = new UserPreferences(styles, colors, avatarUrl);
@@ -86,10 +87,10 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
     @Override
     public void uploadAvatar(Uri imageUri) {
-        dataSource.uploadAvatar(imageUri, new it.unimib.yourwardrobe.core.functional.Callback<String>() {
+        dataSource.uploadAvatar(imageUri, new Callback<String>() {
             @Override
             public void onSuccess(String avatarUrl) {
-                dataSource.updateAvatarUrl(avatarUrl, new it.unimib.yourwardrobe.core.functional.Callback<Boolean>() {
+                dataSource.updateAvatarUrl(avatarUrl, new Callback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean result) {
                         avatarUrlLiveData.setValue(avatarUrl);
@@ -120,7 +121,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     @Override
     public LiveData<Integer> getTotalGarments() {
         MutableLiveData<Integer> result = new MutableLiveData<>();
-        dataSource.getTotalGarments(new it.unimib.yourwardrobe.core.functional.Callback<Integer>() {
+        dataSource.getTotalGarments(new Callback<Integer>() {
             @Override
             public void onSuccess(Integer count) {
                 result.setValue(count);
@@ -137,7 +138,7 @@ public class ProfileRepositoryImpl implements ProfileRepository {
     @Override
     public LiveData<Integer> getTotalOutfits() {
         MutableLiveData<Integer> result = new MutableLiveData<>();
-        dataSource.getTotalOutfits(new it.unimib.yourwardrobe.core.functional.Callback<Integer>() {
+        dataSource.getTotalOutfits(new Callback<Integer>() {
             @Override
             public void onSuccess(Integer count) {
                 result.setValue(count);

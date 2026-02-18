@@ -5,10 +5,10 @@ import android.content.Context;
 import javax.inject.Inject;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.data.remote.AuthRemoteDataSource;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.repository.AuthRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 public class AuthRepositoryImpl implements AuthRepository {
 

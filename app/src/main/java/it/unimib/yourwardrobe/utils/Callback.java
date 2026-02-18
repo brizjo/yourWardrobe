@@ -1,4 +1,4 @@
-package it.unimib.yourwardrobe.core.functional;
+package it.unimib.yourwardrobe.utils;
 
 public interface Callback<T> {
     void onSuccess(T data);

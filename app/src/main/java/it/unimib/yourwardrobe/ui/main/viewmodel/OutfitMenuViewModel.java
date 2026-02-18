@@ -19,41 +19,25 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class OutfitMenuViewModel extends ViewModel {
 
-    private final Context context;
     private static final String TAG = "OutfitMenuViewModel";
+    private final Context context;
     private final OutfitRepository outfitRepository;
     private final GarmentRepository garmentRepository;
-    public enum UiState {
-        LOADING,
-        NOT_ENOUGH_GARMENTS,
-        NO_OUTFITS,
-        HAS_OUTFITS
-    }
-    public enum SortOrder {
-        BY_NAME_ASC,
-        BY_NAME_DESC,
-        BY_DATE_NEWEST,
-        BY_DATE_OLDEST,
-        BY_GARMENT_COUNT
-    }
-
     private final MutableLiveData<Map<String, List<String>>> activeFilters = new MutableLiveData<>(new HashMap<>());
-    private List<Outfit> allOutfits = new ArrayList<>();
-    private SortOrder currentSortOrder = SortOrder.BY_NAME_ASC;
-
     private final MutableLiveData<List<Outfit>> outfits = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<UiState> uiState = new MutableLiveData<>(UiState.LOADING);
-
+    private List<Outfit> allOutfits = new ArrayList<>();
+    private SortOrder currentSortOrder = SortOrder.BY_NAME_ASC;
     @Inject
     public OutfitMenuViewModel(@ApplicationContext Context context, OutfitRepository outfitRepository, GarmentRepository garmentRepository) {
         this.context = context;
@@ -227,10 +211,6 @@ public class OutfitMenuViewModel extends ViewModel {
         }
     }
 
-    // =========================================================================
-    // Metodi pubblici per filtri
-    // =========================================================================
-
     public void filterByStyle(List<String> styles) {
         Log.d(TAG, "Filtro per stili: " + styles);
         Map<String, List<String>> filters = activeFilters.getValue();
@@ -248,6 +228,10 @@ public class OutfitMenuViewModel extends ViewModel {
         activeFilters.setValue(filters);
         applyFiltersAndSort();
     }
+
+    // =========================================================================
+    // Metodi pubblici per filtri
+    // =========================================================================
 
     public void filterByColor(List<String> colors) {
         Log.d(TAG, "Filtro per colori: " + colors);
@@ -270,8 +254,14 @@ public class OutfitMenuViewModel extends ViewModel {
         applyFiltersAndSort();
     }
 
-    public LiveData<List<Outfit>> getOutfits() { return outfits; }
-    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<List<Outfit>> getOutfits() {
+        return outfits;
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
     public LiveData<UiState> getUiState() {
         return uiState;
     }
@@ -279,10 +269,6 @@ public class OutfitMenuViewModel extends ViewModel {
     public LiveData<Map<String, List<String>>> getActiveFilters() {
         return activeFilters;
     }
-
-    // =========================================================================
-    // Metodi per ottenere tutte le opzioni disponibili (per i dialog)
-    // =========================================================================
 
     public List<String> getAllStyles() {
         //return List.of("Casual", "Elegante", "Sportivo", "Formale", "Streetwear", "Business", "Boho", "Vintage");
@@ -293,7 +279,26 @@ public class OutfitMenuViewModel extends ViewModel {
         return Arrays.asList(context.getResources().getStringArray(R.array.seasons));
     }
 
+    // =========================================================================
+    // Metodi per ottenere tutte le opzioni disponibili (per i dialog)
+    // =========================================================================
+
     public List<String> getAllColors() {
         return Arrays.asList(context.getResources().getStringArray(R.array.garment_color));
+    }
+
+    public enum UiState {
+        LOADING,
+        NOT_ENOUGH_GARMENTS,
+        NO_OUTFITS,
+        HAS_OUTFITS
+    }
+
+    public enum SortOrder {
+        BY_NAME_ASC,
+        BY_NAME_DESC,
+        BY_DATE_NEWEST,
+        BY_DATE_OLDEST,
+        BY_GARMENT_COUNT
     }
 }

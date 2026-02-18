@@ -26,10 +26,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.User;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 public class GarmentRemoteDataSource {
 

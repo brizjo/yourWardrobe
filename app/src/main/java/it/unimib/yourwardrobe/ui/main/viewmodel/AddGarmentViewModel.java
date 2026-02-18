@@ -21,10 +21,10 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.utils.ImageValidationState;
+import it.unimib.yourwardrobe.ui.common.ImageValidationState;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class AddGarmentViewModel extends ViewModel {
@@ -108,9 +108,13 @@ public class AddGarmentViewModel extends ViewModel {
         isButtonEnabled.setValue(imageOk && hasName && hasCategory && hasColors && hasStyles && hasSeason && hasSubCategory);
     }
 
-    private void validateForm(ImageValidationState state) { validateForm(); }
+    private void validateForm(ImageValidationState state) {
+        validateForm();
+    }
 
-    public LiveData<Boolean> isButtonEnabled() { return isButtonEnabled; }
+    public LiveData<Boolean> isButtonEnabled() {
+        return isButtonEnabled;
+    }
 
     public void setGarmentImage(Bitmap bitmap) {
         garmentImage.setValue(bitmap);
@@ -118,8 +122,10 @@ public class AddGarmentViewModel extends ViewModel {
             @Override
             public void onSuccess(Boolean result) {
                 if (result) imageValidationState.postValue(ImageValidationState.VALID);
-                else imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
+                else
+                    imageValidationState.postValue(ImageValidationState.INVALID_CONFIRMATION_NEEDED);
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 imageValidationState.postValue(ImageValidationState.ERROR);
@@ -128,7 +134,9 @@ public class AddGarmentViewModel extends ViewModel {
         });
     }
 
-    public void forceImageAsValid() { imageValidationState.setValue(ImageValidationState.VALID); }
+    public void forceImageAsValid() {
+        imageValidationState.setValue(ImageValidationState.VALID);
+    }
 
     public void resetImageSelection() {
         garmentImage.setValue(null);
@@ -179,6 +187,7 @@ public class AddGarmentViewModel extends ViewModel {
                 garmentAddedSuccessfully.postValue(true);
                 isLoading.postValue(false);
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 cancelTimeout();
@@ -202,7 +211,73 @@ public class AddGarmentViewModel extends ViewModel {
         cancelTimeout();
     }
 
-    public void setGarmentName(String name) { garmentName.setValue(name); }
+    public void setGarmentName(String name) {
+        garmentName.setValue(name);
+    }
+
+    public LiveData<ImageValidationState> getImageValidationState() {
+        return imageValidationState;
+    }
+
+    public LiveData<Boolean> getGarmentAddedSuccessfully() {
+        return garmentAddedSuccessfully;
+    }
+
+    public LiveData<Boolean> getOfflineSaveScheduled() {
+        return offlineSaveScheduled;
+    }
+
+    public LiveData<List<String>> getAllColors() {
+        return allColors;
+    }
+
+    public LiveData<List<String>> getAllCategories() {
+        return allCategories;
+    }
+
+    public LiveData<List<String>> getAllStyles() {
+        return allStyles;
+    }
+
+    public LiveData<List<String>> getAllFabrics() {
+        return allFabrics;
+    }
+
+    public LiveData<List<String>> getAllSeasons() {
+        return allSeasons;
+    }
+
+    public LiveData<List<String>> getAllSubCategories() {
+        return allSubCategories;
+    }
+
+    public LiveData<List<String>> getAvailableSubCategories() {
+        return allSubCategories;
+    }
+
+    public LiveData<List<String>> getSelectedColors() {
+        return selectedColors;
+    }
+
+    public LiveData<List<String>> getSelectedStyles() {
+        return selectedStyles;
+    }
+
+    public LiveData<List<String>> getSelectedFabrics() {
+        return selectedFabrics;
+    }
+
+    public LiveData<String> getSelectedSeason() {
+        return selectedSeason;
+    }
+
+    public void setSelectedSeason(String season) {
+        selectedSeason.setValue(season);
+    }
+
+    public LiveData<String> getSelectedCategory() {
+        return selectedCategory;
+    }
 
     public void setSelectedCategory(String category) {
         if (this.selectedCategory.getValue() == null || !this.selectedCategory.getValue().equals(category)) {
@@ -213,28 +288,31 @@ public class AddGarmentViewModel extends ViewModel {
         allSubCategories.setValue(availableSubcategories != null ? availableSubcategories : new ArrayList<>());
     }
 
-    public void setSelectedSeason(String season) { selectedSeason.setValue(season); }
-    public void setSelectedSubCategory(String subCategory) { selectedSubCategory.setValue(subCategory); }
+    public LiveData<String> getSelectedSubCategory() {
+        return selectedSubCategory;
+    }
 
-    public LiveData<ImageValidationState> getImageValidationState() { return imageValidationState; }
-    public LiveData<Boolean> getGarmentAddedSuccessfully() { return garmentAddedSuccessfully; }
-    public LiveData<Boolean> getOfflineSaveScheduled() { return offlineSaveScheduled; }
-    public LiveData<List<String>> getAllColors() { return allColors; }
-    public LiveData<List<String>> getAllCategories() { return allCategories; }
-    public LiveData<List<String>> getAllStyles() { return allStyles; }
-    public LiveData<List<String>> getAllFabrics() { return allFabrics; }
-    public LiveData<List<String>> getAllSeasons() { return allSeasons; }
-    public LiveData<List<String>> getAllSubCategories() { return allSubCategories; }
-    public LiveData<List<String>> getAvailableSubCategories() { return allSubCategories; }
-    public LiveData<List<String>> getSelectedColors() { return selectedColors; }
-    public LiveData<List<String>> getSelectedStyles() { return selectedStyles; }
-    public LiveData<List<String>> getSelectedFabrics() { return selectedFabrics; }
-    public LiveData<String> getSelectedSeason() { return selectedSeason; }
-    public LiveData<String> getSelectedCategory() { return selectedCategory; }
-    public LiveData<String> getSelectedSubCategory() { return selectedSubCategory; }
-    public LiveData<String> getErrorMessage() { return errorMessage; }
-    public LiveData<Boolean> getIsLoading() { return isLoading; }
-    public void updateSelectedColors(List<String> newSelection) { selectedColors.setValue(newSelection); }
-    public void updateSelectedStyles(List<String> newSelection) { selectedStyles.setValue(newSelection); }
-    public void updateSelectedFabrics(List<String> newSelection) { selectedFabrics.setValue(newSelection); }
+    public void setSelectedSubCategory(String subCategory) {
+        selectedSubCategory.setValue(subCategory);
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public void updateSelectedColors(List<String> newSelection) {
+        selectedColors.setValue(newSelection);
+    }
+
+    public void updateSelectedStyles(List<String> newSelection) {
+        selectedStyles.setValue(newSelection);
+    }
+
+    public void updateSelectedFabrics(List<String> newSelection) {
+        selectedFabrics.setValue(newSelection);
+    }
 }

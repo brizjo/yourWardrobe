@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,16 +29,16 @@ import com.google.android.material.carousel.UncontainedCarouselStrategy;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton; // ✅ import singolo
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.ClothesAdapter;
-import it.unimib.yourwardrobe.ui.main.viewmodel.ClothesViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
+import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.main.adapter.ClothesAdapter;
+import it.unimib.yourwardrobe.ui.main.viewmodel.ClothesViewModel;
 
 @AndroidEntryPoint
 public class ClothesFragment extends Fragment {
@@ -67,7 +66,8 @@ public class ClothesFragment extends Fragment {
     private ClothesAdapter accessoriesAdapter;
     private ClothesAdapter gridAdapter;
 
-    public ClothesFragment() {}
+    public ClothesFragment() {
+    }
 
     public static ClothesFragment newInstance() {
         return new ClothesFragment();
@@ -328,10 +328,6 @@ public class ClothesFragment extends Fragment {
                 .show();
     }
 
-    interface OnFilterValuesSelectedListener {
-        void onSelected(List<String> selectedValues);
-    }
-
     private void showFilterValueDialog(String title, List<String> allOptions,
                                        OnFilterValuesSelectedListener listener) {
         View dialogView = LayoutInflater.from(requireContext())
@@ -344,13 +340,13 @@ public class ClothesFragment extends Fragment {
         dialogTitle.setText(getString(R.string.select) + title);
 
         int colorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_primary);
-        int colorDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
+        int colorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
         ColorStateList colorStateList = new ColorStateList(
                 new int[][]{{android.R.attr.state_checked}, {-android.R.attr.state_checked}},
                 new int[]{colorSelected, colorDefault});
 
         int textColorSelected = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimary);
-        int textColorDefault  = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
+        int textColorDefault = ContextCompat.getColor(requireContext(), R.color.md_theme_onPrimaryContainer);
         ColorStateList chipTextColorStateList = new ColorStateList(
                 new int[][]{{android.R.attr.state_checked}, {-android.R.attr.state_checked}},
                 new int[]{textColorSelected, textColorDefault});
@@ -415,5 +411,9 @@ public class ClothesFragment extends Fragment {
             }
         });
         return chip;
+    }
+
+    interface OnFilterValuesSelectedListener {
+        void onSelected(List<String> selectedValues);
     }
 }

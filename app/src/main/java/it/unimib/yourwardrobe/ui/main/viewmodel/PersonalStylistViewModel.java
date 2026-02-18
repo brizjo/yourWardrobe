@@ -16,15 +16,14 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
-import it.unimib.yourwardrobe.domain.model.UserPreferences;
 import it.unimib.yourwardrobe.domain.model.WeatherInfo;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 import it.unimib.yourwardrobe.domain.repository.ProfileRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
 @HiltViewModel
@@ -47,17 +46,14 @@ public class PersonalStylistViewModel extends ViewModel {
     private final MutableLiveData<Boolean> outfitSaved = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-
-    private List<Garment> allGarments = new ArrayList<>();
-    private double currentTemperature = 20.0;
-
-    // Preferenze utente
-    private List<String> userFavoriteColors = new ArrayList<>();
-    private List<String> userFavoriteStyles = new ArrayList<>();
-
     private final Map<String, Set<String>> colorHarmony = new HashMap<>();
     private final Map<String, Set<String>> styleCompatibility = new HashMap<>();
     private final Map<String, Set<String>> seasonCompatibility = new HashMap<>();
+    private List<Garment> allGarments = new ArrayList<>();
+    private double currentTemperature = 20.0;
+    // Preferenze utente
+    private List<String> userFavoriteColors = new ArrayList<>();
+    private List<String> userFavoriteStyles = new ArrayList<>();
 
     @Inject
     public PersonalStylistViewModel(
@@ -142,26 +138,26 @@ public class PersonalStylistViewModel extends ViewModel {
     // -------------------------------------------------------------------------
 
     private void initializeColorHarmony() {
-        colorHarmony.put("Nero",    new HashSet<>(Arrays.asList("Bianco", "Grigio", "Rosso", "Blu", "Beige", "Nero")));
-        colorHarmony.put("Bianco",  new HashSet<>(Arrays.asList("Nero", "Blu", "Grigio", "Rosso", "Verde", "Beige", "Bianco")));
-        colorHarmony.put("Grigio",  new HashSet<>(Arrays.asList("Nero", "Bianco", "Blu", "Rosso", "Rosa", "Grigio")));
-        colorHarmony.put("Blu",     new HashSet<>(Arrays.asList("Bianco", "Grigio", "Beige", "Nero", "Marrone", "Blu")));
-        colorHarmony.put("Rosso",   new HashSet<>(Arrays.asList("Nero", "Bianco", "Grigio", "Blu scuro", "Rosso")));
-        colorHarmony.put("Verde",   new HashSet<>(Arrays.asList("Bianco", "Beige", "Marrone", "Nero", "Verde")));
-        colorHarmony.put("Beige",   new HashSet<>(Arrays.asList("Bianco", "Marrone", "Blu", "Verde", "Nero", "Beige")));
+        colorHarmony.put("Nero", new HashSet<>(Arrays.asList("Bianco", "Grigio", "Rosso", "Blu", "Beige", "Nero")));
+        colorHarmony.put("Bianco", new HashSet<>(Arrays.asList("Nero", "Blu", "Grigio", "Rosso", "Verde", "Beige", "Bianco")));
+        colorHarmony.put("Grigio", new HashSet<>(Arrays.asList("Nero", "Bianco", "Blu", "Rosso", "Rosa", "Grigio")));
+        colorHarmony.put("Blu", new HashSet<>(Arrays.asList("Bianco", "Grigio", "Beige", "Nero", "Marrone", "Blu")));
+        colorHarmony.put("Rosso", new HashSet<>(Arrays.asList("Nero", "Bianco", "Grigio", "Blu scuro", "Rosso")));
+        colorHarmony.put("Verde", new HashSet<>(Arrays.asList("Bianco", "Beige", "Marrone", "Nero", "Verde")));
+        colorHarmony.put("Beige", new HashSet<>(Arrays.asList("Bianco", "Marrone", "Blu", "Verde", "Nero", "Beige")));
         colorHarmony.put("Marrone", new HashSet<>(Arrays.asList("Beige", "Verde", "Bianco", "Blu", "Marrone")));
-        colorHarmony.put("Rosa",    new HashSet<>(Arrays.asList("Grigio", "Bianco", "Nero", "Blu", "Rosa")));
+        colorHarmony.put("Rosa", new HashSet<>(Arrays.asList("Grigio", "Bianco", "Nero", "Blu", "Rosa")));
     }
 
     private void initializeStyleCompatibility() {
-        styleCompatibility.put("Casual",     new HashSet<>(Arrays.asList("Casual", "Sportivo", "Streetwear")));
-        styleCompatibility.put("Elegante",   new HashSet<>(Arrays.asList("Elegante", "Formale", "Business")));
-        styleCompatibility.put("Sportivo",   new HashSet<>(Arrays.asList("Sportivo", "Casual", "Streetwear")));
-        styleCompatibility.put("Formale",    new HashSet<>(Arrays.asList("Formale", "Elegante", "Business")));
+        styleCompatibility.put("Casual", new HashSet<>(Arrays.asList("Casual", "Sportivo", "Streetwear")));
+        styleCompatibility.put("Elegante", new HashSet<>(Arrays.asList("Elegante", "Formale", "Business")));
+        styleCompatibility.put("Sportivo", new HashSet<>(Arrays.asList("Sportivo", "Casual", "Streetwear")));
+        styleCompatibility.put("Formale", new HashSet<>(Arrays.asList("Formale", "Elegante", "Business")));
         styleCompatibility.put("Streetwear", new HashSet<>(Arrays.asList("Streetwear", "Casual", "Sportivo")));
-        styleCompatibility.put("Business",   new HashSet<>(Arrays.asList("Business", "Formale", "Elegante")));
-        styleCompatibility.put("Boho",       new HashSet<>(Arrays.asList("Boho", "Casual")));
-        styleCompatibility.put("Vintage",    new HashSet<>(Arrays.asList("Vintage", "Casual", "Elegante")));
+        styleCompatibility.put("Business", new HashSet<>(Arrays.asList("Business", "Formale", "Elegante")));
+        styleCompatibility.put("Boho", new HashSet<>(Arrays.asList("Boho", "Casual")));
+        styleCompatibility.put("Vintage", new HashSet<>(Arrays.asList("Vintage", "Casual", "Elegante")));
     }
 
     private void initializeSeasonCompatibility() {
@@ -196,6 +192,7 @@ public class PersonalStylistViewModel extends ViewModel {
                 allGarments = garments;
                 android.util.Log.d("PersonalStylistVM", "Caricati " + garments.size() + " capi");
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 errorMessage.postValue("Errore caricamento capi: " + error);
@@ -223,6 +220,7 @@ public class PersonalStylistViewModel extends ViewModel {
                 }
                 isLoading.postValue(false);
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 errorMessage.postValue("Errore meteo: " + error);
@@ -345,12 +343,12 @@ public class PersonalStylistViewModel extends ViewModel {
         // Log top 5 outfit
         android.util.Log.d("PersonalStylistVM", "=== TOP 5 OUTFIT PER PUNTEGGIO PREFERENZE ===");
         for (int i = 0; i < Math.min(5, scoredOutfits.size()); i++) {
-            android.util.Log.d("PersonalStylistVM", "#" + (i+1) + " Score: " + scoredOutfits.get(i).score);
+            android.util.Log.d("PersonalStylistVM", "#" + (i + 1) + " Score: " + scoredOutfits.get(i).score);
         }
 
         // Selezione pesata: 70% top 20%, 30% resto
         Random random = new Random();
-        int topCount = Math.max(1, (int)(validOutfits.size() * 0.2));
+        int topCount = Math.max(1, (int) (validOutfits.size() * 0.2));
 
         if (random.nextDouble() < 0.7) {
             // Scegli da top 20%
@@ -364,23 +362,6 @@ public class PersonalStylistViewModel extends ViewModel {
             return scoredOutfits.get(index).outfit;
         }
     }
-
-    /**
-     * Classe helper per associare outfit e punteggio
-     */
-    private static class OutfitScore {
-        List<Garment> outfit;
-        double score;
-
-        OutfitScore(List<Garment> outfit, double score) {
-            this.outfit = outfit;
-            this.score = score;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Combinazioni outfit (resto del codice invariato)
-    // -------------------------------------------------------------------------
 
     private List<List<Garment>> generateAllPossibleOutfits(
             List<Garment> tops, List<Garment> bottoms,
@@ -477,6 +458,10 @@ public class PersonalStylistViewModel extends ViewModel {
 
         return allOutfits;
     }
+
+    // -------------------------------------------------------------------------
+    // Combinazioni outfit (resto del codice invariato)
+    // -------------------------------------------------------------------------
 
     private List<List<Garment>> filterOutfitsByConstraints(
             List<List<Garment>> outfits, String filterColor, String filterStyle) {
@@ -595,6 +580,7 @@ public class PersonalStylistViewModel extends ViewModel {
                 isLoading.postValue(false);
                 outfitSaved.postValue(true);
             }
+
             @Override
             public void onFailure(String error, Throwable t) {
                 isLoading.postValue(false);
@@ -603,13 +589,52 @@ public class PersonalStylistViewModel extends ViewModel {
         });
     }
 
-    public LiveData<WeatherInfo> getCurrentWeather() { return currentWeather; }
-    public LiveData<String> getSuggestedSeason() { return suggestedSeason; }
-    public LiveData<List<String>> getAvailableColors() { return availableColors; }
-    public LiveData<List<String>> getAvailableStyles() { return availableStyles; }
-    public LiveData<List<String>> getAvailableSeasons() { return availableSeasons; }
-    public LiveData<List<Garment>> getGeneratedOutfitGarments() { return generatedOutfitGarments; }
-    public LiveData<Boolean> getOutfitSaved() { return outfitSaved; }
-    public LiveData<String> getErrorMessage() { return errorMessage; }
-    public LiveData<Boolean> getIsLoading() { return isLoading; }
+    public LiveData<WeatherInfo> getCurrentWeather() {
+        return currentWeather;
+    }
+
+    public LiveData<String> getSuggestedSeason() {
+        return suggestedSeason;
+    }
+
+    public LiveData<List<String>> getAvailableColors() {
+        return availableColors;
+    }
+
+    public LiveData<List<String>> getAvailableStyles() {
+        return availableStyles;
+    }
+
+    public LiveData<List<String>> getAvailableSeasons() {
+        return availableSeasons;
+    }
+
+    public LiveData<List<Garment>> getGeneratedOutfitGarments() {
+        return generatedOutfitGarments;
+    }
+
+    public LiveData<Boolean> getOutfitSaved() {
+        return outfitSaved;
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    /**
+     * Classe helper per associare outfit e punteggio
+     */
+    private static class OutfitScore {
+        List<Garment> outfit;
+        double score;
+
+        OutfitScore(List<Garment> outfit, double score) {
+            this.outfit = outfit;
+            this.score = score;
+        }
+    }
 }

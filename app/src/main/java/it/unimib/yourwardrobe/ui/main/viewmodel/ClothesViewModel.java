@@ -15,13 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import dagger.hilt.android.lifecycle.HiltViewModel;
 
-import it.unimib.yourwardrobe.core.functional.Callback;
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class ClothesViewModel extends AndroidViewModel {
@@ -31,13 +32,6 @@ public class ClothesViewModel extends AndroidViewModel {
     private final String categoryBottom;
     private final String categoryFootWear;
     private final String categoryAccessories;
-
-    public enum DisplayMode {
-        BY_CATEGORY,
-        GRID_ALPHABETICAL,
-        GRID_BY_DATE
-    }
-
     private final MutableLiveData<List<Garment>> allGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> topGarments = new MutableLiveData<>();
     private final MutableLiveData<List<Garment>> bottomGarments = new MutableLiveData<>();
@@ -46,18 +40,15 @@ public class ClothesViewModel extends AndroidViewModel {
     private final MutableLiveData<List<String>> allColors = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allStyles = new MutableLiveData<>();
     private final MutableLiveData<List<String>> allFabrics = new MutableLiveData<>();
-
     private final MutableLiveData<List<String>> activeColorFilters = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<String>> activeStyleFilters = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<String>> activeFabricFilters = new MutableLiveData<>(new ArrayList<>());
-
     private final MediatorLiveData<Map<String, List<String>>> activeFilters = new MediatorLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isWardrobeEmpty = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(true);
     private final MutableLiveData<DisplayMode> displayMode = new MutableLiveData<>(DisplayMode.BY_CATEGORY);
     private final MutableLiveData<List<Garment>> gridGarments = new MutableLiveData<>();
-
     @Inject
     public ClothesViewModel(Application application, GarmentRepository garmentRepository) {
         super(application);
@@ -71,7 +62,8 @@ public class ClothesViewModel extends AndroidViewModel {
         activeFilters.addSource(activeColorFilters, colors -> updateCombinedFilters());
         activeFilters.addSource(activeStyleFilters, styles -> updateCombinedFilters());
         activeFilters.addSource(activeFabricFilters, fabrics -> updateCombinedFilters())
-;    }
+        ;
+    }
 
     private void updateCombinedFilters() {
         Map<String, List<String>> combined = new HashMap<>();
@@ -85,8 +77,8 @@ public class ClothesViewModel extends AndroidViewModel {
     }
 
     /*
-    * Recupera i colori, stili e tessuti da risorse.
-    */
+     * Recupera i colori, stili e tessuti da risorse.
+     */
     private void loadFilterOptions() {
         Application app = getApplication();
         allColors.setValue(Arrays.asList(app.getResources().getStringArray(R.array.garment_color)));
@@ -147,10 +139,9 @@ public class ClothesViewModel extends AndroidViewModel {
                 tops.add(g);
             } else if (categoryBottom.equalsIgnoreCase(g.getCategory())) {
                 bottoms.add(g);
-            } else if (categoryFootWear.equalsIgnoreCase(g.getCategory())){
+            } else if (categoryFootWear.equalsIgnoreCase(g.getCategory())) {
                 shoes.add(g);
-            }
-            else if (categoryAccessories.equalsIgnoreCase(g.getCategory())) {
+            } else if (categoryAccessories.equalsIgnoreCase(g.getCategory())) {
                 accs.add(g);
             }
 
@@ -199,13 +190,6 @@ public class ClothesViewModel extends AndroidViewModel {
         activeFabricFilters.setValue(new ArrayList<>());
     }
 
-    public void setDisplayMode(DisplayMode mode) {
-        if (this.displayMode.getValue() == mode) return; // Non fare nulla se la modalità è già quella
-
-        this.displayMode.setValue(mode);
-        updateDisplayedGarments(mode);
-    }
-
     private void updateDisplayedGarments(DisplayMode mode, List<Garment> listToDisplay) {
         //List<Garment> fullList = allGarments.getValue();
         if (listToDisplay == null) return;
@@ -245,6 +229,14 @@ public class ClothesViewModel extends AndroidViewModel {
         return displayMode;
     }
 
+    public void setDisplayMode(DisplayMode mode) {
+        if (this.displayMode.getValue() == mode)
+            return; // Non fare nulla se la modalità è già quella
+
+        this.displayMode.setValue(mode);
+        updateDisplayedGarments(mode);
+    }
+
     public LiveData<List<Garment>> getGridGarments() {
         return gridGarments;
     }
@@ -276,9 +268,11 @@ public class ClothesViewModel extends AndroidViewModel {
     public LiveData<List<String>> getAllColors() {
         return allColors;
     }
+
     public LiveData<List<String>> getAllStyles() {
         return allStyles;
     }
+
     public LiveData<List<String>> getAllFabrics() {
         return allFabrics;
     }
@@ -291,6 +285,11 @@ public class ClothesViewModel extends AndroidViewModel {
         return isLoading;
     }
 
+    public enum DisplayMode {
+        BY_CATEGORY,
+        GRID_ALPHABETICAL,
+        GRID_BY_DATE
+    }
 
 
     /**

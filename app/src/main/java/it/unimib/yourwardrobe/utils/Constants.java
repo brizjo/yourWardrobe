@@ -10,7 +10,6 @@ public class Constants {
     public static final String WEATHER_APPID_PARAMETER = "appid";
     public static final String WEATHER_UNITS_PARAMETER = "units";
     public static final String WEATHER_LANG_PARAMETER = "lang";
-
     public static final String RETROFIT_ERROR = "retrofit_error";
     public static final String API_APPID_ERROR = "api_appid_error";
     public static final String UNEXPECTED_ERROR = "unexpected_error";

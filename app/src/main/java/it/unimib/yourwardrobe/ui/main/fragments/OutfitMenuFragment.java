@@ -34,7 +34,7 @@ import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.OutfitGridAdapter;
+import it.unimib.yourwardrobe.ui.main.adapter.OutfitGridAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.OutfitMenuViewModel;
 
 @AndroidEntryPoint

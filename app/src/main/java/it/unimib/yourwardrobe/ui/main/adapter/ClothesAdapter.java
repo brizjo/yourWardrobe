@@ -1,0 +1,97 @@
+package it.unimib.yourwardrobe.ui.main.adapter;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.common.GlideLoader;
+import it.unimib.yourwardrobe.ui.main.components.CardGarment;
+
+public class ClothesAdapter extends RecyclerView.Adapter<ClothesAdapter.ClothesViewHolder> {
+
+    private final int layoutId;
+    private final OnItemClickListener onItemClickListener;
+    private List<Garment> clothesList;
+
+    public ClothesAdapter(List<Garment> clothesList, int layoutId, OnItemClickListener onItemClickListener) {
+        this.clothesList = clothesList != null ? clothesList : new ArrayList<>();
+        this.layoutId = layoutId;
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public ClothesAdapter(List<Garment> clothesList, OnItemClickListener onItemClickListener) {
+        this(clothesList, R.layout.item_clothes_carousel, onItemClickListener);
+    }
+
+    @NonNull
+    @Override
+    public ClothesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(this.layoutId, parent, false);
+        return new ClothesViewHolder(view);
+    }
+
+    /*public void updateGarments(List<Garment> newGarments) {
+        this.clothesList.clear();
+        this.clothesList.addAll(newGarments);
+        notifyDataSetChanged(); // Notifica al RecyclerView di ridisegnare tutto
+    }*/
+
+    @Override
+    public void onBindViewHolder(@NonNull ClothesViewHolder holder, int position) {
+        Garment garment = clothesList.get(position);
+        holder.bind(garment, onItemClickListener);
+    }
+
+    @Override
+    public int getItemCount() {
+        return clothesList != null ? clothesList.size() : 0;
+    }
+
+    /**
+     * Aggiorna la lista di capi e notifica l'adapter
+     */
+    public void updateGarments(List<Garment> newGarments) {
+        this.clothesList = newGarments != null ? newGarments : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, Garment garment);
+    }
+
+    public static class ClothesViewHolder extends RecyclerView.ViewHolder {
+
+        private final CardGarment cardGarment;
+        private final ImageView targetImageView;
+
+        public ClothesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            cardGarment = itemView.findViewById(R.id.clothesCard);
+            targetImageView = cardGarment.findViewById(R.id.card_garment_image);
+            cardGarment.setClipToOutline(true);
+        }
+
+        public void bind(Garment garment, OnItemClickListener listener) {
+            if (cardGarment != null && garment != null) {
+                GlideLoader.loadImage(itemView.getContext(), garment.getImageUrl(), targetImageView);
+
+
+                cardGarment.setOnCardClickListener(v -> {
+                    if (listener != null) {
+                        listener.onItemClick(v, garment);
+                    }
+                });
+            }
+        }
+    }
+}

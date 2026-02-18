@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.adapter.SelectClothesAdapter;
 import it.unimib.yourwardrobe.domain.model.Garment;
+import it.unimib.yourwardrobe.ui.main.adapter.SelectClothesAdapter;
 import it.unimib.yourwardrobe.ui.main.viewmodel.CreateOutfitViewModel;
 
 public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
@@ -31,10 +31,6 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
     private int categoryType;
     private boolean isReplacement;  // ← NUOVO
     private TextView dialogTitle;
-
-    public interface OnGarmentSelectedListener {
-        void onGarmentsConfirmed(List<Garment> selected);
-    }
 
     public static SelectClothesDialogFragment newInstance(int categoryType, boolean isReplacement, OnGarmentSelectedListener listener) {
         SelectClothesDialogFragment fragment = new SelectClothesDialogFragment();
@@ -105,15 +101,24 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
                         garments,
                         finalIsMultiSelect,
                         finalMaxSelection,
-                        (garment, isSelected) -> {}
+                        (garment, isSelected) -> {
+                        }
                 );
 
                 List<Garment> alreadySelected = new ArrayList<>();
                 switch (categoryType) {
-                    case 1: alreadySelected = viewModel.getSelectedTops().getValue(); break;
-                    case 2: alreadySelected = viewModel.getSelectedBottoms().getValue(); break;
-                    case 3: alreadySelected = viewModel.getSelectedShoes().getValue(); break;
-                    case 4: alreadySelected = viewModel.getSelectedAccessories().getValue(); break;
+                    case 1:
+                        alreadySelected = viewModel.getSelectedTops().getValue();
+                        break;
+                    case 2:
+                        alreadySelected = viewModel.getSelectedBottoms().getValue();
+                        break;
+                    case 3:
+                        alreadySelected = viewModel.getSelectedShoes().getValue();
+                        break;
+                    case 4:
+                        alreadySelected = viewModel.getSelectedAccessories().getValue();
+                        break;
                 }
                 if (alreadySelected != null && !alreadySelected.isEmpty()) {
                     adapter.setSelectedGarments(alreadySelected);
@@ -134,5 +139,9 @@ public class SelectClothesDialogFragment extends BottomSheetDialogFragment {
         });
 
         return view;
+    }
+
+    public interface OnGarmentSelectedListener {
+        void onGarmentsConfirmed(List<Garment> selected);
     }
 }

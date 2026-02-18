@@ -1,15 +1,19 @@
 package it.unimib.yourwardrobe.ui.main.viewmodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
 import android.app.Application;
 import android.content.res.Resources;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Observer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,12 +28,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import androidx.lifecycle.Observer;
-import it.unimib.yourwardrobe.core.functional.Callback;
 
+import it.unimib.yourwardrobe.R;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
-import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClothesViewModelTest {

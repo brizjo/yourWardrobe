@@ -15,8 +15,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
+import it.unimib.yourwardrobe.ui.common.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.ui.main.MainActivity;
-import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
 
 @AndroidEntryPoint
 public class WelcomeActivity extends AppCompatActivity {

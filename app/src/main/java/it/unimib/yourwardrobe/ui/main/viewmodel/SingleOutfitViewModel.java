@@ -3,14 +3,17 @@ package it.unimib.yourwardrobe.ui.main.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Callback;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
+import it.unimib.yourwardrobe.utils.Callback;
 
 @HiltViewModel
 public class SingleOutfitViewModel extends ViewModel {
@@ -31,16 +34,30 @@ public class SingleOutfitViewModel extends ViewModel {
         this.outfitRepository = outfitRepository;
     }
 
+    public LiveData<Outfit> getOutfit() {
+        return outfit;
+    }
+
     public void setOutfit(Outfit outfitData) {
         outfit.setValue(outfitData);
         originalOutfit = deepCopyOutfit(outfitData); // salva copia originale
     }
 
-    public LiveData<Outfit> getOutfit() { return outfit; }
-    public LiveData<Boolean> getIsEditMode() { return isEditMode; }
-    public LiveData<Boolean> getOutfitDeleted() { return outfitDeleted; }
-    public LiveData<Boolean> getOutfitUpdated() { return outfitUpdated; }
-    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<Boolean> getIsEditMode() {
+        return isEditMode;
+    }
+
+    public LiveData<Boolean> getOutfitDeleted() {
+        return outfitDeleted;
+    }
+
+    public LiveData<Boolean> getOutfitUpdated() {
+        return outfitUpdated;
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
 
     public void enterEditMode() {
         // Aggiorna la copia originale ogni volta che si entra in edit mode
@@ -92,6 +109,7 @@ public class SingleOutfitViewModel extends ViewModel {
                     isEditMode.postValue(false);
                     outfitUpdated.postValue(true);
                 }
+
                 @Override
                 public void onFailure(String error, Throwable t) {
                     errorMessage.postValue(error);
@@ -105,9 +123,14 @@ public class SingleOutfitViewModel extends ViewModel {
         if (current != null) {
             outfitRepository.deleteOutfit(current, new Callback<Boolean>() {
                 @Override
-                public void onSuccess(Boolean result) { outfitDeleted.postValue(true); }
+                public void onSuccess(Boolean result) {
+                    outfitDeleted.postValue(true);
+                }
+
                 @Override
-                public void onFailure(String error, Throwable t) { errorMessage.postValue(error); }
+                public void onFailure(String error, Throwable t) {
+                    errorMessage.postValue(error);
+                }
             });
         }
     }

@@ -12,8 +12,8 @@ import androidx.work.WorkerParameters;
 
 import it.unimib.yourwardrobe.BuildConfig;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.source.api.WeatherApiService;
-import it.unimib.yourwardrobe.source.dto.WeatherResponse;
+import it.unimib.yourwardrobe.data.api.WeatherApiService;
+import it.unimib.yourwardrobe.data.dto.WeatherResponse;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

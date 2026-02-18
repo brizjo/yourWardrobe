@@ -3,7 +3,6 @@ package it.unimib.yourwardrobe.ui.main;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -33,29 +32,14 @@ import java.util.Set;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.core.functional.Result;
-import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
-import it.unimib.yourwardrobe.utils.NetworkBannerHelper;
+import it.unimib.yourwardrobe.ui.common.NetworkBannerHelper;
+import it.unimib.yourwardrobe.ui.common.viewmodel.AuthViewModel;
 import it.unimib.yourwardrobe.ui.welcome.WelcomeActivity;
+import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.workers.WeatherNotificationScheduler;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-
-    private AuthViewModel authViewModel;
-    private FusedLocationProviderClient fusedLocationClient;
-
-    private final ActivityResultLauncher<String[]> locationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
-                boolean granted = Boolean.TRUE.equals(permissions.get(Manifest.permission.ACCESS_FINE_LOCATION)) ||
-                        Boolean.TRUE.equals(permissions.get(Manifest.permission.ACCESS_COARSE_LOCATION));
-                if (granted) {
-                    scheduleWeatherNotification();
-                } else {
-                    // Permesso negato, usa coordinate di default (Roma)
-                    WeatherNotificationScheduler.schedule(this, 41.9028, 12.4964);
-                }
-            });
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -68,6 +52,19 @@ public class MainActivity extends AppCompatActivity {
                     // same time, respect the user's decision. Don't link to system
                     // settings in an effort to convince the user to change their
                     // decision.
+                }
+            });
+    private AuthViewModel authViewModel;
+    private FusedLocationProviderClient fusedLocationClient;
+    private final ActivityResultLauncher<String[]> locationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
+                boolean granted = Boolean.TRUE.equals(permissions.get(Manifest.permission.ACCESS_FINE_LOCATION)) ||
+                        Boolean.TRUE.equals(permissions.get(Manifest.permission.ACCESS_COARSE_LOCATION));
+                if (granted) {
+                    scheduleWeatherNotification();
+                } else {
+                    // Permesso negato, usa coordinate di default (Roma)
+                    WeatherNotificationScheduler.schedule(this, 41.9028, 12.4964);
                 }
             });
 
@@ -154,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUpObservers() {
         authViewModel.getAuthResult().observe(this, result -> {
-            if (result.status == Result.Status.SUCCESS && result.data == null) {
+            if (result.status == Resource.Status.SUCCESS && result.data == null) {
                 navigateToWelcomeActivity();
             }
         });

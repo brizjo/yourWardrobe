@@ -15,7 +15,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import it.unimib.yourwardrobe.R;
-import it.unimib.yourwardrobe.ui.shared.AuthViewModel;
+import it.unimib.yourwardrobe.ui.common.viewmodel.AuthViewModel;
 
 public class SignUpFragment extends Fragment {
 

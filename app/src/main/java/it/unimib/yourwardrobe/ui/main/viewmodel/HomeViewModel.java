@@ -27,8 +27,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import it.unimib.yourwardrobe.core.functional.Callback;
-import it.unimib.yourwardrobe.core.functional.Result;
 import it.unimib.yourwardrobe.domain.model.Garment;
 import it.unimib.yourwardrobe.domain.model.Outfit;
 import it.unimib.yourwardrobe.domain.model.User;
@@ -37,6 +35,8 @@ import it.unimib.yourwardrobe.domain.repository.AuthRepository;
 import it.unimib.yourwardrobe.domain.repository.GarmentRepository;
 import it.unimib.yourwardrobe.domain.repository.OutfitRepository;
 import it.unimib.yourwardrobe.domain.repository.WeatherRepository;
+import it.unimib.yourwardrobe.utils.Callback;
+import it.unimib.yourwardrobe.utils.Resource;
 import it.unimib.yourwardrobe.utils.WeatherUtil;
 
 @HiltViewModel
@@ -53,11 +53,11 @@ public class HomeViewModel extends ViewModel {
     private final Gson gson;
 
     // --- LiveData pubblici ---
-    private final MutableLiveData<Result<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
-    public final LiveData<Result<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
+    private final MutableLiveData<Resource<WeatherInfo>> _currentWeatherResult = new MutableLiveData<>();
+    public final LiveData<Resource<WeatherInfo>> currentWeatherResult = _currentWeatherResult;
 
-    private final MutableLiveData<Result<User>> _currentUser = new MutableLiveData<>();
-    public final LiveData<Result<User>> currentUser = _currentUser;
+    private final MutableLiveData<Resource<User>> _currentUser = new MutableLiveData<>();
+    public final LiveData<Resource<User>> currentUser = _currentUser;
 
     private final MutableLiveData<List<Garment>> _outfitOfTheDay = new MutableLiveData<>();
     public final LiveData<List<Garment>> outfitOfTheDay = _outfitOfTheDay;
@@ -66,8 +66,8 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Boolean> isGeneratingOutfit = _isGeneratingOutfit;
 
     // Planned outfit
-    private final MutableLiveData<Result<WeatherInfo>> _plannedWeather = new MutableLiveData<>();
-    public final LiveData<Result<WeatherInfo>> plannedWeather = _plannedWeather;
+    private final MutableLiveData<Resource<WeatherInfo>> _plannedWeather = new MutableLiveData<>();
+    public final LiveData<Resource<WeatherInfo>> plannedWeather = _plannedWeather;
 
     private final MutableLiveData<List<Garment>> _plannedOutfit = new MutableLiveData<>();
     public final LiveData<List<Garment>> plannedOutfit = _plannedOutfit;
@@ -76,17 +76,15 @@ public class HomeViewModel extends ViewModel {
     public final LiveData<Boolean> isGeneratingPlanned = _isGeneratingPlanned;
 
     // Save outfit
-    private final MutableLiveData<Result<Boolean>> _saveOutfitResult = new MutableLiveData<>();
-    public final LiveData<Result<Boolean>> saveOutfitResult = _saveOutfitResult;
-
-    // Cache
-    private WeatherInfo cachedWeatherInfo;
-
+    private final MutableLiveData<Resource<Boolean>> _saveOutfitResult = new MutableLiveData<>();
+    public final LiveData<Resource<Boolean>> saveOutfitResult = _saveOutfitResult;
     // Compatibility maps
     private final Map<String, Set<String>> colorHarmony = new HashMap<>();
     private final Map<String, Set<String>> styleCompatibility = new HashMap<>();
     private final Map<String, Set<String>> seasonCompatibility = new HashMap<>();
     private final Map<String, List<String>> occasionToStyles = new HashMap<>();
+    // Cache
+    private WeatherInfo cachedWeatherInfo;
 
     @Inject
     public HomeViewModel(WeatherRepository weatherRepository,
@@ -112,40 +110,40 @@ public class HomeViewModel extends ViewModel {
     // -------------------------------------------------------------------------
 
     private void initializeColorHarmony() {
-        colorHarmony.put("Nero",    new HashSet<>(Arrays.asList("Bianco","Grigio","Rosso","Blu","Beige","Nero")));
-        colorHarmony.put("Bianco",  new HashSet<>(Arrays.asList("Nero","Blu","Grigio","Rosso","Verde","Beige","Bianco")));
-        colorHarmony.put("Grigio",  new HashSet<>(Arrays.asList("Nero","Bianco","Blu","Rosso","Rosa","Grigio")));
-        colorHarmony.put("Blu",     new HashSet<>(Arrays.asList("Bianco","Grigio","Beige","Nero","Marrone","Blu")));
-        colorHarmony.put("Rosso",   new HashSet<>(Arrays.asList("Nero","Bianco","Grigio","Blu scuro","Rosso")));
-        colorHarmony.put("Verde",   new HashSet<>(Arrays.asList("Bianco","Beige","Marrone","Nero","Verde")));
-        colorHarmony.put("Beige",   new HashSet<>(Arrays.asList("Bianco","Marrone","Blu","Verde","Nero","Beige")));
-        colorHarmony.put("Marrone", new HashSet<>(Arrays.asList("Beige","Verde","Bianco","Blu","Marrone")));
-        colorHarmony.put("Rosa",    new HashSet<>(Arrays.asList("Grigio","Bianco","Nero","Blu","Rosa")));
+        colorHarmony.put("Nero", new HashSet<>(Arrays.asList("Bianco", "Grigio", "Rosso", "Blu", "Beige", "Nero")));
+        colorHarmony.put("Bianco", new HashSet<>(Arrays.asList("Nero", "Blu", "Grigio", "Rosso", "Verde", "Beige", "Bianco")));
+        colorHarmony.put("Grigio", new HashSet<>(Arrays.asList("Nero", "Bianco", "Blu", "Rosso", "Rosa", "Grigio")));
+        colorHarmony.put("Blu", new HashSet<>(Arrays.asList("Bianco", "Grigio", "Beige", "Nero", "Marrone", "Blu")));
+        colorHarmony.put("Rosso", new HashSet<>(Arrays.asList("Nero", "Bianco", "Grigio", "Blu scuro", "Rosso")));
+        colorHarmony.put("Verde", new HashSet<>(Arrays.asList("Bianco", "Beige", "Marrone", "Nero", "Verde")));
+        colorHarmony.put("Beige", new HashSet<>(Arrays.asList("Bianco", "Marrone", "Blu", "Verde", "Nero", "Beige")));
+        colorHarmony.put("Marrone", new HashSet<>(Arrays.asList("Beige", "Verde", "Bianco", "Blu", "Marrone")));
+        colorHarmony.put("Rosa", new HashSet<>(Arrays.asList("Grigio", "Bianco", "Nero", "Blu", "Rosa")));
     }
 
     private void initializeStyleCompatibility() {
-        styleCompatibility.put("Casual",     new HashSet<>(Arrays.asList("Casual","Sportivo","Streetwear")));
-        styleCompatibility.put("Elegante",   new HashSet<>(Arrays.asList("Elegante","Formale","Business")));
-        styleCompatibility.put("Sportivo",   new HashSet<>(Arrays.asList("Sportivo","Casual","Streetwear")));
-        styleCompatibility.put("Formale",    new HashSet<>(Arrays.asList("Formale","Elegante","Business")));
-        styleCompatibility.put("Streetwear", new HashSet<>(Arrays.asList("Streetwear","Casual","Sportivo")));
-        styleCompatibility.put("Business",   new HashSet<>(Arrays.asList("Business","Formale","Elegante")));
-        styleCompatibility.put("Boho",       new HashSet<>(Arrays.asList("Boho","Casual")));
-        styleCompatibility.put("Vintage",    new HashSet<>(Arrays.asList("Vintage","Casual","Elegante")));
+        styleCompatibility.put("Casual", new HashSet<>(Arrays.asList("Casual", "Sportivo", "Streetwear")));
+        styleCompatibility.put("Elegante", new HashSet<>(Arrays.asList("Elegante", "Formale", "Business")));
+        styleCompatibility.put("Sportivo", new HashSet<>(Arrays.asList("Sportivo", "Casual", "Streetwear")));
+        styleCompatibility.put("Formale", new HashSet<>(Arrays.asList("Formale", "Elegante", "Business")));
+        styleCompatibility.put("Streetwear", new HashSet<>(Arrays.asList("Streetwear", "Casual", "Sportivo")));
+        styleCompatibility.put("Business", new HashSet<>(Arrays.asList("Business", "Formale", "Elegante")));
+        styleCompatibility.put("Boho", new HashSet<>(Arrays.asList("Boho", "Casual")));
+        styleCompatibility.put("Vintage", new HashSet<>(Arrays.asList("Vintage", "Casual", "Elegante")));
     }
 
     private void initializeSeasonCompatibility() {
-        seasonCompatibility.put("Primavera", new HashSet<>(Arrays.asList("Primavera","Primavera - Estate","Primavera - Autunno","Tutte le stagioni")));
-        seasonCompatibility.put("Estate",    new HashSet<>(Arrays.asList("Estate","Primavera - Estate","Tutte le stagioni")));
-        seasonCompatibility.put("Autunno",   new HashSet<>(Arrays.asList("Autunno","Inverno - Autunno","Primavera - Autunno","Tutte le stagioni")));
-        seasonCompatibility.put("Inverno",   new HashSet<>(Arrays.asList("Inverno","Inverno - Autunno","Tutte le stagioni")));
+        seasonCompatibility.put("Primavera", new HashSet<>(Arrays.asList("Primavera", "Primavera - Estate", "Primavera - Autunno", "Tutte le stagioni")));
+        seasonCompatibility.put("Estate", new HashSet<>(Arrays.asList("Estate", "Primavera - Estate", "Tutte le stagioni")));
+        seasonCompatibility.put("Autunno", new HashSet<>(Arrays.asList("Autunno", "Inverno - Autunno", "Primavera - Autunno", "Tutte le stagioni")));
+        seasonCompatibility.put("Inverno", new HashSet<>(Arrays.asList("Inverno", "Inverno - Autunno", "Tutte le stagioni")));
     }
 
     private void initializeOccasionToStyles() {
-        occasionToStyles.put("Casual",   Arrays.asList("Casual","Streetwear","Boho","Vintage"));
-        occasionToStyles.put("Business", Arrays.asList("Business","Formale","Elegante"));
-        occasionToStyles.put("Elegant",  Arrays.asList("Elegante","Formale"));
-        occasionToStyles.put("Sport",    Arrays.asList("Sportivo"));
+        occasionToStyles.put("Casual", Arrays.asList("Casual", "Streetwear", "Boho", "Vintage"));
+        occasionToStyles.put("Business", Arrays.asList("Business", "Formale", "Elegante"));
+        occasionToStyles.put("Elegant", Arrays.asList("Elegante", "Formale"));
+        occasionToStyles.put("Sport", List.of("Sportivo"));
     }
 
     // -------------------------------------------------------------------------
@@ -153,17 +151,17 @@ public class HomeViewModel extends ViewModel {
     // -------------------------------------------------------------------------
 
     public void getCurrentUser() {
-        _currentUser.setValue(Result.loading(null));
+        _currentUser.setValue(Resource.loading(null));
         var user = authRepository.getCurrentUser();
-        if (user != null) _currentUser.setValue(Result.success(user));
+        if (user != null) _currentUser.setValue(Resource.success(user));
     }
 
     public void getCurrentWeather(double lat, double lon) {
-        _currentWeatherResult.setValue(Result.loading(null));
+        _currentWeatherResult.setValue(Resource.loading(null));
         weatherRepository.getCurrentWeather(lat, lon, new Callback<>() {
             @Override
             public void onSuccess(WeatherInfo data) {
-                _currentWeatherResult.setValue(Result.success(data));
+                _currentWeatherResult.setValue(Resource.success(data));
                 cachedWeatherInfo = data;
                 loadOrGenerateOutfit(data);
             }
@@ -171,7 +169,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.e(TAG, errorMessage, t);
-                _currentWeatherResult.setValue(Result.error(errorMessage, null));
+                _currentWeatherResult.setValue(Resource.error(errorMessage, null));
                 loadOrGenerateOutfitFallback();
             }
         });
@@ -243,7 +241,7 @@ public class HomeViewModel extends ViewModel {
 
     public void generatePlannedOutfit(double lat, double lon, long dateMillis,
                                       int targetHour, String occasion) {
-        _plannedWeather.setValue(Result.loading(null));
+        _plannedWeather.setValue(Resource.loading(null));
         _isGeneratingPlanned.setValue(true);
 
         // Imposta l'ora selezionata nel timestamp
@@ -257,7 +255,7 @@ public class HomeViewModel extends ViewModel {
         weatherRepository.getForecastWeather(lat, lon, adjustedMillis, new Callback<>() {
             @Override
             public void onSuccess(WeatherInfo data) {
-                _plannedWeather.setValue(Result.success(data));
+                _plannedWeather.setValue(Resource.success(data));
                 String season = seasonFromWeatherInfo(data);
                 List<String> allowedStyles = occasionToStyles.getOrDefault(
                         occasion, Arrays.asList("Casual", "Streetwear"));
@@ -267,7 +265,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onFailure(String errorMessage, Throwable t) {
                 Log.e(TAG, errorMessage, t);
-                _plannedWeather.setValue(Result.error(errorMessage, null));
+                _plannedWeather.setValue(Resource.error(errorMessage, null));
                 _isGeneratingPlanned.setValue(false);
             }
         });
@@ -298,21 +296,21 @@ public class HomeViewModel extends ViewModel {
 
     public void savePlannedOutfit(String name, List<Garment> garments, String season) {
         if (name == null || name.trim().isEmpty()) {
-            _saveOutfitResult.setValue(Result.error("Inserisci un nome per l'outfit", null));
+            _saveOutfitResult.setValue(Resource.error("Inserisci un nome per l'outfit", null));
             return;
         }
-        _saveOutfitResult.setValue(Result.loading(null));
+        _saveOutfitResult.setValue(Resource.loading(null));
         Outfit outfit = new Outfit(name.trim(), season, garments);
         outfitRepository.saveOutfit(outfit, new Callback<>() {
             @Override
             public void onSuccess(Boolean result) {
-                _saveOutfitResult.postValue(Result.success(true));
+                _saveOutfitResult.postValue(Resource.success(true));
             }
 
             @Override
             public void onFailure(String error, Throwable t) {
                 Log.e(TAG, error, t);
-                _saveOutfitResult.postValue(Result.error(error, null));
+                _saveOutfitResult.postValue(Resource.error(error, null));
             }
         });
     }
@@ -346,9 +344,9 @@ public class HomeViewModel extends ViewModel {
 
         if (pool.size() < 3) pool = filterBySeason(allGarments, filterSeason);
 
-        List<Garment> tops        = filterByCategory(pool, "Parte superiore", filterSeason);
-        List<Garment> bottoms     = filterByCategory(pool, "Parte inferiore", filterSeason);
-        List<Garment> shoes       = isWarm
+        List<Garment> tops = filterByCategory(pool, "Parte superiore", filterSeason);
+        List<Garment> bottoms = filterByCategory(pool, "Parte inferiore", filterSeason);
+        List<Garment> shoes = isWarm
                 ? filterByCategory(pool, "Calzature", filterSeason)
                 : filterByCategoryNoSeason(allGarments, "Calzature");
         List<Garment> accessories = isWarm
@@ -357,7 +355,7 @@ public class HomeViewModel extends ViewModel {
 
         if (tops.isEmpty() || bottoms.isEmpty()) return new ArrayList<>();
 
-        List<List<Garment>> allOutfits   = generateAllCombinations(tops, bottoms, shoes, accessories);
+        List<List<Garment>> allOutfits = generateAllCombinations(tops, bottoms, shoes, accessories);
         List<List<Garment>> validOutfits = filterByConstraints(allOutfits);
 
         if (validOutfits.isEmpty()) return new ArrayList<>();
@@ -435,9 +433,15 @@ public class HomeViewModel extends ViewModel {
         List<Garment> result = new ArrayList<>();
         for (Garment g : garments) {
             if (!garmentMatchesSeason(g, season)) continue;
-            if (g.getStyle() == null || g.getStyle().isEmpty()) { result.add(g); continue; }
+            if (g.getStyle() == null || g.getStyle().isEmpty()) {
+                result.add(g);
+                continue;
+            }
             for (String s : g.getStyle()) {
-                if (allowedStyles.contains(s)) { result.add(g); break; }
+                if (allowedStyles.contains(s)) {
+                    result.add(g);
+                    break;
+                }
             }
         }
         return result;
@@ -481,7 +485,9 @@ public class HomeViewModel extends ViewModel {
 
     private boolean isColorHarmonious(List<Garment> outfit) {
         List<String> colors = new ArrayList<>();
-        for (Garment g : outfit) { if (g.getColor() != null) colors.addAll(g.getColor()); }
+        for (Garment g : outfit) {
+            if (g.getColor() != null) colors.addAll(g.getColor());
+        }
         if (colors.isEmpty()) return true;
         for (int i = 0; i < colors.size(); i++) {
             for (int j = i + 1; j < colors.size(); j++) {
@@ -496,7 +502,9 @@ public class HomeViewModel extends ViewModel {
 
     private boolean isStyleCompatible(List<Garment> outfit) {
         List<String> styles = new ArrayList<>();
-        for (Garment g : outfit) { if (g.getStyle() != null) styles.addAll(g.getStyle()); }
+        for (Garment g : outfit) {
+            if (g.getStyle() != null) styles.addAll(g.getStyle());
+        }
         if (styles.isEmpty()) return true;
         for (int i = 0; i < styles.size(); i++) {
             for (int j = i + 1; j < styles.size(); j++) {
@@ -535,7 +543,8 @@ public class HomeViewModel extends ViewModel {
         String json = sharedPreferences.getString(PREF_OUTFIT_KEY, null);
         if (json == null) return null;
         try {
-            Type t = new TypeToken<List<Garment>>() {}.getType();
+            Type t = new TypeToken<List<Garment>>() {
+            }.getType();
             return gson.fromJson(json, t);
         } catch (Exception e) {
             Log.e(TAG, "Errore caricamento outfit salvato", e);

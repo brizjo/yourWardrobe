@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Crea il tuo outfit"
+                android:text="@string/crea_il_tuo_outfit"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:fontFamily="@font/troglo"
@@ -133,7 +133,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Scarpe"
+                android:text="@string/scarpe"
                 android:textColor="@color/md_theme_primary"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -207,18 +207,24 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottone fisso in basso -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_save_outfit"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="@dimen/md"
-        android:layout_marginEnd="@dimen/md"
-        android:layout_marginBottom="24dp"
-        android:layout_marginTop="12dp"
-        android:text="Salva"
-        android:fontFamily="@font/popstar"
-        android:textSize="18sp"
-        android:enabled="false" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="26dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_outfit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:enabled="false"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:layout_marginBottom="40dp"
+            android:fontFamily="@font/popstar"
+            app:cornerRadius="@dimen/lg"
+            android:text="@string/salva" />
+
+    </RelativeLayout>
 
 </LinearLayout>

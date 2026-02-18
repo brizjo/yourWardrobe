@@ -1,6 +1,9 @@
 package it.unimib.yourwardrobe.ui.main.components;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -10,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -48,21 +52,42 @@ public class CardWeather extends LinearLayout {
 
     public void setConditionBackground(int drawableResourceId) {
         Glide.with(getContext())
+                .asBitmap()
                 .load(drawableResourceId)
                 .error(R.drawable.mist)
-                .into(new CustomTarget<Drawable>() {
-
+                .into(new CustomTarget<Bitmap>() {
                     @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        layout.setBackground(resource);
+                    public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                        // Imposta il background tramite Drawable
+                        Glide.with(getContext())
+                                .load(drawableResourceId)
+                                .error(R.drawable.mist)
+                                .into(new CustomTarget<Drawable>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                        layout.setBackground(resource);
+                                    }
+                                    @Override
+                                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                                        layout.setBackground(placeholder);
+                                    }
+                                });
+
+                        Palette.from(bitmap).generate(palette -> {
+                            int dominant = palette.getDominantColor(Color.WHITE);
+                            double r = Color.red(dominant) / 255.0;
+                            double g = Color.green(dominant) / 255.0;
+                            double b = Color.blue(dominant) / 255.0;
+                            double luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                            int textColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
+                            tvTemperature.setTextColor(textColor);
+                            tvCondition.setTextColor(textColor);
+                        });
                     }
 
                     @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        layout.setBackground(placeholder);
-                    }
+                    public void onLoadCleared(@Nullable Drawable placeholder) {}
                 });
-
     }
 
     public void setCondition(String condition) {
@@ -79,5 +104,4 @@ public class CardWeather extends LinearLayout {
     public void setTemperature(String temperature) {
         tvTemperature.setText(temperature);
     }
-
 }

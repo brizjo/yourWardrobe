@@ -50,10 +50,10 @@
         <item name="homeAsUpIndicator">@drawable/ic_arrow_back</item>
     </style>
 
-    <style name="AppLogo" parent="@style/TextAppearance.Material3.DisplayMedium">
+    <style name="AppLogo" parent="@style/TextAppearance.Material3.DisplayLarge">
         <item name="fontFamily">@font/chango</item>
-        <item name="android:fontFamily">@font/troglo</item>
-    </style>
+        <item name="android:fontFamily">@font/chango</item>
+>    </style>
 
     <style name="MyHeadlineLarge" parent="@style/TextAppearance.Material3.HeadlineLarge">
         <item name="fontFamily">@font/troglo</item>

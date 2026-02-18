@@ -11,15 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
         android:text="@string/app_name"
         android:fontFamily="@font/troglo"
         android:textAlignment="center"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="24sp"
-        android:autoSizeMaxTextSize="42sp"
-        android:autoSizeStepGranularity="2sp"
+        android:textSize="36sp"
         android:textAppearance="@style/AppLogo" />
 
     <ImageView
@@ -45,13 +42,18 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/welcome_message"
+                android:fontFamily="@font/popstar"
                 android:textAppearance="@style/MyHeadlineLarge" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/sign_up_phrase"
+                android:fontFamily="@font/popstar"
                 android:textAppearance="@style/TextAppearance.YourWardrobe.Body" />
 
             <com.google.android.material.textfield.TextInputLayout

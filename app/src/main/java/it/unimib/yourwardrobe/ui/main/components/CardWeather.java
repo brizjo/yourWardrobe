@@ -23,6 +23,8 @@ import it.unimib.yourwardrobe.R;
 
 public class CardWeather extends LinearLayout {
     private TextView tvCondition;
+    private TextView tvClock;
+    private TextView tvDate;
     private ImageView ivConditionIcon;
     private TextView tvTemperature;
     private ConstraintLayout layout;
@@ -47,6 +49,8 @@ public class CardWeather extends LinearLayout {
         tvCondition = findViewById(R.id.tv_weather_condition);
         ivConditionIcon = findViewById(R.id.iv_weather_condition_icon);
         tvTemperature = findViewById(R.id.tv_weather_temperature);
+        tvClock = findViewById(R.id.tv_weather_time);
+        tvDate = findViewById(R.id.tv_date);
         layout = findViewById(R.id.layout_weather);
     }
 
@@ -82,6 +86,9 @@ public class CardWeather extends LinearLayout {
                             int textColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
                             tvTemperature.setTextColor(textColor);
                             tvCondition.setTextColor(textColor);
+                            tvClock.setTextColor(textColor);
+                            tvDate.setTextColor(textColor);
+
                         });
                     }
 
